@@ -98,7 +98,15 @@
     </delete> 
     
     <select id="selectUserList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	   SELECT  row_number() OVER () as rnum, usr.*,usr.position, team.name as team_name
+	   SELECT  row_number() OVER () as rnum, 
+			user_id, 
+			usr.name,
+			phone_num, 
+			email, 
+			organization,
+			COALESCE(usr.position, '') AS position,
+			usr.description,
+			team.name as team_name
 		FROM
 		ntm_schemas.itm_user usr, ntm_schemas.itm_team team
 		WHERE  usr.team_id = team.id
@@ -112,7 +120,7 @@
     	<selectKey resultType="long" keyProperty="team_id" order="BEFORE">
         	SELECT id FROM ntm_schemas.itm_team where name = #{team}
         </selectKey>
-    	WITH UPSERT AS (
+    	WITH upsert AS (
     						UPDATE ntm_schemas.itm_user
     						SET name = #{name},
 						        phone_num = #{phone_num},
@@ -122,10 +130,11 @@
 						        team_id = #{team_id}::bigint, 
 						        modify_date = NOW()
 						    WHERE user_id = #{user_id}
+						    RETURNING *
     					)
     	   INSERT INTO ntm_schemas.itm_user
     	   ( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
-			VALUES(  
+			SELECT  
 				#{ user_id }, 
 				#{ user_id }, 
 				#{ name }, 
@@ -140,7 +149,9 @@
 				#{ reg_user }, 
 				now(),
 				'FALSE'
-			)
+			WHERE NOT EXISTS (SELECT * FROM upsert)
+			
+			
     </update>
     
     

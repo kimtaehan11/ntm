@@ -304,7 +304,12 @@ public class UserService {
                 //예외처리 
                 tempMap.put("user_id", tempMap.get("user_id").toString().replace(".0", ""));
                 
-                log.info(i + " 번쨰 열입니다. : " + tempMap.toString());
+                
+                if("".equals( tempMap.get("user_id"))) {
+                	 tempMap.put("result", "-1");
+                     arrayList.add(tempMap);
+                     continue;
+                }
                 tempMap.put("reg_user", "admin");
                 int result = sqlSession.insert("UserDAO.upsertUser", tempMap);
                 tempMap.put("result", result);

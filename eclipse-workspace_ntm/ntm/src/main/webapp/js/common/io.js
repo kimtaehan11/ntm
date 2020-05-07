@@ -32,7 +32,7 @@ function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
 	
 }
 
-var ajaxForm = function (id, func){
+var ajaxForm = function (tran , id, func){
 	var data = new FormData();
 	data.append("file1", $('#file1').prop('files')[0]);				
 	console.log(data);
@@ -40,20 +40,24 @@ var ajaxForm = function (id, func){
 	$.ajax({
         type: "POST",
         enctype: 'multipart/form-data',
-        url: "user/uploadExcel.file",
+        url: tran,
         data: data,
         processData: false,
         contentType: false,
         cache: false,
         timeout: 600000,
-        success: function (result) {
-            console.log("SUCCESS : ", result.data.url);
-            $('#objectUrl').attr("disabled", true) 
-            $('#objectUrl').val(result.data.url)
+        success: function (data) {
+        	
+        	if(data["resultCode"] == "0000"){
+        		func(tran, data);
+			}
+			else{
+				
+			}
+        	
         },
         error: function (e) {
-            console.log("ERROR : ", e);
-
+        	alert("시스템 오류");
         }
 
     });

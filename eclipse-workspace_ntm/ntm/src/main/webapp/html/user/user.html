@@ -4,9 +4,9 @@
 	<div class="container-fluid">
 	
 		<br/>
-		<h5 id="grid-options">»ç¿ëÀÚ °ü¸®</h5>
+		<h5 id="grid-options">ì‚¬ìš©ìž ê´€ë¦¬</h5>
 		<select  class="form-control" id="team_id_main" title="" style="width:200px">
-			<option selected="selected" value="">ÀüÃ¼</option>
+			<option selected="selected" value="">ì „ì²´</option>
 		</select>
 		<br/>
 		<table id="userTable" class="table table-bordered" style="width:100%">
@@ -18,7 +18,7 @@
 	                <th>Team</th>
 	                <th>organization</th>
 	                <th>Phone</th>
-	                <th>Role</th>
+	                <th>position</th>
 	                <th>Email</th>
 	                <th>description</th>
 	            </tr>
@@ -28,7 +28,7 @@
 <!-- 		<form id="frm" name="frm" action="user/uploadExcel.file" enctype="multipart/form-data" method="post" style="display:none"> -->
 <!-- 		    <input   name="files[]" id="files" type="file" /> -->
 <!-- 		</form> -->
-		<form id="frm" method="post" action="user/uploadExcel.file" enctype="multipart/form-data">
+		<form id="frm" method="post" action="user/uploadExcel.file" enctype="multipart/form-data"  style="display:none">
 	         <input type="file" id="file1" name="file1">
 		</form>
 
@@ -37,7 +37,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 id="modalTitle" class="modal-title">»ç¿ëÀÚ µî·Ï</h4>
+						<h4 id="modalTitle" class="modal-title">ì‚¬ìš©ìž ë“±ë¡</h4>
 					</div>
 					<div class="modal-body">
 						<table id="userTableModal" class="" style="width:100%">
@@ -53,8 +53,8 @@
 					       	  <tr>
 					       	 		<th>Team</th>
 					       	  		<th>
-					       	  			<select  class="form-control" id="team_id" title="¼±ÅÃ ±¸ºÐ" style="width:100%">
-												<option selected="selected" value="">¼±ÅÃÇØ ÁÖ¼¼¿ä</option>
+					       	  			<select  class="form-control" id="team_id" title="ì„ íƒ êµ¬ë¶„" style="width:100%">
+												<option selected="selected" value="">ì„ íƒí•´ ì£¼ì„¸ìš”</option>
 										</select>
 									</th>	
 					       	  </tr>	
@@ -82,9 +82,9 @@
 					    </table>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-success" id="btnSave" >ÀúÀå</button>
-						<button type="button" class="btn btn-success" id="btnUpdate">¼öÁ¤</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">´Ý±â</button>
+						<button type="button" class="btn btn-success" id="btnSave" >ì €ìž¥</button>
+						<button type="button" class="btn btn-success" id="btnUpdate">ìˆ˜ì •</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">ë‹«ê¸°</button>
 					</div>
 				</div>
 			</div>

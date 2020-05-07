@@ -54,8 +54,6 @@ VALUES(  'admin', 'admin', '김태한', '010-0000-0000', 'nexcore4u@sk.com', 'SK
 
 
 
--- itm_user : ����
--- itm_user : ����
 CREATE SEQUENCE itm_role_id_seq
     START WITH 1
     INCREMENT BY 1

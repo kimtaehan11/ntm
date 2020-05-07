@@ -38,7 +38,7 @@ $(document).ready(function() {
 //	            }
 	        });
 		        
-	        ajaxForm("frm", callbackS);
+	        ajaxForm("user/uploadExcel.file", "frm", callbackS);
 
 		});
 });
