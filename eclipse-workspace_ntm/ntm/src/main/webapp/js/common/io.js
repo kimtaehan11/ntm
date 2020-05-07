@@ -32,32 +32,57 @@ function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
 	
 }
 
-
-
-
-
-
 var ajaxForm = function (id, func){
-    $('#'+id).ajaxForm({
-        contentType : false,
+	var data = new FormData();
+	data.append("file1", $('#file1').prop('files')[0]);				
+	console.log(data);
+
+	$.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: "user/uploadExcel.file",
+        data: data,
         processData: false,
-        enctype: "multipart/form-data",
-        dataType : "POST",
-        dataType : 'json',
-        beforeSubmit: function(data, form, option) {
-            console.log('beforeSubmit');
-            console.log(data);
-            console.log(form);
-            console.log(option);
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (result) {
+            console.log("SUCCESS : ", result.data.url);
+            $('#objectUrl').attr("disabled", true) 
+            $('#objectUrl').val(result.data.url)
         },
-        success: function(returnData) {
-            func(returnData);
-        },
-        error: function(x,e){
-            console.log("[aljjabaegi]ajax status : "+x.status);
-            console.log(e);
-        },
+        error: function (e) {
+            console.log("ERROR : ", e);
+
+        }
+
     });
+
+
+
+	
+	
+//	$('#'+id).ajaxForm({
+////        contentType : false,
+////        processData: false,
+//		type: "POST",
+//        enctype: "multipart/form-data",
+////        dataType : "POST",
+//        dataType : 'json',
+//        beforeSubmit: function(data, form, option) {
+//            console.log('beforeSubmit');
+//            console.log(data);
+//            console.log(form);
+//            console.log(option);
+//        },
+//        success: function(returnData) {
+//            func(returnData);
+//        },
+//        error: function(x,e){
+//            console.log("[aljjabaegi]ajax status : "+x.status);
+//            console.log(e);
+//        },
+//    }).submit();
 }
 
 

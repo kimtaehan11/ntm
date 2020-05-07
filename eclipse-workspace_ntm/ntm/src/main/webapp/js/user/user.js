@@ -19,24 +19,26 @@ $(document).ready(function() {
 		$("#team_id_main").on('change', function(){
 			searchUserList();
 		});
-		$('#files').on('change', function(){
+		
+		
+		
+		$('#file1').on('change', function(){
 			
 			fileBuffer = [];
-	        const target = document.getElementsByName('files[]');
+	        const target = document.getElementsByName('file1');
 	        
-	        Array.prototype.push.apply(fileBuffer, target[0].files);
+	        Array.prototype.push.apply(fileBuffer, target.files);
 	        var html = '';
 	        $.each(target[0].files, function(index, file){
 	            const fileName = file.name;
 	            const fileEx = fileName.slice(fileName.indexOf(".") + 1).toLowerCase();
-	            if(fileEx != "jpg" && fileEx != "png" &&  fileEx != "gif" &&  fileEx != "bmp" && fileEx != "wmv" && fileEx != "mp4" && fileEx != "avi"){
-	                alert("파일은 (jpg, png, gif, bmp, wmv, mp4, avi) 형식만 등록 가능합니다.");
-	                return false;
-	            }
+//	            if(fileEx != "jpg" && fileEx != "png" &&  fileEx != "gif" &&  fileEx != "bmp" && fileEx != "wmv" && fileEx != "mp4" && fileEx != "avi"){
+//	                alert("파일은 (jpg, png, gif, bmp, wmv, mp4, avi) 형식만 등록 가능합니다.");
+//	                return false;
+//	            }
 	        });
 		        
-	        ajaxForm(frm, callbackS);
-		        
+	        ajaxForm("frm", callbackS);
 
 		});
 });
@@ -166,7 +168,7 @@ var callbackS = function(tran, data){
 	            {
 	                text: '업로드',
 	                action: function ( e, dt, node, config ) {
-	                	$('#files').trigger('click');
+	                	$('#file1').trigger('click');
 	                }
 	            }
 	        ]

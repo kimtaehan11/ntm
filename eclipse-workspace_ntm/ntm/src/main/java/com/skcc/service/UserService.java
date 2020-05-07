@@ -1,15 +1,22 @@
 package com.skcc.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.skcc.controller.UserController;
 
@@ -224,6 +231,95 @@ public class UserService {
 			response.put("resultCode", "0001");
 			response.put("message", "정상적으로 저장에 실패하였습니다.");
 		}
+		return response;
+	}
+	
+	
+	
+	private String getCellString(XSSFCell cell) {
+		
+		String resultStr = "";
+		if(null != cell) {
+		
+			switch(cell.getCellType()) {
+			
+			case FORMULA:
+				resultStr = cell.getCellFormula();
+				break;
+				
+			case STRING:
+				resultStr = cell.getStringCellValue() + "";
+				break;
+				
+			case NUMERIC:
+				resultStr = cell.getNumericCellValue() + "";
+				break;
+				
+			case BLANK:
+				resultStr = cell.getBooleanCellValue() + "";
+				break;
+				
+			case ERROR:
+				resultStr = cell.getErrorCellString() + "";
+				break;
+			}
+		}
+		
+		
+		return resultStr;
+	}
+
+	public Map<String, Object> saveUserExcel(MultipartFile excelFile) {
+		
+		Map<String, Object> response = new HashMap<String, Object>();
+		ArrayList<Map<String, Object> > arrayList = new ArrayList<Map<String, Object> >();
+		try {
+			OPCPackage opcPackage = OPCPackage.open(excelFile.getInputStream());
+			XSSFWorkbook workbook = new XSSFWorkbook(opcPackage);
+			// 첫번째 시트 불러오기
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            
+            for(int i=2; i<sheet.getLastRowNum() + 1; i++) {
+            	
+            	Map<String, Object> tempMap = new HashMap<String, Object>();
+            		
+                XSSFRow row = sheet.getRow(i);
+                // 행이 존재하기 않으면 패스
+                if(null == row) {
+                    continue;
+                }
+                
+                // 행의 두번째 열(이름부터 받아오기) 
+                tempMap.put("id", 			getCellString(row.getCell(1)));
+                tempMap.put("name", 		getCellString(row.getCell(2)));
+                tempMap.put("team", 		getCellString(row.getCell(3)));
+                tempMap.put("organization", getCellString(row.getCell(4)));
+                tempMap.put("phone", 		getCellString(row.getCell(5)));
+                tempMap.put("role",			getCellString(row.getCell(6)));
+                tempMap.put("email", 		getCellString(row.getCell(7)));
+                tempMap.put("description", 	getCellString(row.getCell(8)));
+                
+                //예외처리 
+                tempMap.put("id", tempMap.get("id").toString().replace(".0", ""));
+                
+                log.info(i + " 번쨰 열입니다. : " + tempMap.toString());
+                
+                int result = sqlSession.insert("UserDAO.upsertUser", tempMap);
+                tempMap.put("result", result);
+                arrayList.add(tempMap);
+                
+            }
+            
+            
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// TODO Auto-generated method stub
+		response.put("resultCode", "0000");
+		response.put("message", "정상적으로 저장되었습니다.");
+		response.put("list", arrayList);
+		
+		
 		return response;
 	}
 }

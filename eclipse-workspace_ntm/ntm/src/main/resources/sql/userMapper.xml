@@ -106,6 +106,10 @@
        		 AND usr.team_id = #{team_id}::bigint
         </if>     
 	</select>
+	
+    <update id="upsertUser" parameterType="java.util.HashMap">
+    
+    </update>
     
     
     <insert id="insertUser" parameterType="map" useGeneratedKeys="true">

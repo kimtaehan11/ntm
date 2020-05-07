@@ -1,9 +1,12 @@
 package com.skcc.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -12,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.skcc.service.UserService;
 
@@ -40,8 +45,6 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	
-	
 	@RequestMapping("/*.do")
 	@ResponseBody
 	public HashMap<String, Object> searchUserList(HttpServletRequest req,  @RequestBody Map<String, Object> reqMap) {	
@@ -71,4 +74,13 @@ public class UserController {
 		return response; 
 	}
 	
+	@RequestMapping("/*.file")     
+	@ResponseBody
+    public HashMap<String, Object> submitReport1( @RequestParam("file1") MultipartFile  uploadFile) throws IOException {   
+		HashMap<String, Object> response = null;
+		
+        return (HashMap<String, Object>) userService.saveUserExcel(uploadFile);
+    }
+	
+
 }

@@ -5,16 +5,6 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 
-<!-- 	<filter> -->
-<!-- 		<filter-name>abcFilter</filter-name> -->
-<!-- 		<filter-class>com.skcc.filter.ReadableRequestWrapperFilterfilter</filter-class> -->
-<!-- 	</filter> -->
-
-<!-- 	<filter-mapping> -->
-<!-- 		<filter-name>abcFilter</filter-name> -->
-<!-- 		<url-pattern>*.do</url-pattern> -->
-<!-- 	</filter-mapping> -->
-	
 	
 	<servlet>
 		<servlet-name>dispatcher</servlet-name>
@@ -25,7 +15,10 @@
 		<servlet-name>dispatcher</servlet-name>
 		<url-pattern>*.do</url-pattern>
 	</servlet-mapping>
-
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>*.file</url-pattern>
+	</servlet-mapping>
 
 
 	<welcome-file-list>

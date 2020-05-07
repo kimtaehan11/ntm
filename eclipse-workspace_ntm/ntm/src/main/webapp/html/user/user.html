@@ -25,10 +25,12 @@
 	        </thead>
 	    </table>
 	    
-		<form id="frm" name="frm" action="user/uploadExcel.do" enctype="multipart/form-data" method="post" style="display:none">
-		    <input   name="files[]" id="files" type="file" />
+<!-- 		<form id="frm" name="frm" action="user/uploadExcel.file" enctype="multipart/form-data" method="post" style="display:none"> -->
+<!-- 		    <input   name="files[]" id="files" type="file" /> -->
+<!-- 		</form> -->
+		<form id="frm" method="post" action="user/uploadExcel.file" enctype="multipart/form-data">
+	         <input type="file" id="file1" name="file1">
 		</form>
-
 
 	    <!-- Modal window  -->
 		<div class="modal fade" id="layerpop">
