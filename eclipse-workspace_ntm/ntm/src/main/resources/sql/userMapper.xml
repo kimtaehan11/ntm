@@ -98,7 +98,7 @@
     </delete> 
     
     <select id="selectUserList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	   SELECT  row_number() OVER () as rnum, usr.*, team.name as team_name
+	   SELECT  row_number() OVER () as rnum, usr.*,usr.position, team.name as team_name
 		FROM
 		ntm_schemas.itm_user usr, ntm_schemas.itm_team team
 		WHERE  usr.team_id = team.id
@@ -108,7 +108,39 @@
 	</select>
 	
     <update id="upsertUser" parameterType="java.util.HashMap">
-    
+<!--     {role=, phone=, organization=ㅅㄷㄴㅅ, name=이성준, description=, id=02232, team=현업테스터, email=} -->
+    	<selectKey resultType="long" keyProperty="team_id" order="BEFORE">
+        	SELECT id FROM ntm_schemas.itm_team where name = #{team}
+        </selectKey>
+    	WITH UPSERT AS (
+    						UPDATE ntm_schemas.itm_user
+    						SET name = #{name},
+						        phone_num = #{phone_num},
+						        email =  #{email},
+						        description =  #{description},
+						        "position" = #{position},
+						        team_id = #{team_id}::bigint, 
+						        modify_date = NOW()
+						    WHERE user_id = #{user_id}
+    					)
+    	   INSERT INTO ntm_schemas.itm_user
+    	   ( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
+			VALUES(  
+				#{ user_id }, 
+				#{ user_id }, 
+				#{ name }, 
+				#{ phone_num }, 
+				#{ email }, 
+				#{ organization }, 
+				#{ position }, 
+				#{ description }, 
+				#{ team_id }::bigint,
+				#{ reg_user }, 
+				now(), 
+				#{ reg_user }, 
+				now(),
+				'FALSE'
+			)
     </update>
     
     
