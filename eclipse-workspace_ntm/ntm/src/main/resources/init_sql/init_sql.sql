@@ -13,7 +13,7 @@ ALTER SCHEMA ntm_schemas OWNER TO ntm_admin;
 
 SET search_path = ntm_schemas, pg_catalog;
 
--- itm_user : »ç¿ëÀÚ Å×ÀÌºí
+-- itm_user : ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½
 CREATE TABLE itm_user
 (
   user_id character varying(256) NOT NULL,
@@ -36,7 +36,7 @@ WITH (
   OIDS=FALSE
 );
 ALTER TABLE itm_user OWNER TO ntm_admin;
-
+ALTER TABLE itm_user ADD PRIMARY KEY(user_id);
 -- Index: ntm_schemas.itm_user_uidx
 
 -- DROP INDEX ntm_schemas.itm_user_uidx;
@@ -47,20 +47,15 @@ CREATE UNIQUE INDEX itm_user_uidx
   (user_id COLLATE pg_catalog."default" DESC);
 
 
-  -- °ü¸®ÀÚ °èÁ¤ »ý¼º
+  -- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
  INSERT INTO itm_user
 ( user_id, password, "name", phone_num, email, organization, "position", description, reg_user, reg_date, modify_user, modify_date, admin)
-VALUES(  'admin', 'admin', '°ü¸®ÀÚ', '010-0000-0000', 'nexcore4u@sk.com', 'SKÁÖ½ÄÈ¸»ç', '¼ö¼®', '°ü¸®ÀÚ°èÁ¤ÀÔ´Ï´Ù.', 'nexcore', now(), 'nexcore', now(),'TRUE');
-
-
- INSERT INTO itm_user
-( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
-VALUES(  '08368', '08368', 'È«±æµ¿', '010-0000-0000', 'È«±æµ¿@sk.com', 'SKÁÖ½ÄÈ¸»ç', '¼ö¼®', '°ü¸®ÀÚ°èÁ¤ÀÔ´Ï´Ù.', '1', 'nexcore', now(), 'nexcore', now(),'FALSE');
+VALUES(  'admin', 'admin', 'ê¹€íƒœí•œ', '010-0000-0000', 'nexcore4u@sk.com', 'SKCC', '1234', '123455', 'nexcore', now(), 'nexcore', now(),'TRUE');
 
 
 
--- itm_user : ¿ªÇÏ
--- itm_user : ¿ªÇÏ
+-- itm_user : ï¿½ï¿½ï¿½ï¿½
+-- itm_user : ï¿½ï¿½ï¿½ï¿½
 CREATE SEQUENCE itm_role_id_seq
     START WITH 1
     INCREMENT BY 1
@@ -88,15 +83,15 @@ CREATE TABLE itm_role (
 
 ALTER TABLE  itm_role OWNER TO ntm_admin;
 
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PM', '[TM] ÇÁ·ÎÁ§Æ® ¸Å´ÏÀú(PM)', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'QA', '[TM] Ç°Áú°ü¸®ÀÚ(QA)', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PL', '[TM] ÆÄÆ®¸®´õ(PL)', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'TESTER', '[TM] Å×½ºÅÍ(TESTER)', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'DEV', '[TM] °³¹ßÀÚ(DEV)', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'CUSTOM', '[TM] °í°´(CUSTOM)', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PM', 'PM', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'QA', 'QA', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PL', 'PL', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'TESTER', 'TESTER', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'DEV', 'DEV', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'CUSTOM', 'CUSTOM', '', 'admin',  now(), 'admin',now() );
 
 
--- itm_team : ±×·ì Á¤º¸
+-- itm_team : ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½
 CREATE SEQUENCE  itm_team_id_seq
     START WITH 1
     INCREMENT BY 1

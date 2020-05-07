@@ -45,12 +45,12 @@ public class UserService {
 		if(list.size() ==1) { 
 			response =  ( Map<String, Object>) list.get(0);
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î ·Î±×ÀÎ µÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ë¡œê·¸ì¸ ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		}
 		else {
 			
 			response.put("resultCode", "0001");
-			response.put("message", "·Î±×ÀÎ¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+			response.put("message", "ë¡œê·¸ì¸ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -63,13 +63,13 @@ public class UserService {
 		Map<String, Object> response = new HashMap<String, Object>();
 		if(list.size() != -1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î Á¶È¸µÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì¡°íšŒë˜ì—ˆìŠµë‹ˆë‹¤.");
 			response.put("list", list);
 		}
 		else {
 			
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î Á¶È¸¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì¡°íšŒì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -81,13 +81,13 @@ public class UserService {
 		Map<String, Object> response = new HashMap<String, Object>();
 		if(list.size() != -1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î Á¶È¸µÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì¡°íšŒë˜ì—ˆìŠµë‹ˆë‹¤.");
 			response.put("list", list);
 		}
 		else {
 			
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î Á¶È¸¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì¡°íšŒì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -104,11 +104,11 @@ public class UserService {
 		int result = sqlSession.insert("UserDAO.insertNewTeam", reqMap);
 		if(result == 1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀåµÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		}
 		else {
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀå¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -123,11 +123,11 @@ public class UserService {
 		int result = sqlSession.update("UserDAO.updateTeam", reqMap);
 		if(result == 1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀåµÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		}
 		else {
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀå¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -151,11 +151,11 @@ public class UserService {
 		
 		if(result == 1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀåµÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		}
 		else {
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀå¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -163,16 +163,18 @@ public class UserService {
 	public Map<String, Object> searchUserList( Map<String, Object> reqMap ) {	
 	
 		List<Object> list = sqlSession.selectList("UserDAO.selectUserList", reqMap);
+		
+//		position
 		Map<String, Object> response = new HashMap<String, Object>();
 		if(list.size() != -1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î Á¶È¸µÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì¡°íšŒë˜ì—ˆìŠµë‹ˆë‹¤.");
 			response.put("list", list);
 		}
 		else {
 			
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î Á¶È¸¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì¡°íšŒì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -189,11 +191,11 @@ public class UserService {
 		int result = sqlSession.insert("UserDAO.insertUser", reqMap);
 		if(result == 1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀåµÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		}
 		else {
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀå¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -206,11 +208,11 @@ public class UserService {
 		int result = sqlSession.update("UserDAO.deleteUser", reqMap);
 		if(result == 1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀåµÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		}
 		else {
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀå¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -225,11 +227,11 @@ public class UserService {
 		int result = sqlSession.insert("UserDAO.updateUser", reqMap);
 		if(result == 1) { 
 			response.put("resultCode", "0000");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀåµÇ¾ú½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		}
 		else {
 			response.put("resultCode", "0001");
-			response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀå¿¡ ½ÇÆĞÇÏ¿´½À´Ï´Ù.");
+			response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ì— ì‹¤íŒ¨í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 		return response;
 	}
@@ -276,7 +278,7 @@ public class UserService {
 		try {
 			OPCPackage opcPackage = OPCPackage.open(excelFile.getInputStream());
 			XSSFWorkbook workbook = new XSSFWorkbook(opcPackage);
-			// Ã¹¹øÂ° ½ÃÆ® ºÒ·¯¿À±â
+			// ì²«ë²ˆì§¸ ì‹œíŠ¸ ë¶ˆëŸ¬ì˜¤ê¸°
             XSSFSheet sheet = workbook.getSheetAt(0);
             
             for(int i=2; i<sheet.getLastRowNum() + 1; i++) {
@@ -284,26 +286,26 @@ public class UserService {
             	Map<String, Object> tempMap = new HashMap<String, Object>();
             		
                 XSSFRow row = sheet.getRow(i);
-                // ÇàÀÌ Á¸ÀçÇÏ±â ¾ÊÀ¸¸é ÆĞ½º
+                // í–‰ì´ ì¡´ì¬í•˜ê¸° ì•Šìœ¼ë©´ íŒ¨ìŠ¤
                 if(null == row) {
                     continue;
                 }
                 
-                // ÇàÀÇ µÎ¹øÂ° ¿­(ÀÌ¸§ºÎÅÍ ¹Ş¾Æ¿À±â) 
-                tempMap.put("id", 			getCellString(row.getCell(1)));
+                // í–‰ì˜ ë‘ë²ˆì§¸ ì—´(ì´ë¦„ë¶€í„° ë°›ì•„ì˜¤ê¸°) 
+                tempMap.put("user_id", 			getCellString(row.getCell(1)));
                 tempMap.put("name", 		getCellString(row.getCell(2)));
                 tempMap.put("team", 		getCellString(row.getCell(3)));
                 tempMap.put("organization", getCellString(row.getCell(4)));
-                tempMap.put("phone", 		getCellString(row.getCell(5)));
-                tempMap.put("role",			getCellString(row.getCell(6)));
+                tempMap.put("phone_num", 		getCellString(row.getCell(5)));
+                tempMap.put("organization",			getCellString(row.getCell(6)));
                 tempMap.put("email", 		getCellString(row.getCell(7)));
                 tempMap.put("description", 	getCellString(row.getCell(8)));
                 
-                //¿¹¿ÜÃ³¸® 
-                tempMap.put("id", tempMap.get("id").toString().replace(".0", ""));
+                //ì˜ˆì™¸ì²˜ë¦¬ 
+                tempMap.put("user_id", tempMap.get("user_id").toString().replace(".0", ""));
                 
-                log.info(i + " ¹ø¤Š ¿­ÀÔ´Ï´Ù. : " + tempMap.toString());
-                
+                log.info(i + " ë²ˆì¨° ì—´ì…ë‹ˆë‹¤. : " + tempMap.toString());
+                tempMap.put("reg_user", "admin");
                 int result = sqlSession.insert("UserDAO.upsertUser", tempMap);
                 tempMap.put("result", result);
                 arrayList.add(tempMap);
@@ -316,7 +318,7 @@ public class UserService {
 		}
 		// TODO Auto-generated method stub
 		response.put("resultCode", "0000");
-		response.put("message", "Á¤»óÀûÀ¸·Î ÀúÀåµÇ¾ú½À´Ï´Ù.");
+		response.put("message", "ì •ìƒì ìœ¼ë¡œ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 		response.put("list", arrayList);
 		
 		
