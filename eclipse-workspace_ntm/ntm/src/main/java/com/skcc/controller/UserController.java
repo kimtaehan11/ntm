@@ -31,7 +31,7 @@ import com.skcc.service.UserService;
 public class UserController {
 
 	/**
-	 * log4j ¼±¾ð
+	 * log4j ì„ ì–¸
 	 * 
 	 * @see none
 	 */
