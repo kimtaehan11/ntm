@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserDAO">
+ 	<resultMap id="PackageHeaderMap"               type="java.util.HashMap">
+       <result property="java.lang.String"         column="row_id"/>
+       <result property="object"                   column="PackageBeanResult"/>
+    </resultMap>
+    
+    <!-- 사용자 조회 -->
+	<select id="selectUser" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	    SELECT * 
+	    FROM
+	        ntm_schemas.itm_user
+	        <where>
+		        <if test="password != null"> 
+		        AND password = #{password}
+		        </if>
+		        <if test="userId != null">
+		        AND user_id = #{userId}
+	        	</if>
+	        </where>
+	</select>
+    
+  	<!-- 팀 조회 -->
+  	<select id="selectTeamList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	  	SELECT team.*, 
+	  		role.name roleName ,
+	  		(SELECT COUNT(*) FROM ntm_schemas.itm_user usr WHERE usr.team_id = team.id) as user_cnt
+		FROM ntm_schemas.itm_team team, 
+				ntm_schemas.itm_role role
+		WHERE team.role_id = role.id
+		
+  	</select>
+  	
+  	<!-- 팀 조회 -->
+  	<select id="selectRoleList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	  	SELECT *
+		FROM ntm_schemas.itm_role role
+  	</select>
+  	
+  	
+  	<insert id="insertNewTeam" parameterType="map" useGeneratedKeys="true">
+  		<selectKey resultType="long" keyProperty="id" order="BEFORE">
+        	SELECT  nextval('ntm_schemas.itm_team_id_seq'::REGCLASS) as id
+        </selectKey>
+        INSERT INTO ntm_schemas.itm_team (
+            id,
+            project_id,
+            role_id,
+            name,
+            description,
+            reg_user,
+            reg_date,
+            modify_user,
+            modify_date
+        ) VALUES (
+            #{ id },
+            #{ project_id }::bigint,
+            #{ role_id }::bigint,
+            #{ name },
+            #{ description },
+            #{ reg_user },
+            NOW(),
+            #{ modify_user },
+            NOW()
+        )
+  	</insert>
+  	
+	<!-- 팀 수정 -->
+    <update id="updateTeam" parameterType="java.util.HashMap">
+    UPDATE
+        ntm_schemas.itm_team
+    SET
+        name = #{name},
+        description = #{description},
+        role_id =  #{ role_id }::bigint,
+        modify_user = #{modify_user},
+        modify_date = NOW()
+    WHERE
+        id = #{id}::bigint;
+    </update> 
+    
+    
+    
+     <delete id="deleteUserByTeam" parameterType="java.util.HashMap">
+    DELETE FROM
+        ntm_schemas.itm_user
+    WHERE
+        team_id = #{id}::bigint;
+    </delete> 
+    
+    <delete id="deleteTeam" parameterType="java.util.HashMap">
+    DELETE FROM
+        ntm_schemas.itm_team
+    WHERE
+        id = #{id}::bigint;
+    </delete> 
+    
+    <select id="selectUserList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	   SELECT  row_number() OVER () as rnum, usr.*, team.name as team_name
+		FROM
+		ntm_schemas.itm_user usr, ntm_schemas.itm_team team
+		WHERE  usr.team_id = team.id
+	    <if test="team_id != ''"> 
+       		 AND usr.team_id = #{team_id}::bigint
+        </if>     
+	</select>
+    
+    
+    <insert id="insertUser" parameterType="map" useGeneratedKeys="true">
+  		
+         INSERT INTO ntm_schemas.itm_user
+		( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
+		VALUES(  
+			#{ user_id }, 
+			#{ user_id }, 
+			#{ name }, 
+			#{ phone_num }, 
+			#{ email }, 
+			#{ organization }, 
+			#{ position }, 
+			#{ description }, 
+			#{ team_id }::bigint,
+			#{ reg_user }, 
+			now(), 
+			#{ modify_user }, 
+			now(),
+			'FALSE'
+		);
+  	</insert>
+  	
+  	<!-- 팀 수정 -->
+    <update id="updateUser" parameterType="java.util.HashMap">
+    UPDATE
+        ntm_schemas.itm_user
+    SET
+        name = #{name},
+        phone_num = #{phone_num},
+        email =  #{email},
+        description =  #{description},
+        "position" = #{position},
+        team_id = #{team_id}::bigint, 
+        modify_date = NOW()
+    WHERE
+        user_id = #{user_id}
+    </update> 
+  	
+  	
+  	 <delete id="deleteUser" parameterType="java.util.HashMap">
+	    DELETE FROM
+	        ntm_schemas.itm_user
+	    WHERE
+	        user_id = #{user_id}
+    </delete> 
+    
+    
+
+</mapper>

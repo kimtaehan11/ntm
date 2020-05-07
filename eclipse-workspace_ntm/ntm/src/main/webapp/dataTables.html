@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	var aDemoItems = [
+	    {
+	        "otherId":"LanTest101",
+	        "firstName":"x1",
+	        "lastName":"yLanTest101",
+	        "gender":"M",
+	        "dob":"10/16/1941",
+	        "race":"Caucasian/White"
+	    },
+	     
+	    {
+	        "otherId":"LanTest102",
+	        "firstName":"x2",
+	        "lastName":"yLanTest102",
+	        "gender":"M",
+	        "dob":"08/10/2005",
+	        "race":"Caucasian/White"
+	    },
+	     
+	    {
+	        "otherId":"Test1111",
+	        "firstName":"x3",
+	        "lastName":"yTest1111",
+	        "gender":"M",
+	        "dob":"08/13/2015",
+	        "race":"Native Hawaian/Pacific Islander"
+	    },
+	];
+	$('#example').DataTable ({
+        "aaData" : aDemoItems,
+        "columns" : [
+            { "mDataProp" : "race" },
+            { "mDataProp" : "otherId" },
+            { "mDataProp" : "firstName" },
+            { "mDataProp" : "lastName" },
+            { "mDataProp" : "gender" },
+            { "mDataProp" : "dob" } 
+        ]
+    });
+} );
+</script>
+</head>
+<body>
+	<table id="example" class="display" style="width:100%">
+	        <thead>
+	            <tr>
+	                <th>Name</th>
+	                <th>Position</th>
+	                <th>Office</th>
+	                <th>Extn.</th>
+	                <th>Start date</th>
+	                <th>Salary</th>
+	            </tr>
+	        </thead>
+	      
+	    </table>
+	
+</body>
+</html>
