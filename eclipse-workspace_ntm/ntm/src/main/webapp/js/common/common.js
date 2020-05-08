@@ -6,14 +6,16 @@
 function appendSelectBox(obj, key, value){
 	$('#' +obj).append("<option value='"+key+"'>"+value+"</option>" );
 }
+function htmlSelectBox(obj, key, value){
+	$('#' +obj).html("<option value='"+key+"'>"+value+"</option>" );
+}
 
 
-function setPopupTable(obj, jsonObj){
+var table = {};
+table.getSelectedRowData = function(obj){
 	
 }
-function convertJsonObjToPouupTable(obj, jsonObj){
-	
-}
+
 
 var modal = {};
 modal.modalClear = function(obj){

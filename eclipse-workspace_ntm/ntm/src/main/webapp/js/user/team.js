@@ -3,8 +3,6 @@ let t;
 
 $(document).ready(function() { 
 	
-//	var dataJson = {
-//	};
 	
 	ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
 	ajaxTranCall("user/searchRoleList.do", {}, callbackS, callBackE);

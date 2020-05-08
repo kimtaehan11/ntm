@@ -62,6 +62,7 @@ var callbackS = function(tran, data){
 	case "user/saveUser.do":
 	case "user/deleteUser.do":
 	case "user/updateUser.do":
+	case "user/uploadExcel.file":
 		alert(data["message"]);
 		if(data["resultCode"] == "0000" ){
 			$('div.modal').modal("hide"); //닫기 
@@ -95,8 +96,8 @@ var callbackS = function(tran, data){
 	            { "mDataProp" : "name" },
 	            { "mDataProp" : "team_name" },
 	            { "mDataProp" : "organization" },
-	            { "mDataProp" : "phone_num" },
 	            { "mDataProp" : "position" },
+	            { "mDataProp" : "phone_num" },
 	            { "mDataProp" : "email" },
 	            { "mDataProp" : "description" }
 	            
@@ -181,6 +182,9 @@ var callbackS = function(tran, data){
 //	        } );
 //	    } ).draw();
 		break;
+		
+		
+	 
 	}
 	
 //	{"resultCode":"0000","message":"정상적으로 조회되었습니다.","list":[{"reg_user":"nexcore","modify_user":"nexcore","description":"관리자계정입니다.","admin":true,"reg_date":1588572727418,"password":"admin","user_id":"admin","organization":"SK주식회사","name":"관리자","phone_num":"010-0000-0000","position":"수석","modify_date":1588572727418,"email":"nexcore4u@sk.com"}]}

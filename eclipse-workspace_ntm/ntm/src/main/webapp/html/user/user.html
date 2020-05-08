@@ -13,21 +13,18 @@
 	        <thead>
 	            <tr>
 	                <th>No</th>
-	                <th>id</th>
-	                <th>Name</th>
-	                <th>Team</th>
-	                <th>organization</th>
-	                <th>Phone</th>
-	                <th>position</th>
+	                <th>아이디</th>
+	                <th>이름</th>
+	                <th>팀명</th>
+	                <th>조직</th>
+	                <th>직급</th>
+	                <th>전화번호</th>
 	                <th>Email</th>
-	                <th>description</th>
+	                <th>설명</th>
 	            </tr>
 	        </thead>
 	    </table>
-	    
-<!-- 		<form id="frm" name="frm" action="user/uploadExcel.file" enctype="multipart/form-data" method="post" style="display:none"> -->
-<!-- 		    <input   name="files[]" id="files" type="file" /> -->
-<!-- 		</form> -->
+
 		<form id="frm" method="post" action="user/uploadExcel.file" enctype="multipart/form-data"  style="display:none">
 	         <input type="file" id="file1" name="file1">
 		</form>
@@ -43,15 +40,15 @@
 						<table id="userTableModal" class="" style="width:100%">
 					       <tbody>
 	          				  <tr>
-					       	 		<th>ID</th>
+					       	 		<th>아이디</th>
 					       	  		<th><input class="form-control required" style="width:100%" id="user_id"  /></th>	
 					       	  </tr>	
 					       	  <tr>
-					       	 		<th>Name</th>
+					       	 		<th>이름</th>
 					       	  		<th><input class="form-control required" style="width:100%" id="name"   /></th>	
 					       	  </tr>	
 					       	  <tr>
-					       	 		<th>Team</th>
+					       	 		<th>팀</th>
 					       	  		<th>
 					       	  			<select  class="form-control" id="team_id" title="선택 구분" style="width:100%">
 												<option selected="selected" value="">선택해 주세요</option>
@@ -59,19 +56,20 @@
 									</th>	
 					       	  </tr>	
 					       	  <tr>
-					       	 		<th>organization</th>
+					       	 		<th>조직</th>
 					       	  		<th><input class="form-control required" style="width:100%" id="organization"   /></th>	
+					       	  </tr>	 
+					       	  <tr>
+					       	 		<th>직급</th>
+					       	  		<th><input class="form-control required" style="width:100%" id="position"   /></th>	
 					       	  </tr>	
 					       	  <tr>
-					       	 		<th>Phone</th>
+					       	 		<th>전화번호</th>
 					       	  		<th><input class="form-control required" style="width:100%" id="phone_num"   /></th>	
 					       	  </tr>	
+					       	 	
 					       	  <tr>
-					       	 		<th>position</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="position"   /></th>	
-					       	  </tr>		
-					       	  <tr>
-					       	 		<th>Email</th>
+					       	 		<th>이메일</th>
 					       	  		<th><input class="form-control required" style="width:100%" id="email"   /></th>	
 					       	  </tr>	
 					       	  <tr>

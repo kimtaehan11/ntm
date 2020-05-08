@@ -12,8 +12,7 @@ CREATE SCHEMA ntm_schemas;
 ALTER SCHEMA ntm_schemas OWNER TO ntm_admin;
 
 SET search_path = ntm_schemas, pg_catalog;
-
--- itm_user : ����� ���̺�
+ 
 CREATE TABLE itm_user
 (
   user_id character varying(256) NOT NULL,
@@ -47,7 +46,6 @@ CREATE UNIQUE INDEX itm_user_uidx
   (user_id COLLATE pg_catalog."default" DESC);
 
 
-  -- ������ ���� ����
  INSERT INTO itm_user
 ( user_id, password, "name", phone_num, email, organization, "position", description, reg_user, reg_date, modify_user, modify_date, admin)
 VALUES(  'admin', 'admin', '김태한', '010-0000-0000', 'nexcore4u@sk.com', 'SKCC', '1234', '123455', 'nexcore', now(), 'nexcore', now(),'TRUE');
@@ -89,7 +87,7 @@ INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'DEV', 'D
 INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'CUSTOM', 'CUSTOM', '', 'admin',  now(), 'admin',now() );
 
 
--- itm_team : �׷� ����
+-- itm_team :  
 CREATE SEQUENCE  itm_team_id_seq
     START WITH 1
     INCREMENT BY 1
@@ -117,3 +115,31 @@ CREATE TABLE itm_team (
 ALTER TABLE itm_team OWNER TO ntm_admin;
 
  
+-- 업무구분 3depth로 정리됨 
+-- 서브시스템, 업무구분, 대상업무
+CREATE SEQUENCE itm_div_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE itm_div_id_seq OWNER TO ntm_admin;
+
+ 
+CREATE TABLE itm_div (
+    id character varying(10)  NOT NULL,
+    project_id bigint NOT NULL,
+    name character varying(256),
+    depth character varying(1),
+    upcode character varying(10),
+    reg_user character varying(256) NOT NULL,
+    reg_date timestamp without time zone DEFAULT now(),
+    modify_user character varying(256),
+    modify_date timestamp without time zone 
+   
+);
+
+
+ALTER TABLE itm_div OWNER TO ntm_admin;
+ALTER TABLE itm_div ADD PRIMARY KEY(id);

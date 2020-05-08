@@ -106,7 +106,8 @@
 			organization,
 			COALESCE(usr.position, '') AS position,
 			usr.description,
-			team.name as team_name
+			team.name as team_name,
+			usr.team_id
 		FROM
 		ntm_schemas.itm_user usr, ntm_schemas.itm_team team
 		WHERE  usr.team_id = team.id
