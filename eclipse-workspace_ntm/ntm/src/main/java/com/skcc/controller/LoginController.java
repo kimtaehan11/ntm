@@ -22,7 +22,7 @@ import com.skcc.service.UserService;
 public class LoginController {
 	
 	/**
-	 * log4j ¼±¾ğ
+	 * log4j ì„ ì–¸
 	 * 
 	 * @see none
 	 */
@@ -38,10 +38,10 @@ public class LoginController {
 
 	
 	/**
-     * ·Î±×ÀÎ Æ®·£Àè¼Ç
+     * ë¡œê·¸ì¸ íŠ¸ëœì­ì…˜
      *
-     * @param     reqMap  http¿äÃ» request
-     * @return    http¿äÃ» response  
+     * @param     reqMap  httpìš”ì²­ request
+     * @return    httpìš”ì²­ response  
      * @exception 
      * @see       
      */
