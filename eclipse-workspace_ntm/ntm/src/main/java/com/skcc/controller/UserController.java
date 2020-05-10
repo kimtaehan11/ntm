@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.skcc.service.UserService;
@@ -47,7 +48,10 @@ public class UserController {
 
 	@RequestMapping("/*.do")
 	@ResponseBody
-	public HashMap<String, Object> searchUserList(HttpServletRequest req,  @RequestBody Map<String, Object> reqMap) {	
+	public HashMap<String, Object> searchUserList(@SessionAttribute("user") Map<String, String> authMap, HttpServletRequest req,  @RequestBody Map<String, Object> reqMap) {	
+		
+		// 로그인정보 사용
+		log.info("userId: {}, userName: {}", authMap.get("userId"), authMap.get("userName"));
 		
 		HashMap<String, Object> response = null;
 		Class<?>[] paramTypes = {Map.class};

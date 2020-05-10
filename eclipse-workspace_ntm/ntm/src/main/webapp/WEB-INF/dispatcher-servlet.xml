@@ -86,4 +86,16 @@
     	<constructor-arg index="0" ref="sqlSessionFactory" /> 
     </bean>
      
+    <!-- login check interceptor -->
+    <bean id="authInterceptor" class="com.skcc.interceptor.AuthInterceptor"/>
+    <mvc:interceptors>
+    	<mvc:interceptor>
+    		<mvc:mapping path="/**/*.do"/>
+    		<mvc:mapping path="/**/*.file"/>
+    		<mvc:exclude-mapping path="/**/login.do"/>
+    		<ref bean="authInterceptor"/> 
+    	</mvc:interceptor> 
+    </mvc:interceptors>
+
+     
 </beans>

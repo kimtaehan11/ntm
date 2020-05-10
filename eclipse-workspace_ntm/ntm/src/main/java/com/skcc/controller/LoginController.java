@@ -3,6 +3,8 @@ package com.skcc.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +49,22 @@ public class LoginController {
      */
 	@RequestMapping("/login.do")
 	@ResponseBody
-	public HashMap<String, Object> hello( @RequestBody Map<String, Object> reqMap ) {	
+	public HashMap<String, Object> hello( HttpSession session, @RequestBody Map<String, Object> reqMap ) {	
 		HashMap<String, Object> response = (HashMap<String, Object>) userService.login(reqMap);
+		/*
+		 * login 처리
+		 */
+		if(response != null && "0000".equals(response.get("resultCode"))){
+			Map<String, String> authMap = new HashMap<String, String>();
+			authMap.put("userId", (String)response.get("user_id"));
+			authMap.put("userName", (String)response.get("name"));
+			// TODO: User권한 정보 추가
+			
+			session.setAttribute("user", authMap);
+			// Controller 내 메소드 사용예시
+			// @SessionAttribute("user") Map<String, String> authMap 
+		}
+		
 		return response; 
 	}
 	
