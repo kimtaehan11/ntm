@@ -57,15 +57,23 @@
 
     <!-- JDBC-PostgreSQL -->
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean id="dataSourceSpied" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${jdbc.driverClassName}" />
         <property name="url" value="${jdbc.url}" />
         <property name="username" value="${jdbc.username}" />
         <property name="password" value="${jdbc.password}" />
-
     </bean>
-
     
+    <!-- SQL log format - 출처: https://addio3305.tistory.com/66 -->
+    <bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+    	<constructor-arg ref="dataSourceSpied" />
+    	<property name="logFormatter">
+    		<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+    			<property name="loggingType" value="MULTI_LINE" />
+    			<property name="sqlPrefix" value="SQL : "/>	
+    		</bean>
+    	</property>
+    </bean>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
     	<property name="mapperLocations" value="classpath*:sql/**/*.xml"/>  

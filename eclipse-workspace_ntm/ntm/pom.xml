@@ -162,6 +162,13 @@
 		    <version>2.9.0.pr4</version>
 		</dependency>
 
+		<!-- MyBatis query log print -->
+		<dependency>
+			<groupId>org.lazyluke</groupId>
+			<artifactId>log4jdbc-remix</artifactId>
+			<version>0.2.7</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>ntm</finalName>
