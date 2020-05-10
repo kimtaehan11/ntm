@@ -1,8 +1,8 @@
 
 
 $(document).ready(function() { 
+	$("#inputLoginId").val(getCookie('user_id'));
 	
-
 });
 
 /*
@@ -26,6 +26,12 @@ $("#btLogin").click(function(){
 		success : function(data){
 			
 			if(data["resultCode"] == "0000"){
+				
+				//USER 정보 설정 
+				setCookie('user_id',  data.user_id, '1');
+				setCookie('name',  data.name, '1');
+				setCookie('team_id',  data.name, 'team_id');
+				
 				location.href = "/ntm?path=main";
 			}
 			else{

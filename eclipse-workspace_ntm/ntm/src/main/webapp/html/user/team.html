@@ -1,63 +1,61 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<div class="container-fluid">
-		<br/> 
-		<h5 id="grid-options">팀관리</h5>
-		<table id="teamTable" class="table table-bordered" style="width:100%">
-	        <thead>
-	            <tr>
-	                <th>No</th>
-	                 <th style="display:none">id</th>
-	                <th>팀 명</th>
-	                <th>팀 설명</th>
-	                <th>팀원수</th>
-	                <th>팀 역할</th>
-	                <th>생성일자</th>
-	            </tr>
-	        </thead>
-	    </table>
-	
+	<br/> 
+	<h5 id="grid-options">팀관리</h5>
+	<table id="teamTable" class="table table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>No</th>
+                 <th style="display:none">id</th>
+                <th>팀 명</th>
+                <th>팀 설명</th>
+                <th>팀원수</th>
+                <th>팀 역할</th>
+                <th>생성일자</th>
+            </tr>
+        </thead>
+    </table>
 
 
-		<!-- Modal window  -->
-		<div class="modal fade" id="layerpop">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 id="modalTitle" class="modal-title">팀 등록</h4>
-					</div>
-					<div class="modal-body">
-						<table id="teamTableModal" class="" style="width:100%">
-					       <tbody>
-	          				  <tr>
-					       	 		<th>Team 명</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="name"  /></th>	
-					       	  </tr>	
-					       	  <tr>
-					       	 		<th>Team 성명</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="description"   /></th>	
-					       	  </tr>	
-					       	  <tr>
-					       	 		<th>Team 역할</th>
-					       	  		<th>
-					       	  			<select  class="form-control" id="role_id" title="선택 구분" style="width:100%">
-												<option selected="selected" value="">선택해 주세요</option>
-										</select>
-									</th>	
-					       	  </tr>		
-					       </tbody>
-					    </table>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-success" id="btnSave" >저장</button>
-						<button type="button" class="btn btn-success" id="btnUpdate">수정</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
-					</div>
+
+	<!-- Modal window  -->
+	<div class="modal fade" id="layerpop">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 id="modalTitle" class="modal-title">팀 등록</h4>
+				</div>
+				<div class="modal-body">
+					<table id="teamTableModal" class="" style="width:100%">
+				       <tbody>
+          				  <tr>
+				       	 		<th>Team 명</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="name"  /></th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>Team 성명</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="description"   /></th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>Team 역할</th>
+				       	  		<th>
+				       	  			<select  class="form-control" id="role_id" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">선택해 주세요</option>
+									</select>
+								</th>	
+				       	  </tr>		
+				       </tbody>
+				    </table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" id="btnSave" >저장</button>
+					<button type="button" class="btn btn-success" id="btnUpdate">수정</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
 				</div>
 			</div>
 		</div>
-
 	</div>
+
 </body>
 </html>

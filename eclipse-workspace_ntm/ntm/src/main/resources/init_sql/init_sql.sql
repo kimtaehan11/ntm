@@ -1,16 +1,11 @@
-
-  
-
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-
 CREATE SCHEMA ntm_schemas;
 ALTER SCHEMA ntm_schemas OWNER TO ntm_admin;
-
 SET search_path = ntm_schemas, pg_catalog;
  
 CREATE TABLE itm_user
@@ -143,3 +138,75 @@ CREATE TABLE itm_div (
 
 ALTER TABLE itm_div OWNER TO ntm_admin;
 ALTER TABLE itm_div ADD PRIMARY KEY(id);
+
+
+-- 시나리오 테이블 
+-- Table: itm_core.itm_scenario
+-- DROP TABLE itm_core.itm_scenario;
+CREATE TABLE itm_scenario
+(
+  scenario_code character varying(100) NOT NULL, -- 시나리오코드
+  scenario_name character varying(200) NOT NULL, -- 시나리오명
+  div_id character varying(10),
+  project_id bigint NOT NULL, -- 프로젝트ID
+  description text, -- 설명
+  reg_user character varying(64), -- 등록자
+  reg_date timestamp with time zone, -- 등록일자
+  modify_user character varying(64), -- 수정자
+  modify_date timestamp with time zone -- 수정일자
+)
+WITH (
+  OIDS=FALSE
+);
+
+
+ALTER TABLE itm_scenario ADD PRIMARY KEY(scenario_code);
+
+ALTER TABLE itm_scenario OWNER TO ntm_admin;
+
+COMMENT ON TABLE  itm_scenario IS '시나리오';
+COMMENT ON COLUMN  itm_scenario.project_id IS '프로젝트ID'; 
+COMMENT ON COLUMN  itm_scenario.scenario_code IS '시나리오코드';
+COMMENT ON COLUMN  itm_scenario.scenario_name IS '시나리오명';
+COMMENT ON COLUMN  itm_scenario.description IS '설명';
+COMMENT ON COLUMN  itm_scenario.reg_user IS '등록자';
+COMMENT ON COLUMN  itm_scenario.reg_date IS '등록일자';
+COMMENT ON COLUMN  itm_scenario.modify_user IS '수정자';
+COMMENT ON COLUMN  itm_scenario.modify_date IS '수정일자';
+
+--테스트케이스 건
+
+CREATE TABLE itm_test_case
+(
+  case_code character varying(100), -- 케이스코드
+  case_name character varying(200), -- 케이스명
+  project_id bigint NOT NULL, -- 프로젝트ID
+ 	scenario_code character varying(100) NOT NULL, -- 시나리오ID
+  tester_id character varying(256),
+  dev_id character varying(256), 
+  state character varying(1), 
+  description text, -- 설명
+  reg_user character varying(64), -- 등록자
+  reg_date timestamp with time zone, -- 등록일자
+  modify_user character varying(64), -- 수정자
+  modify_date timestamp with time zone -- 수정일자
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE  itm_test_case OWNER TO ntm_admin;
+COMMENT ON TABLE  itm_test_case IS '테스트케이스';
+COMMENT ON COLUMN itm_test_case.project_id IS '프로젝트ID';
+COMMENT ON COLUMN itm_test_case.scenario_code IS '시나리오ID';
+COMMENT ON COLUMN itm_test_case.case_code IS '케이스코드';
+COMMENT ON COLUMN itm_test_case.case_name IS '케이스명';
+COMMENT ON COLUMN itm_test_case.description IS '설명';
+COMMENT ON COLUMN itm_test_case.reg_user IS '등록자';
+COMMENT ON COLUMN itm_test_case.reg_date IS '등록일자';
+COMMENT ON COLUMN itm_test_case.modify_user IS '수정자';
+COMMENT ON COLUMN itm_test_case.modify_date IS '수정일자';
+
+
+
+ALTER TABLE itm_test_case ADD PRIMARY KEY(case_code);
+

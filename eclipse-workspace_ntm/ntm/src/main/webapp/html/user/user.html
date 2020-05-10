@@ -1,92 +1,90 @@
 <!DOCTYPE html>
 <html>
 <body>
-	<div class="container-fluid">
 	
-		<br/>
-		<h5 id="grid-options">사용자 관리</h5>
-		<select  class="form-control" id="team_id_main" title="" style="width:200px">
-			<option selected="selected" value="">전체</option>
-		</select>
-		<br/>
-		<table id="userTable" class="table table-bordered" style="width:100%">
-	        <thead>
-	            <tr>
-	                <th>No</th>
-	                <th>아이디</th>
-	                <th>이름</th>
-	                <th>팀명</th>
-	                <th>조직</th>
-	                <th>직급</th>
-	                <th>전화번호</th>
-	                <th>Email</th>
-	                <th>설명</th>
-	            </tr>
-	        </thead>
-	    </table>
+	<br/>
+	<h5 id="grid-options">사용자 관리</h5>
+	<select  class="form-control" id="team_id_main" title="" style="width:200px">
+		<option selected="selected" value="">전체</option>
+	</select>
+	<br/>
+	<table id="userTable" class="table table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>팀명</th>
+                <th>조직</th>
+                <th>직급</th>
+                <th>전화번호</th>
+                <th>Email</th>
+                <th>설명</th>
+            </tr>
+        </thead>
+    </table>
 
-		<form id="frm" method="post" action="user/uploadExcel.file" enctype="multipart/form-data"  style="display:none">
-	         <input type="file" id="file1" name="file1">
-		</form>
+	<form id="frm" method="post" action="user/uploadExcel.file" enctype="multipart/form-data"  style="display:none">
+         <input type="file" id="file1" name="file1">
+	</form>
 
-	    <!-- Modal window  -->
-		<div class="modal fade" id="layerpop">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 id="modalTitle" class="modal-title">사용자 등록</h4>
-					</div>
-					<div class="modal-body">
-						<table id="userTableModal" class="" style="width:100%">
-					       <tbody>
-	          				  <tr>
-					       	 		<th>아이디</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="user_id"  /></th>	
-					       	  </tr>	
-					       	  <tr>
-					       	 		<th>이름</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="name"   /></th>	
-					       	  </tr>	
-					       	  <tr>
-					       	 		<th>팀</th>
-					       	  		<th>
-					       	  			<select  class="form-control" id="team_id" title="선택 구분" style="width:100%">
-												<option selected="selected" value="">선택해 주세요</option>
-										</select>
-									</th>	
-					       	  </tr>	
-					       	  <tr>
-					       	 		<th>조직</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="organization"   /></th>	
-					       	  </tr>	 
-					       	  <tr>
-					       	 		<th>직급</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="position"   /></th>	
-					       	  </tr>	
-					       	  <tr>
-					       	 		<th>전화번호</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="phone_num"   /></th>	
-					       	  </tr>	
-					       	 	
-					       	  <tr>
-					       	 		<th>이메일</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="email"   /></th>	
-					       	  </tr>	
-					       	  <tr>
-					       	 		<th>Desc</th>
-					       	  		<th><input class="form-control required" style="width:100%" id="description"   /></th>	
-					       	  </tr>		
-					       </tbody>
-					    </table>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-success" id="btnSave" >저장</button>
-						<button type="button" class="btn btn-success" id="btnUpdate">수정</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
-					</div>
+    <!-- Modal window  -->
+	<div class="modal fade" id="layerpop">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 id="modalTitle" class="modal-title">사용자 등록</h4>
+				</div>
+				<div class="modal-body">
+					<table id="userTableModal" class="" style="width:100%">
+				       <tbody>
+          				  <tr>
+				       	 		<th>아이디</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="user_id"  /></th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>이름</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="name"   /></th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>팀</th>
+				       	  		<th>
+				       	  			<select  class="form-control" id="team_id" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">선택해 주세요</option>
+									</select>
+								</th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>조직</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="organization"   /></th>	
+				       	  </tr>	 
+				       	  <tr>
+				       	 		<th>직급</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="position"   /></th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>전화번호</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="phone_num"   /></th>	
+				       	  </tr>	
+				       	 	
+				       	  <tr>
+				       	 		<th>이메일</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="email"   /></th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>Desc</th>
+				       	  		<th><input class="form-control required" style="width:100%" id="description"   /></th>	
+				       	  </tr>		
+				       </tbody>
+				    </table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" id="btnSave" >저장</button>
+					<button type="button" class="btn btn-success" id="btnUpdate">수정</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
 				</div>
 			</div>
 		</div>
-    </div>
+	</div>
 </body>
 </html>
