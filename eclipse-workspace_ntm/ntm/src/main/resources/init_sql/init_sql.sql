@@ -288,8 +288,48 @@ ALTER TABLE itm_img ADD PRIMARY KEY(id, seq);
 ------------------------------------------이미지 테이블 종료 (itm_img_id_seq)
 
 
+--코드그룹 테이블 시작 (itm_code_group)----------------------------------------  
+CREATE TABLE  itm_code_group
+(
+  code_group character varying(30) NOT NULL, -- 코드그룹식별자
+  code_group_name character varying(200), -- 코드그룹명
+  description text, -- 설명
+  readonly_fg boolean DEFAULT false, -- 읽기전용여부
+  reg_user character varying(64), -- 등록자
+  reg_date timestamp with time zone, -- 등록일자
+  CONSTRAINT itm_code_group_pk PRIMARY KEY (code_group)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE itm_code_group OWNER TO ntm_admin;
+------------------------------------------코드그룹 테이블 종료 (itm_code_group)
 
+ 
 
-
+--코드그룹 테이블 시작 (itm_code)----------------------------------------  
+CREATE TABLE itm_code
+(
+  code_group character varying(30) NOT NULL, -- 코드그룹식별자
+  code_id bigint NOT NULL, -- 코드식별자
+  code_name character varying(200) NOT NULL, -- 코드명
+  description text, -- 설명
+  reg_user character varying(64), -- 등록자
+  reg_date timestamp with time zone, -- 등록일자
+  project_id bigint NOT NULL, -- 프로젝트ID
+  no_defect_fg boolean DEFAULT false,
+  end_status bigint, -- 종료상태
+  prop_required_fg boolean DEFAULT false, -- 속성값필수여부
+  CONSTRAINT itm_code_pk PRIMARY KEY (code_group, code_id),
+  CONSTRAINT itm_code_fk FOREIGN KEY (code_group)
+      REFERENCES itm_code_group (code_group) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE  itm_code OWNER TO ntm_admin; 
+------------------------------------------코드그룹 테이블 종료 (itm_code)
+ 
 
 

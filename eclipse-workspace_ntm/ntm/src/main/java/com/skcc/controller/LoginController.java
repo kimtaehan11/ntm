@@ -49,7 +49,7 @@ public class LoginController {
      */
 	@RequestMapping("/login.do")
 	@ResponseBody
-	public HashMap<String, Object> hello( HttpSession session, @RequestBody Map<String, Object> reqMap ) {	
+	public HashMap<String, Object> loginTran( HttpSession session, @RequestBody Map<String, Object> reqMap ) {	
 		HashMap<String, Object> response = (HashMap<String, Object>) userService.login(reqMap);
 		/*
 		 * login 처리
