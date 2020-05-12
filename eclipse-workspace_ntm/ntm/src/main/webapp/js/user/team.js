@@ -56,9 +56,8 @@ var callbackS = function(tran, data){
 	            
 	        ],
 			"language": {
-		        "emptyTable": "데이터가 없어요." 
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
-		    
 			lengthChange: false, 	// 표시 건수기능 숨기기
 			searching: true,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기

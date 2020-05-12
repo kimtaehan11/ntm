@@ -107,8 +107,8 @@ var callbackS = function(tran, data){
 	            { "mDataProp" : 'reg_user' } ,
 	            { "mDataProp" : 'reg_date_str' } 
 	        ],
-			"language": {
-		        "emptyTable": "데이터가 없어요." 
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
 		    
 			lengthChange: false, 	// 표시 건수기능 숨기기
@@ -152,8 +152,8 @@ var callbackS = function(tran, data){
 	            { "mDataProp" : 'use_yn' } ,
 	            { "mDataProp" : 'code_cnt' } 
 	        ],
-			"language": {
-		        "emptyTable": "데이터가 없어요." 
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
 		    
 			lengthChange: false, 	// 표시 건수기능 숨기기

@@ -75,11 +75,11 @@ $(document).ready(function() {
 //	$("button[name=btnUp]").on('click', function(){
 	$("#btnTester").on('click', function(){
 		isTester = true;
-		ajaxTranCall("user/searchUserList.do", {team_id:''}, callbackS, callBackE);
+		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
 	});
 	$("#btnDeveloper").on('click', function(){
 		isTester = false;
-		ajaxTranCall("user/searchUserList.do", {team_id:''}, callbackS, callBackE);
+		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
 	});
 	$('#tcTableModalUser').on('click', function(){
 
@@ -164,7 +164,7 @@ var callbackS = function(tran, data){
 		}
 		break;
 		
-	case "user/searchUserList.do":
+	case "user/selectUserList.do":
 		
 		tcTableModalUser = $('#tcTableModalUser').DataTable ({
 			destroy: true,
@@ -173,8 +173,8 @@ var callbackS = function(tran, data){
 	            { "mDataProp" : 'team_name' },
 	            { "mDataProp" : 'name' } 
 	        ],
-			"language": {
-		        "emptyTable": "데이터가 없어요." 
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
 		    
 			lengthChange: false, 	// 표시 건수기능 숨기기
@@ -209,8 +209,8 @@ var callbackS = function(tran, data){
 		            { "mDataProp" : 'dev_name' },
 		            { "mDataProp" : 'state' }
 		        ],
-				"language": {
-			        "emptyTable": "데이터가 없어요." 
+		        "language": {
+			        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 			    },
 			    
 				lengthChange: true, 	// 표시 건수기능 숨기기
@@ -295,8 +295,8 @@ var callbackS = function(tran, data){
 	        "columns" : [
 	            { "mDataProp" : 'scenario_name' } 
 	        ],
-			"language": {
-		        "emptyTable": "데이터가 없어요." 
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
 		    
 			lengthChange: true, 	// 표시 건수기능 숨기기

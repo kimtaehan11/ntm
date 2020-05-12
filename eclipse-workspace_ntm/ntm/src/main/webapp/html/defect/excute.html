@@ -19,9 +19,9 @@
 		<div class="col-md-6">
 			 
 			<div>
-				<select  class="" id="selectTeam" name="selectTeam" title="" style="width:40%">
+				<select  class="" id="selectTeam" name="selectTeam" title="" style="width:30%">
 				</select>
-				<select  class="" id="selectUser" name="selectUser" title="" style="width:40%">
+				<select  class="" id="selectUser" name="selectUser" title="" style="width:30%">
 				</select>
 			</div><br/>
 			
@@ -88,36 +88,36 @@
 	<div class="modal fade" id="layerpop">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-				<div class="modal-header">
-					<h4 id="modalTitle" class="modal-title">사용자 등록</h4>
+				<div class="modal-header bg-ntm">
+					<h6 id="modalTitle" class="modal-title color-white"> </h6>
 				</div>
 				<div class="modal-body">
-					<table id="defectTableModal" class="" style="width:100%">
+					<table id="defectTableModal"  class="table table-bordered" style="width:100%">
 				       <tbody>
           				  <tr>
 				       	 		<th>결함명</th>
-				       	  		<th><input class="form-control required" style="width:100%" id="title"  /></th>	
+				       	  		<td><input class="form-control required" style="width:100%" id="title"  /></td>	
 				       	  </tr>	
 				       	  
 				       	  <tr>
 				       	 		<th>결함유형 </th>
-				       	  		<th>
+				       	  		<td>
 				       	  			<select  class="form-control" id="test_type_id" title="선택 구분" style="width:100%">
 											<option selected="selected" value="0">결함</option>
 											<option   value="1">수정요청</option>
 									</select>
-								</th>	
+								</td>	
 				       	  </tr>
 				       	  <tr>
 				       	 		<th>결함상태 </th>
-				       	  		<th>
+				       	  		<td>
 				       	  			<select  class="form-control" id="test_type_id" title="선택 구분" style="width:100%">
 											<option selected="selected" value="0">등록</option>
 											<option   value="1">조치중</option>
 											<option   value="2">조치완료</option>
 											<option   value="3">결함종료</option>
 									</select>
-								</th>	
+								</td>	
 				       	  </tr>		
 				       	 <tr>
 				       	 		<th>내용</th>
@@ -132,27 +132,27 @@
 				       	  </tr>		
 				       	  <tr>
 				       	 		<th>첨부파일</th>
-				       	  		<th>
+				       	  		<td>
 				       	  			<input multiple="multiple" type="file" id="files" name="filename[]" />
-								</th>	
+								</td>	
 				       	  </tr>	
 				       	 
 				       	   <tr>
 				       	   		<th></th>
-				       	 		<th>
+				       	 		<td>
 				       	 			<div id="imgs" >
 				       	 				<img id="img1" style="height:100px;"/>
 				       	 				<img id="img2" style="height:100px;"/>
 				       	  			</div>
-			       	  			</th>
+			       	  			</td>
 				       	  		
 				       	  </tr>	
 				       	  
 				       	  <tr>
 				       	 		<th>테스트자동화</th>
-				       	  		<th>
+				       	  		<td>
 				       	  			<button type="button" class="btn btn-success" id="btnRecording" >레코딩 시작</button>
-								</th>	
+								</td>	
 				       	  </tr>	
 				       </tbody>
 				    </table>
