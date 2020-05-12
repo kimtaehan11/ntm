@@ -23,8 +23,7 @@ CREATE TABLE itm_user
   reg_date timestamp without time zone DEFAULT now(),
   modify_user character varying(256),
   modify_date timestamp without time zone,
-  admin boolean DEFAULT false,
-  CONSTRAINT itm_user_pk PRIMARY KEY (user_id) 
+  admin boolean DEFAULT false
 )
 WITH (
   OIDS=FALSE
@@ -68,7 +67,7 @@ CREATE TABLE itm_role (
     reg_date timestamp without time zone DEFAULT now(),
     modify_user character varying(256),
     modify_date timestamp without time zone,
-  	CONSTRAINT itm_user_pk PRIMARY KEY (id) 
+  	CONSTRAINT itm_role_pk PRIMARY KEY (id) 
 );
 
 
