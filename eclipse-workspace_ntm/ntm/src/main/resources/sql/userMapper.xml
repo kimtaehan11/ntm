@@ -24,9 +24,10 @@
     
   	<!-- 팀 조회 -->
   	<select id="selectTeamList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	  	SELECT team.*, 
+	  	SELECT row_number() OVER () as rnum, team.*, 
 	  		role.name roleName ,
-	  		(SELECT COUNT(*) FROM ntm_schemas.itm_user usr WHERE usr.team_id = team.id) as user_cnt
+	  		(SELECT COUNT(*) FROM ntm_schemas.itm_user usr WHERE usr.team_id = team.id) as user_cnt,
+	  		to_char(team.reg_date, 'YYYY-MM-DD') reg_date_str
 		FROM ntm_schemas.itm_team team, 
 				ntm_schemas.itm_role role
 		WHERE team.role_id = role.id
@@ -127,6 +128,7 @@
 						        phone_num = #{phone_num},
 						        email =  #{email},
 						        description =  #{description},
+						         organization = #{organization},
 						        "position" = #{position},
 						        team_id = #{team_id}::bigint, 
 						        modify_date = NOW()
@@ -187,6 +189,7 @@
         phone_num = #{phone_num},
         email =  #{email},
         description =  #{description},
+        organization = #{organization},
         "position" = #{position},
         team_id = #{team_id}::bigint, 
         modify_date = NOW()

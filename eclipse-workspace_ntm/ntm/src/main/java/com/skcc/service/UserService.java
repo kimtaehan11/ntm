@@ -160,7 +160,7 @@ public class UserService {
 		return response;
 	}
 	
-	public Map<String, Object> searchUserList( Map<String, Object> reqMap ) {	
+	public Map<String, Object> selectUserList( Map<String, Object> reqMap ) {	
 	
 		List<Object> list = sqlSession.selectList("UserDAO.selectUserList", reqMap);
 		

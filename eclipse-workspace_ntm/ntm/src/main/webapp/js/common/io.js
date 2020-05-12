@@ -8,6 +8,8 @@
 //
 function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
 	
+	jsonBody["cookieUserId"] = getCookie("user_id");
+	
 	$.ajax({
 		url : location.protocol + "//" + location.host + "/ntm/" + tran,
 		method: "POST", 

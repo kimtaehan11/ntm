@@ -74,13 +74,6 @@ CREATE TABLE itm_role (
 
 ALTER TABLE  itm_role OWNER TO ntm_admin;
 
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PM', 'PM', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'QA', 'QA', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PL', 'PL', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'TESTER', 'TESTER', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'DEV', 'DEV', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'CUSTOM', 'CUSTOM', '', 'admin',  now(), 'admin',now() );
-
 
 -- itm_team :  
 CREATE SEQUENCE  itm_team_id_seq
@@ -294,7 +287,7 @@ CREATE TABLE  itm_code_group
   code_group character varying(30) NOT NULL, -- 코드그룹식별자
   code_group_name character varying(200), -- 코드그룹명
   description text, -- 설명
-  readonly_fg boolean DEFAULT false, -- 읽기전용여부
+  use_yn character varying(1) DEFAULT 'Y', -- 사용여부
   reg_user character varying(64), -- 등록자
   reg_date timestamp with time zone, -- 등록일자
   CONSTRAINT itm_code_group_pk PRIMARY KEY (code_group)
@@ -311,15 +304,13 @@ ALTER TABLE itm_code_group OWNER TO ntm_admin;
 CREATE TABLE itm_code
 (
   code_group character varying(30) NOT NULL, -- 코드그룹식별자
-  code_id bigint NOT NULL, -- 코드식별자
+  code_id 	character varying(30) NOT NULL, -- 코드명
   code_name character varying(200) NOT NULL, -- 코드명
   description text, -- 설명
+  use_yn character varying(1) DEFAULT 'Y', -- 사용여부  
+  priority bigint,
   reg_user character varying(64), -- 등록자
   reg_date timestamp with time zone, -- 등록일자
-  project_id bigint NOT NULL, -- 프로젝트ID
-  no_defect_fg boolean DEFAULT false,
-  end_status bigint, -- 종료상태
-  prop_required_fg boolean DEFAULT false, -- 속성값필수여부
   CONSTRAINT itm_code_pk PRIMARY KEY (code_group, code_id),
   CONSTRAINT itm_code_fk FOREIGN KEY (code_group)
       REFERENCES itm_code_group (code_group) MATCH SIMPLE

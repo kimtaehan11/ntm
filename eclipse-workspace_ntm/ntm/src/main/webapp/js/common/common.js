@@ -42,6 +42,9 @@ modal.convertModalToJsonObj= function(obj){
 	$('#' +obj +' select').each(function(){
 		resultJson[$(this).attr('id')] = $(this).val();
 	});
+	$('#' +obj +' textarea').each(function(){
+		resultJson[$(this).attr('id')] = $(this).val();
+	});
 	return resultJson;
 }
 

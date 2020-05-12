@@ -7,7 +7,7 @@ let userTable;
 
 $(document).ready(function() { 
 	
-		searchUserList();
+		selectUserList();
 		ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
 		
 		//신규 저장버튼 click event
@@ -21,7 +21,7 @@ $(document).ready(function() {
 		});
 		
 		$("#team_id_main").on('change', function(){
-			searchUserList();
+			selectUserList();
 		});
 		
 		
@@ -49,13 +49,13 @@ $(document).ready(function() {
 
 
 
-var searchUserList = function( ) {
+var selectUserList = function( ) {
 
 	var json = {
 		team_id : $("#team_id_main").val()		
 	};
 
-	ajaxTranCall("user/searchUserList.do", json, callbackS, callBackE);
+	ajaxTranCall("user/selectUserList.do", json, callbackS, callBackE);
 	
 } 
 
@@ -70,7 +70,7 @@ var callbackS = function(tran, data){
 		alert(data["message"]);
 		if(data["resultCode"] == "0000" ){
 			$('div.modal').modal("hide"); //닫기 
-			searchUserList();
+			selectUserList();
 		}
 		break;
 		
@@ -85,7 +85,7 @@ var callbackS = function(tran, data){
 		
 		break;
 	
-	case "user/searchUserList.do":
+	case "user/selectUserList.do":
 		if(data.resultCode != "0000"){
 			
 			return;
@@ -121,15 +121,7 @@ var callbackS = function(tran, data){
 			},
 			"scrollY":        500,
 	        "scrollCollapse": false,
-	        
-//	        //컬럼속성
-//	        "columnDefs": [
-//	            {
-//	                "targets": [ 1 ],
-//	                "visible": false,
-//	                "searchable": true
-//	            },
-//	        ],
+	        "language": { "search": "검색 : " },
 			
 			
 	        dom : 'Bfrtip',
