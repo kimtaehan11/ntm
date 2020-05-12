@@ -208,5 +208,88 @@ COMMENT ON COLUMN itm_test_case.modify_date IS '수정일자';
 
 
 
-ALTER TABLE itm_test_case ADD PRIMARY KEY(case_code);
+ALTER TABLE itm_test_case ADD PRIMARY KEY(scenario_code, case_code);
+
+
+
+
+--결함 테이블 시작 (itm_defect)----------------------------------------  
+CREATE SEQUENCE itm_defect_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE itm_defect_id_seq OWNER TO ntm_admin;
+
+CREATE TABLE itm_defect
+(
+ id bigint DEFAULT nextval('ntm_schemas.itm_defect_id_seq'::regclass) NOT NULL,
+  project_id bigint NOT NULL, -- 프로젝트ID
+  scenario_code character varying(100) NOT NULL, -- 시나리오ID
+  case_code character varying(100), -- 케이스코드
+  test_type_id character varying(10) NOT NULL, -- 테스트유형ID
+  defect_code character varying(10), -- 결함코드
+  title character varying(200), -- 결함명
+  description text, -- 설명
+  defect_user character varying(64), -- 결함담당자
+  reg_user character varying(64), -- 등록자
+  reg_date timestamp with time zone, -- 등록일자
+  modify_user character varying(64), -- 수정자
+  modify_date timestamp with time zone, -- 수정일자
+  due_date timestamp with time zone, -- 조치완료일자
+  plan_date timestamp with time zone, -- 조치예정일자
+  defect_result text,
+  requestor bigint, -- 요청자
+  resolve_date timestamp with time zone, -- 조치해결일자
+  imgkey bigint
+ 
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE itm_defect OWNER TO ntm_admin;
+ALTER SEQUENCE itm_defect_id_seq OWNED BY itm_defect.id;
+------------------------------------------결함 테이블 시작 (itm_defect)
+
+
+
+--이미지 테이블 시작 (itm_img_id_seq)----------------------------------------  
+CREATE SEQUENCE itm_img_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER TABLE itm_img_id_seq OWNER TO ntm_admin;
+
+CREATE TABLE itm_img
+(
+  id bigint DEFAULT nextval('ntm_schemas.itm_img_id_seq'::regclass) NOT NULL,
+  seq bigint,
+  tbName character varying(100) NOT NULL, -- 시나리오ID
+  tbDate character varying(8) NOT NULL, -- 시나리오ID
+  saveFileName character varying(256) NOT NULL, -- 시나리오ID
+  originFileName character varying(256) NOT NULL, -- 시나리오ID
+  fileLength bigint, -- 시나리오ID
+  ext character varying(10) NOT NULL, -- 시나리오ID
+  reg_user character varying(64), -- 등록자
+  reg_date timestamp with time zone -- 등록일자
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE itm_img OWNER TO ntm_admin;
+ALTER SEQUENCE itm_img_id_seq OWNED BY itm_img.id;
+ALTER TABLE itm_img ADD PRIMARY KEY(id, seq);
+------------------------------------------이미지 테이블 종료 (itm_img_id_seq)
+
+
+
+
+
+
 

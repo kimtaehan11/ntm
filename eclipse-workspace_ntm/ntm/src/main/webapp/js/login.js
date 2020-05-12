@@ -30,7 +30,7 @@ $("#btLogin").click(function(){
 				//USER 정보 설정 
 				setCookie('user_id',  data.user_id, '1');
 				setCookie('name',  data.name, '1');
-				setCookie('team_id',  data.name, 'team_id');
+				setCookie('team_id',  data.team_id, '1');
 				
 				location.href = "/ntm?path=main";
 			}

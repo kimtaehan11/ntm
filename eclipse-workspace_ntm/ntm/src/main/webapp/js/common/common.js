@@ -48,13 +48,15 @@ modal.convertModalToJsonObj= function(obj){
 
 modal.convertJsonObjToModal = function(obj, jsonObj){
 	
-	
 	$('#' +obj +' input').each(function(){
 		$(this).val(jsonObj[$(this).attr('id')]);
 	});
 	$('#' +obj +' select').each(function(){
 		if(jsonObj[$(this).attr('id')] != null)
 			$(this).val(jsonObj[$(this).attr('id')]);
+	});
+	$('#' +obj +' textarea').each(function(){
+		$(this).val(jsonObj[$(this).attr('id')]);
 	});
 }
 

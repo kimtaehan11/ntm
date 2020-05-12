@@ -4,12 +4,11 @@ public class test {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
-		
-		String url = "/ntm/user/searchUserList.do";
-		url = url.substring(url.lastIndexOf("/") + 1).replace(".do", "");
-		
-		System.out.println(url); 
+		System.out.println("test");
+		String originFileName = "007.jpg";
+
+		System.out.println(System.getProperty("user.home"));
+		System.out.println(System.getProperty("user.dir"));
 		
 //		Class<?> c = Class.forName("class name");
 //		Method method = c.getDeclaredMethod("method name", parameterTypes);
@@ -19,7 +18,9 @@ public class test {
 	
 	public void tempsearchUserList(String temp) {
 		System.out.println("test");
+		String originFileName = "007.jpg";
 		
+		System.out.println(originFileName.split(".").length);
 		
 	}
 

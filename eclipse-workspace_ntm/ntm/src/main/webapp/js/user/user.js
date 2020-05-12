@@ -1,4 +1,8 @@
-
+/**
+ * @author  Barack Obama
+ * @version 1.0
+ * @see     js 
+ */
 let userTable;
 
 $(document).ready(function() { 
@@ -38,7 +42,7 @@ $(document).ready(function() {
 //	            }
 	        });
 		        
-	        ajaxForm("user/uploadExcel.file", "frm", callbackS);
+	        ajaxFormExcel("user/uploadExcel.file", "file1", callbackS);
 
 		});
 });

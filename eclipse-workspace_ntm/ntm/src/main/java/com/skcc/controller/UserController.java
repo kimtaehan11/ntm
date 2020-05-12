@@ -48,7 +48,7 @@ public class UserController {
 
 	@RequestMapping("/*.do")
 	@ResponseBody
-	public HashMap<String, Object> searchUserList(@SessionAttribute("user") Map<String, String> authMap, HttpServletRequest req,  @RequestBody Map<String, Object> reqMap) {	
+	public HashMap<String, Object> doRequest(@SessionAttribute("user") Map<String, String> authMap, HttpServletRequest req,  @RequestBody Map<String, Object> reqMap) {	
 		
 		// 로그인정보 사용
 		log.info("userId: {}, userName: {}", authMap.get("userId"), authMap.get("userName"));
@@ -80,7 +80,7 @@ public class UserController {
 	
 	@RequestMapping("/*.file")     
 	@ResponseBody
-    public HashMap<String, Object> submitReport1( @RequestParam("file1") MultipartFile  uploadFile) throws IOException {   
+    public HashMap<String, Object> fileRequest( @RequestParam("file1") MultipartFile  uploadFile) throws IOException {   
 		HashMap<String, Object> response = null;
 		
         return (HashMap<String, Object>) userService.saveUserExcel(uploadFile);

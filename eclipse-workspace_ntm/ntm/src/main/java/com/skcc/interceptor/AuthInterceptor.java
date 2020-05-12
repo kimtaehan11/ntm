@@ -34,19 +34,19 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 		if(authMap == null) {
 			log.error("login session info is null");
 			// TODO: Project Exception 생성
-			throw new RuntimeException("Auth Exception");
-			//return false;
+//			throw new RuntimeException("Auth Exception");
+			response.setStatus(999);
+			return false;
 		}
-		
 		/*
 		 * TODO: User의 권한별 화면 접근제어
 		 * User권한을 넘겨받고, 권한에 따라 urlPath가 접근가능한지 확인하는 로직
 		 * Role & auth check
 		 */
+		else {
+			log.info("userId: {}, userName: {}", authMap.get("userId"), authMap.get("userName"));
+			return true;
+		}
 		
-		
-		log.info("userId: {}, userName: {}", authMap.get("userId"), authMap.get("userName"));
-		
-		return true;
 	}
 }

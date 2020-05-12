@@ -14,6 +14,12 @@ function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
 		dataType: "json", 
 		contentType : 'application/json',  
 		data : JSON.stringify(jsonBody),
+		statusCode: {
+			999:function(data) {
+				alert("세션이 만료되었습니다.\n로그인 화면으로 이동합니다.");
+				location.href = "/ntm";
+			}
+		},
 		success : function(data){
 			
 			if(data["resultCode"] == "0000"){
@@ -25,16 +31,51 @@ function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
 			
 		},
 		error : function(xhr, status, error){
-		
-			alert("시스템 오류");
 		}
 	});
 	
 }
 
-var ajaxForm = function (tran , id, func){
+/*
+ * 파일도 같이 보낼때..
+ */
+var ajaxTranCallWithFile = function(tran, data,  succeesCallback, errorCallback){
+	
+	
+	
+	$.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: tran,
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+        	
+        	if(data["resultCode"] == "0000"){
+        		succeesCallback(tran, data);
+			}
+			else{
+				
+			}
+        	
+        },
+        error: function (e) {
+        	alert("시스템 오류");
+        }
+
+    });
+}
+
+/*
+ * 액셀 업로드만 
+ */
+var ajaxFormExcel = function (tran , id, func){
+	
 	var data = new FormData();
-	data.append("file1", $('#file1').prop('files')[0]);				
+	data.append(id, $('#'+ id).prop('files')[0]);				
 	console.log(data);
 
 	$.ajax({
@@ -61,32 +102,9 @@ var ajaxForm = function (tran , id, func){
         }
 
     });
-
-
-
-	
-	
-//	$('#'+id).ajaxForm({
-////        contentType : false,
-////        processData: false,
-//		type: "POST",
-//        enctype: "multipart/form-data",
-////        dataType : "POST",
-//        dataType : 'json',
-//        beforeSubmit: function(data, form, option) {
-//            console.log('beforeSubmit');
-//            console.log(data);
-//            console.log(form);
-//            console.log(option);
-//        },
-//        success: function(returnData) {
-//            func(returnData);
-//        },
-//        error: function(x,e){
-//            console.log("[aljjabaegi]ajax status : "+x.status);
-//            console.log(e);
-//        },
-//    }).submit();
 }
+
+
+
 
 
