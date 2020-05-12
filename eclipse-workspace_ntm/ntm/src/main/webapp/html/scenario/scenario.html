@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<body>
+	
+	
+	<div class="row">
+		<div class="col-md-4">
+			<br/><h6 id="grid-options">NTM 2020 > 사용자 > 시나리오</h6><br/> 
+			<div>
+				<select  class="" id="selectA" name="selectA" title="" style="width:30%">
+					<option selected="selected" value="">전체</option>
+				</select>
+				<select  class="" id="selectB" name="selectB" title="" style="width:30%">
+					<option selected="selected" value="">전체</option>
+				</select>
+				<select  class="" id="selectC" name="selectC" title="" style="width:30%">
+					<option selected="selected" value="">전체</option>
+				</select>
+			</div>
+			<br/> 
+			<table id="tableScenario" class="table table-bordered" style="width:100%">
+		        <thead>
+		            <tr>
+		                <th>시나리오</th>
+		            </tr>
+		        </thead>
+		    </table>
+		</div>
+		<div class="col-md-8">
+		
+			<br/><h6 id="grid-options">NTM 2020 > 사용자 > 시나리오 > 테스트케이스 > <span id="spanTCName"></h6><br/> 
+			<table id="tableTestcase" class="table table-bordered" style="width:100%">
+		        <thead>
+		            <tr>
+		                <th>케이스코드</th>
+		                <th>케이스명</th>
+		                <th>등록자</th>
+		                <th>테스터</th>
+		                <th>개발자</th>
+		                <th>상태</th>
+		            </tr>
+		        </thead>
+		    </table>
+		</div>
+	</div>
+	
+	
+	<!-- Modal window Scenario -->
+	<div class="modal fade" id="layerModalScenario">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 id="modalTitle" class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+				
+					<table id="seTableModal" class="" style="width:100%">
+				       <tbody>
+          				  <tr >
+				       	 		<th>서브시스템</th>
+				       	 		<th>
+				       	  			<select  class="form-control" name="selectA" id="modalSelectA" title="선택 구분" style="width:100%">
+											<option selected="selected"  value="">전체</option>
+									</select>
+								</th>	
+				       	  		
+				       	  </tr>	
+				       	  <tr >
+				       	 		<th>업무구분</th>
+				       	  		<th>
+				       	  			<select  class="form-control" name="selectB" id="modalSelectB" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">전체</option>
+									</select>
+								</th>	
+				       	  </tr>	
+				       	  <tr >
+				       	 		<th>대상업무</th>
+				       	  		<th>
+				       	  			<select  class="form-control" name="selectC" id="modalSelectC" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">전체</option>
+									</select>
+								</th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>시나리오코드</th>
+				       	  		<th><input id="scenario_code" class="form-control required" style="width:100%"   /></th>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>시나리오명</th>
+				       	  		<th><input id="scenario_name" class="form-control required" style="width:100%"   /></th>	
+				       	  </tr>	
+				       	   <tr>
+				       	 		<th>설명</th>
+				       	  		<th><input id="description" class="form-control required" style="width:100%"   /></th>	
+				       	  </tr>		 
+				       </tbody>
+				    </table>
+				
+				
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" id="btnSave" >저장</button>
+					<button type="button" class="btn btn-success" id="btnUpdate">수정</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- Modal window Scenario -->
+	<div class="modal fade" id="layerModalTestCase">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 id="modalTitleTc" class="modal-title"></h4>
+				</div>
+				<div class="modal-body">
+				
+					<div class="row">
+						<div class="col-md-7">
+						
+							<table id="tcTableModal"  class="" style="width:100%">
+						       <tbody>
+		          				  <tr>
+						       	 		<th>시나리오</th>
+						       	 		<th>
+						       	 			<input id="tc_scenario_code" class="" style="display:none;"   />
+						       	 			<input id="tc_scenario_name" class="form-control required" readonly="true" style="width:100%"/>
+						       	  		</th>	
+						       	  </tr>	
+						       	  <tr>
+						       	 		<th>테스트케이스 Code</th>
+						       	 		<th>
+						       	 			<input id="testcase_code" class="form-control required" style="width:100%"/>
+						       	  		</th>	
+						       	  </tr>	
+						       	  <tr>
+						       	 		<th>테스트케이스 명</th>
+						       	 		<th>
+						       	 			<input id="testcase_name" class="form-control required" style="width:100%"/>
+						       	  		</th>	
+						       	  </tr>	
+						       	  <tr>
+						       	 		<th>테스터</th>
+						       	 		<th>
+						       	 			<input id="tester" class="" style="display:none;"   />
+						       	 			<input id="tester_nm" class="" style="width:70%" readonly="true"/>
+						       	 			<button type="button" id="btnTester" name="btnUp" class="btn btn-success">변경</button>
+						       	  		</th>	
+						       	  </tr>	
+						       	  <tr>
+						       	 		<th>개발자</th>
+						       	 		<th>
+						       	 			<input id="developer" class="" style="display:none;"  />
+						       	 			<input id="developer_nm" class="" style="width:70%" readonly="true"/>
+						       	 			<button type="button" id="btnDeveloper" name="btnUp" class="btn btn-success">변경</button>
+						       	  		</th>	
+						       	  </tr>		
+				       	  		 <tr>
+						       	 		<th>설명</th>
+						       	  		<th><input id="tc_description" class="form-control required" style="width:100%"   /></th>	
+						       	  </tr>		 
+						       </tbody>
+						    </table>
+				    	</div>	
+						<div class="col-md-5">
+							<table id="tcTableModalUser"  class="table table-bordered" style="width:100%">
+								<thead>
+						            <tr>
+						                <th>팀</th>
+						                <th>이름</th>
+						            </tr>
+						        </thead>
+								
+							</table>
+					
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" id="btnSaveTc" >저장</button>
+					<button type="button" class="btn btn-success" id="btnUpdateTc">수정</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<br/><h6 id="grid-options">NTM 2020 > 시나리오 > 업무분류 > 서브시스템</h6><br/>
+	
+	<div class="row">
+		<div class="col-sm">
+			<table id="tableA" class="table table-bordered" style="width:100%">
+		        <thead>
+		            <tr>
+		                <th>서브시스템 (<span id="tableThA">전체</span>)</th>
+		            </tr>
+		        </thead>
+		    </table>
+		</div>
+		<div class="col-sm">
+			<table id="tableB" class="table table-bordered" style="width:100%">
+		        <thead>
+		            <tr>
+		                <th>업무구분 (<span id="tableThB">전체</span>)</th>
+		            </tr>
+		        </thead>
+		    </table>
+		</div>
+		<div class="col-sm">
+			<table id="tableC" class="table table-bordered" style="width:100%">
+		        <thead>
+		            <tr>
+		                <th>대상업무 (<span id="tableThC">전체</span>)</th>
+		            </tr>
+		        </thead>
+		    </table>
+		</div>
+	</div>
+	
+	
+	<!-- Modal window  -->
+	<div class="modal fade" id="layerpop">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-ntm">
+					<h6 id="modalTitle" class="modal-title color-white"></h6>
+				</div>
+				<div class="modal-body">
+					<table id="teamTableModal" class="table table-bordered" style="width:100%">
+				       <tbody>
+          				  <tr id="modalTrA">
+				       	 		<th>서브시스템</th>
+				       	 		<td>
+				       	  			<select  class="form-control" id="selectA" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">선택해 주세요</option>
+									</select>
+								</td>	
+				       	  		
+				       	  </tr>	
+				       	  <tr id="modalTrB">
+				       	 		<th>업무구분</th>
+				       	  		<td>
+				       	  			<select  class="form-control" id="selectB" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">선택해 주세요</option>
+									</select>
+								</td>	
+				       	  </tr>	
+				       	  <tr>
+				       	 		<th>이름</th>
+				       	  		<td><input id="name" class="form-control required" style="width:100%" id="name"  /></td>	
+				       	  </tr>		
+				       </tbody>
+				    </table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" id="btnSave" >저장</button>
+					<button type="button" class="btn btn-success" id="btnUpdate">수정</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

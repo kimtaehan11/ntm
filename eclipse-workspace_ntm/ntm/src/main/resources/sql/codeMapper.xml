@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CodeDAO">
+ 	<resultMap id="PackageHeaderMap"               type="java.util.HashMap">
+       <result property="java.lang.String"         column="row_id"/>
+       <result property="object"                   column="PackageBeanResult"/>
+    </resultMap>
+    
+    <!-- 사용자 조회 -->
+	<select id="selectCodeGroupList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	    SELECT  gp.*,
+	    	(select COUNT(*) from ntm_schemas.itm_code cd where cd.code_group =  gp.code_group ) as code_cnt
+	    FROM ntm_schemas.itm_code_group gp
+	</select>
+	
+  	<select id="selectCodeList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	    SELECT  cd.*, #{code_group_name} as code_group_name, 
+	       to_char(cd.reg_date, 'YYYY-MM-DD') reg_date_str
+	    FROM ntm_schemas.itm_code cd
+	    WHERE code_group = #{code_group}
+	</select>
+	
+	<insert id="insertCodeGroup" parameterType="map" useGeneratedKeys="true">
+		INSERT INTO ntm_schemas.itm_code_group
+		(	
+			code_group, 
+			code_group_name, 
+			description, 
+			use_yn, 
+			reg_user, 
+			reg_date
+		)
+		VALUES 
+		(
+			#{code_group}, 
+			#{code_group_name}, 
+			#{description}, 
+			#{use_yn}, 
+			#{cookieUserId}, 
+			now()
+		)
+	</insert>
+	
+	
+	<!-- 팀 수정 -->
+    <update id="updateCodeGroup" parameterType="java.util.HashMap">
+    UPDATE
+        ntm_schemas.itm_code_group
+    SET
+        code_group_name = #{code_group_name},
+        description = #{description},
+        use_yn =  #{use_yn},
+        reg_user =  #{cookieUserId}, 
+        reg_date =  now()
+    WHERE
+        code_group = #{code_group}
+    </update> 
+    
+    
+    <insert id="insertCode" parameterType="map" useGeneratedKeys="true">
+		INSERT INTO ntm_schemas.itm_code
+		(
+			code_group, 
+			code_id, 
+			code_name, 
+			description,
+			use_yn, 
+			priority, 
+			reg_user, 
+			reg_date
+		)
+		VALUES (
+			#{code_group}, 
+			#{code_id},  
+			#{code_name},  
+			#{description},  
+			#{use_yn},  
+			#{priority}::bigint,  
+			#{cookieUserId},  
+			now()
+		)
+	</insert>
+	
+	
+	<!-- 팀 수정 -->
+    <update id="updateCode" parameterType="java.util.HashMap">
+    UPDATE
+        ntm_schemas.itm_code
+    SET
+        code_name = #{code_name},
+        priority = #{priority}::bigint,  
+        description = #{description},
+        use_yn =  #{use_yn},
+        reg_user =  #{cookieUserId}, 
+        reg_date =  now()
+    WHERE
+        code_group = #{code_group} AND code_id = #{code_id}
+    </update> 
+    
+</mapper>

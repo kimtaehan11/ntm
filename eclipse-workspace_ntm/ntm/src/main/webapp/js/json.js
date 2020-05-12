@@ -1,0 +1,1 @@
+var t = {"reg_user":"admin","modify_user":"admin","resultCode":"0000","description":"","admin":false,"team_id":17,"message":"정상적으로 로그인 되었습니다.","reg_date":1589077540807,"password":"307843","user_id":"307843","organization":"현대해상","name":"홍석운","phone_num":"","position":"차장","modify_date":1589077540807,"email":""}

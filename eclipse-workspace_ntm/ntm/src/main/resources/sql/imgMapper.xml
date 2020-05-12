@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ImgDAO">
+ 	<resultMap id="PackageHeaderMap"               type="java.util.HashMap">
+       <result property="java.lang.String"         column="row_id"/>
+       <result property="object"                   column="PackageBeanResult"/>
+    </resultMap>
+    
+    <!-- 사용자 조회 -->
+	<select id="selectImgId" resultType="java.lang.Integer">
+	    select nextval('ntm_schemas.itm_img_id_seq'::regclass);
+	</select>
+	
+	<insert id="insertImg" parameterType="map" useGeneratedKeys="true">
+		INSERT INTO ntm_schemas.itm_img
+		VALUES(
+			#{id}::bigint,
+			(SELECT COUNT(*)+1 FROM ntm_schemas.itm_img WHERE id = #{id}),
+			#{tbName},
+  			#{tbDate},
+ 			#{saveFileName},
+ 			#{originFileName},
+ 			#{fileLength}::bigint,
+ 			#{ext},
+ 			#{user_id},
+ 			now()
+		)
+  	</insert>
+	
+	
+	<select id="selectImgById" parameterType="java.lang.Integer" resultMap="PackageHeaderMap">
+	    select * 
+	    from ntm_schemas.itm_img 
+	    where id = #{id}::bigint
+	</select>
+</mapper>
