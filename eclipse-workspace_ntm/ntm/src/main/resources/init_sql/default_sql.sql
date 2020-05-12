@@ -34,8 +34,13 @@ INSERT INTO ntm_schemas.itm_code_group
 		(code_group, code_group_name, description, use_yn, reg_user, reg_date)
 VALUES ('B001', '결함상태', '결함에 상태에 대한 표기', 'Y', 'admin', now());
 
+INSERT INTO ntm_schemas.itm_code_group
+		(code_group, code_group_name, description, use_yn, reg_user, reg_date)
+VALUES ('C001', '테스트케이스상태', '테스트케이스 상태에 대한 표기', 'Y', 'admin', now());
+
 
 --itm_code 
+--A001 결함유형 
 INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
 VALUES ('A001', 'A001_01', '코딩오류', '코딩오류', 'Y', 10, 'admin', now());
@@ -48,7 +53,7 @@ INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
 VALUES ('A001', 'A001_03', '디자인변경', '디자인변경', 'Y', 30, 'admin', now());
 
-
+--B001 결함상태 
 INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
 VALUES ('B001', 'B001_01', '등록', '테스터가 결함 등록', 'Y', 0, 'admin', now());
@@ -69,12 +74,23 @@ INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
 VALUES ('B001', 'B001_05', '조치완료', '개발자가 결함을 수정완료', 'Y', 40, 'admin', now());
 
-
 INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
 VALUES ('B001', 'B001_06', '지연', '불가항력 이유로 지연건', 'Y', 50, 'admin', now());
 
-
 INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
 VALUES ('B001', 'B001_07', '반려', '테스터가 결함건을 반려처리', 'Y', 60, 'admin', now());
+
+--C001 테스트케이스상태 
+INSERT INTO ntm_schemas.itm_code
+		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
+VALUES ('C001', 'C001_01', '수행대기', '테스트케이스 수행대기', 'Y', 0, 'admin', now());
+
+INSERT INTO ntm_schemas.itm_code
+		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
+VALUES ('C001', 'C001_02', '수행중', '테스트케이스 수행중', 'Y', 0, 'admin', now());
+
+INSERT INTO ntm_schemas.itm_code
+		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
+VALUES ('C001', 'C001_03', '수행완료', '테스트케이스 수행완료', 'Y', 0, 'admin', now());
