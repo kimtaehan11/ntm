@@ -138,6 +138,7 @@
 	<select id="selectTestCaseList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
 	   SELECT row_number() OVER () as rnum,
 			cs.*, 
+			ntm_schemas.GET_CODENAME('C001', cs.state) as stateStr,
 			COALESCE(test.name, '') test_name, 
 			COALESCE(dev.name, '') dev_name, 
 			COALESCE(reg.name, '') reg_name, 
@@ -189,10 +190,29 @@
 		AND scenario_code 	= #{scenario_code}
     </update> 
     
+    <update id="updateTestcaseOnlyState" parameterType="map" useGeneratedKeys="true">
+    	UPDATE ntm_schemas.itm_test_case 
+		SET state = #{state} 
+		WHERE case_code = #{case_code} 
+		AND scenario_code 	= #{scenario_code}
+    </update> 
+    
   	<delete id="deleteTestcase" parameterType="java.util.HashMap">
 		DELETE
 		FROM ntm_schemas.itm_test_case
 		WHERE case_code 	= #{case_code} 
 		AND scenario_code 	= #{scenario_code}
     </delete>
+    
+     <!-- 사용자 조회 -->
+	<!-- {"depthA":"A0003","depthB":"B0023","depthC":"C0009"} -->
+	<select id="selectDefectByDevIdList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	   select * 
+		from ntm_schemas.itm_test_case cs, 
+			ntm_schemas.itm_defect df
+		where cs.dev_id = 'N00435'
+		and cs.scenario_code = df.scenario_code
+		and cs.case_code = df.case_code
+		        
+	</select>
 </mapper>

@@ -60,10 +60,12 @@
 						<td><input class="form-control" id="dev_name"/></td>
 					</tr>
 					<tr>
-						<th>결함 상태</th>
-						<td style="padding-right:10px;"><input class="form-control" id="state"/></td>
-						<td><button  class="btn btn-success" id="btnSave2" >저장</button></td>
-						<td	></td>
+						<th>테스트 상태</th>
+						<td style="padding-right:10px;">
+							<select  class="form-control" id="state" title="선택 구분" style="width:100%">
+							</select>
+						</td>
+						<td colspan="2"><button  class="btn btn-success" id="btnStateChange" >테스트 상태변경</button></td>
 					</tr>
 				</tbody>
 			</table>
@@ -103,19 +105,13 @@
 				       	 		<th>결함유형 </th>
 				       	  		<td>
 				       	  			<select  class="form-control" id="test_type_id" title="선택 구분" style="width:100%">
-											<option selected="selected" value="0">결함</option>
-											<option   value="1">수정요청</option>
 									</select>
 								</td>	
 				       	  </tr>
 				       	  <tr>
 				       	 		<th>결함상태 </th>
 				       	  		<td>
-				       	  			<select  class="form-control" id="test_type_id" title="선택 구분" style="width:100%">
-											<option selected="selected" value="0">등록</option>
-											<option   value="1">조치중</option>
-											<option   value="2">조치완료</option>
-											<option   value="3">결함종료</option>
+				       	  			<select  class="form-control" id="defect_code" title="선택 구분" style="width:100%">
 									</select>
 								</td>	
 				       	  </tr>		

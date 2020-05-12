@@ -11,6 +11,9 @@ $(document).ready(function() {
 	
 	//팀정보 조회합니다.
 	ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
+	ajaxTranCall("code/selectCodeList.do", {"code_group":"C001"}, callbackS, callBackE);
+	ajaxTranCall("code/selectCodeList.do", {"code_group":"A001"}, callbackS, callBackE);
+	ajaxTranCall("code/selectCodeList.do", {"code_group":"B001"}, callbackS, callBackE);
 	
 	$("#selectTeam").on('change', function(){
 		isFirstLoad = false;
@@ -80,6 +83,17 @@ $(document).ready(function() {
 		data.append("case_code", $("#case_code").val());
 		ajaxTranCallWithFile ("defect/insertDefect.file", data,  callbackS, callBackE);
 	});
+	
+	//테스트 상태변경 버튼
+	$("#btnStateChange").on('click', function(){
+		var jsonObj = {
+			"scenario_code" :  	$("#scenario_code").val(),
+			"case_code"		:	$("#case_code").val(),
+			"state"    		:	$("#state").val()	
+		}
+		ajaxTranCall ("scenario/updateTestcaseOnlyState.do", jsonObj,  callbackS, callBackE);
+	});
+	
 });
 
 function handleImgFileSelect(e){
@@ -128,14 +142,37 @@ var callbackS = function(tran, data){
 	
 	
 	switch(tran){
+	
+	case "code/selectCodeList.do":
 		
-		case "defect/insertDefect.file":
-			alert(data["message"]);
-			if(data["resultCode"] == "0000" ){
-				$('div.modal').modal("hide"); //	
-				selectDefectList();
+		var code_group = data["code_group"];
+		var list = data["list"];
+		
+		if(code_group == "C001"){
+			for(var i=0; i<list.length; i++){
+				appendSelectBox2( $("#state"), list[i].code_id, list[i].code_name);
 			}
-			break;
+		}
+		else if(code_group == "B001"){
+			for(var i=0; i<list.length; i++){
+				appendSelectBox2( $("#defect_code"), list[i].code_id, list[i].code_name);
+			}
+		}
+		
+		else if(code_group == "A001"){
+			for(var i=0; i<list.length; i++){
+				appendSelectBox2( $("#test_type_id"), list[i].code_id, list[i].code_name);
+			}
+		}
+		break;
+	case "defect/insertDefect.file":
+	case "scenario/updateTestcaseOnlyState.do":
+		alert(data["message"]);
+		if(data["resultCode"] == "0000" ){
+			$('div.modal').modal("hide"); //	
+			selectDefectList();
+		}
+		break;
 		case "defect/selectDefectDetail.do":
 //"ext":"jpg","reg_date":1589247841751,"originfilename":"011.jpg","tbname":"itm_defect","filelength":170510,"reg_user":"307843","savefilename":"307843_1589247841708.jpg","tbdate":"20200512","id":7,"seq":1},
 //"ext":"jpg","reg_date":1589247841796,"originfilename":"012.jpg","tbname":"itm_defect","filelength":86288,"reg_user":"307843","savefilename":"307843_1589247841756.jpg","tbdate":"20200512","id":7,"seq":2}]}
@@ -150,9 +187,9 @@ var callbackS = function(tran, data){
 		        "columns" : [
 		            { "mDataProp" : 'rnum' } ,
 		            { "mDataProp" : 'title' },
-		            { "mDataProp" : 'test_type_id' },
-		            { "mDataProp" : 'defect_code' }  ,
-		            { "mDataProp" : 'reg_date' } 
+		            { "mDataProp" : 'test_type_name' },
+		            { "mDataProp" : 'defect_name' }  ,
+		            { "mDataProp" : 'reg_date_str' } 
 		        ],
 		        "language": {
 			        "emptyTable": "데이터가 없어요." , "search": "검색 : "
@@ -235,9 +272,9 @@ var callbackS = function(tran, data){
 		            { "mDataProp" : 'rnum' },
 		            { "mDataProp" : 'scenario_code' },
 		            { "mDataProp" : 'case_name' } ,
-		            { "mDataProp" : 'dev_name' }  ,
 		            { "mDataProp" : 'test_name' } ,
-		            { "mDataProp" : 'state' } 
+		            { "mDataProp" : 'dev_name' }  ,
+		            { "mDataProp" : 'statestr' }
 		        ],
 		        "language": {
 			        "emptyTable": "데이터가 없어요." , "search": "검색 : "
@@ -284,8 +321,12 @@ var modalOpen = function(type, e, dt, node, config ) {
 
 		$("#imgs").html("");
 		$("#existingImgsTr").hide();
-		
+//		 $("#defect_code").val("")
+	 	$("#defect_code option:eq(0)").prop("selected", true);
+	 	$("#test_type_id option:eq(0)").prop("selected", true);
 
+//		appendSelectBox2( $("#defect_code"), list[i].code_id, list[i].code_name);
+//		appendSelectBox2( $("#test_type_id"), list[i].code_id, list[i].code_name);
         // readonly 삭제
         $("#test_type_id").removeAttr("readonly");
 		

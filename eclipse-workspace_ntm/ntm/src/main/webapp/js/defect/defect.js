@@ -5,7 +5,7 @@
  */
 var isFirstLoad;
 
-var caseTable, defectTable;
+var devDefectTable;
 
 $(document).ready(function() { 
 	
@@ -42,8 +42,39 @@ var callbackS = function(tran, data){
 	
 	
 	switch(tran){
+	case "scenario/selectDefectByDevIdList.do":
 		
 		
+		var list = data["list"];
+		
+		
+		devDefectTable  = $('#devDefectTable').DataTable ({
+			destroy: true,
+	        "aaData" : list,
+	        "columns" : [
+	            { "mDataProp" : 'case_name' },
+	            { "mDataProp" : 'test_type_id' } ,
+	            { "mDataProp" : 'test_type_id' } ,
+	            { "mDataProp" : 'test_type_id' } ,
+	            { "mDataProp" : 'test_type_id' } ,
+	            { "mDataProp" : 'test_type_id' } 
+	        ],
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
+		    },
+		    
+			lengthChange: false, 	// 표시 건수기능 숨기기
+			searching: true,  		// 검색 기능 숨기기
+			ordering: false,  		// 정렬 기능 숨기기
+			info: false,			// 정보 표시 숨기기
+			paging: false, 			// 페이징 기능 숨기기
+			select: {
+	            style: 'single' //single, multi
+			}
+			
+	    });
+		break;
+	
 		//팀 정보 전체 조회
 		case "user/searchTeamList.do":
 			var list = data["list"];
@@ -74,7 +105,7 @@ var callbackS = function(tran, data){
 			else{
 			}
 			
-			selectTestCaseList();
+			selectDefectByDevIdList();
 			
 			break;
 			
@@ -86,10 +117,19 @@ var callBackE = function(tran, data){
 	
 }
 
+var selectDefectByDevIdList = function(){
+	
+	var jsonObj = {
+		"dev_id" : $("#selectUser").val()
+	}
+	ajaxTranCall("scenario/selectDefectByDevIdList.do", jsonObj, callbackS, callBackE);
+}
+
+
 
 var modalOpen = function(type, e, dt, node, config ) {
 	
-//	modal.modalClear("userTableModal");
+//	modal.modalClear("userTableModal");	
 	
 	if(type == "1"){
 		$('#modalTitle').text("신규결함 등록");

@@ -50,6 +50,8 @@ public class CodeService {
 		Map<String, Object> response = new HashMap<String, Object>();
 		if(list.size() != -1) { 
 			Message.SetSuccesMsg(response, "select");
+			
+			response.put("code_group", reqMap.get("code_group"));
 			response.put("list", list);
 		}
 		return response;

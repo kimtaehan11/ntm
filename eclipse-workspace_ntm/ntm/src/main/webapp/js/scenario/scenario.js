@@ -193,6 +193,7 @@ var callbackS = function(tran, data){
 	//testCase list 조회완료 
 	case "scenario/selectTestCaseList.do":
 		if(data["resultCode"] == "0000" ){
+			
 			//{"scenario_code":"CLUZ0922U","reg_date":1589049872316,"case_code":"A_CASE_0001",
 			//"project_id":0,"reg_user":"admin","modify_user":"admin","case_name":"화면 일반 테스트",
 			//"description":"화면 일반 테스트","modify_date":1589049872316}
@@ -207,7 +208,7 @@ var callbackS = function(tran, data){
 		            { "mDataProp" : 'reg_name' },
 		            { "mDataProp" : 'test_name' },
 		            { "mDataProp" : 'dev_name' },
-		            { "mDataProp" : 'state' }
+		            { "mDataProp" : 'statestr' }
 		        ],
 		        "language": {
 			        "emptyTable": "데이터가 없어요." , "search": "검색 : "

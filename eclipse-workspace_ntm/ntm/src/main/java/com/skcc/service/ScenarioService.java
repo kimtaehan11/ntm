@@ -318,6 +318,30 @@ public class ScenarioService {
 		return response;
 		
 	}
+	
+	
+	/**
+	 * 테스트케이스 UPDATE
+	 *
+	 * @param Map (request)
+	 * @return Map (response)
+	 * @exception 예외사항한 라인에 하나씩
+	 */
+	public Map<String, Object> updateTestcaseOnlyState( Map<String, Object> reqMap ) {	
+			
+		Map<String, Object> response = new HashMap<String, Object>();
+		try {
+			int result = sqlSession.update("ScenarioDAO.updateTestcaseOnlyState", reqMap);
+			if(result == 1) {
+				Message.SetSuccesMsg(response, "insert");
+			}
+		}
+		catch(Exception e) {
+//			Message.SetSuccesMsg(response, "select");
+		}
+		return response;
+		
+	}
 
 	/**
 	 * 테스트케이스 삭제
@@ -341,4 +365,31 @@ public class ScenarioService {
 		
 		return response;
 	}
+	
+	/**
+	 * 개발자 아이디 결함을 전부 조회.
+	 *
+	 * @param Map (request)
+	 * @return Map (response)
+	 * @exception 예외사항한 라인에 하나씩
+	 */
+	public Map<String, Object> selectDefectByDevIdList( Map<String, Object> reqMap ) {	
+	
+		Map<String, Object> response = new HashMap<String, Object>();
+		
+		try {
+			List<Object> list = sqlSession.selectList("ScenarioDAO.selectDefectByDevIdList", reqMap);
+			
+			if(list.size() != -1) {
+				Message.SetSuccesMsg(response, "select");
+				response.put("list", list);
+			}
+		}
+		catch(Exception e) {
+//			Message.SetSuccesMsg(response, "select");
+		}
+		
+		return response;
+	}
+	
 }

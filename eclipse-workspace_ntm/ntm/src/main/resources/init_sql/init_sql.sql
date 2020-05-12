@@ -321,5 +321,15 @@ WITH (
 ALTER TABLE  itm_code OWNER TO ntm_admin; 
 ------------------------------------------코드그룹 테이블 종료 (itm_code)
  
+CREATE FUNCTION GET_CODENAME(_group TEXT, _code TEXT)
+RETURNS TEXT AS $$
+DECLARE codename TEXT;
+BEGIN
+        SELECT  code_name INTO codename
+        FROM    ntm_schemas.itm_code
+        WHERE   code_group = $1
+        AND     code_id = $2;
 
-
+        RETURN codename;
+END;
+$$  LANGUAGE plpgsql;
