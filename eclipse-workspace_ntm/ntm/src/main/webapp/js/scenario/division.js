@@ -227,8 +227,8 @@ var searchDivListSetTable = function ( detpth, list){
         "columns" : [
             { "mDataProp" : 'name' } 
         ],
-		"language": {
-	        "emptyTable": "데이터가 없어요." 
+        "language": {
+	        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 	    },
 	    
 		lengthChange: false, 	// 표시 건수기능 숨기기

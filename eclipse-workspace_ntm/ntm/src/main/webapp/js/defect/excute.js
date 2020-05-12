@@ -154,8 +154,8 @@ var callbackS = function(tran, data){
 		            { "mDataProp" : 'defect_code' }  ,
 		            { "mDataProp" : 'reg_date' } 
 		        ],
-				"language": {
-			        "emptyTable": "데이터가 없어요." 
+		        "language": {
+			        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 			    },
 			    
 				lengthChange: false, 	// 표시 건수기능 숨기기
@@ -239,8 +239,8 @@ var callbackS = function(tran, data){
 		            { "mDataProp" : 'test_name' } ,
 		            { "mDataProp" : 'state' } 
 		        ],
-				"language": {
-			        "emptyTable": "데이터가 없어요." 
+		        "language": {
+			        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 			    },
 			    
 				lengthChange: false, 	// 표시 건수기능 숨기기
