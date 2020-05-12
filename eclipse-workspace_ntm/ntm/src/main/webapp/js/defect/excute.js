@@ -14,7 +14,7 @@ $(document).ready(function() {
 	
 	$("#selectTeam").on('change', function(){
 		isFirstLoad = false;
-		searchUserList($(this).val());
+		selectUserList($(this).val());
 	});
 	
 	$("#selectUser").on('change', function(){
@@ -110,7 +110,7 @@ var selectTestCaseList = function(){
 	ajaxTranCall("scenario/selectTestCaseList.do", jsonObj, callbackS, callBackE);
 }
 
-var searchUserList = function(team_id){
+var selectUserList = function(team_id){
 	var jsonObj = {};
 	if(team_id == null || team_id == ""){
 		
@@ -120,7 +120,7 @@ var searchUserList = function(team_id){
 		jsonObj["team_id"] = team_id;
 	}
 	
-	ajaxTranCall("user/searchUserList.do", jsonObj, callbackS, callBackE);
+	ajaxTranCall("user/selectUserList.do", jsonObj, callbackS, callBackE);
 }
 
 
@@ -198,11 +198,11 @@ var callbackS = function(tran, data){
 			
 			var team_id = getCookie('team_id');
 			isFirstLoad = true;
-			searchUserList(team_id);
+			selectUserList(team_id);
 			break;
 			
 		//user 정보 조회함
-		case "user/searchUserList.do":
+		case "user/selectUserList.do":
 			var list = data["list"];
 			htmlSelectBox2($("#selectUser"), "", "전체");
 			for(var i=0; i<list.length; i++){
