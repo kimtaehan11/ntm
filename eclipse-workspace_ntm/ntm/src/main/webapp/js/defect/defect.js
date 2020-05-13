@@ -15,9 +15,11 @@ $(document).ready(function() {
 	$("#selectTeam").on('change', function(){
 		isFirstLoad = false;
 		selectUserList($(this).val());
+		selectDefectByDevIdList();
 	});
 	
 	$("#selectUser").on('change', function(){
+		selectDefectByDevIdList();
 	});
 	
 	
@@ -52,17 +54,35 @@ var callbackS = function(tran, data){
 			destroy: true,
 	        "aaData" : list,
 	        "columns" : [
-	            { "mDataProp" : 'case_name' },
-	            { "mDataProp" : 'test_type_id' } ,
-	            { "mDataProp" : 'test_type_id' } ,
-	            { "mDataProp" : 'test_type_id' } ,
-	            { "mDataProp" : 'test_type_id' } ,
-	            { "mDataProp" : 'test_type_id' } 
+	            { "mDataProp" : 'rnum' },
+	            { "mDataProp" : 'case_name' } ,
+	            { "mDataProp" : 'scenario_name' } ,
+	            { "mDataProp" : 'title' } ,
+	            { "mDataProp" : 'test_type_name' } ,
+	            { "mDataProp" : 'defect_name' } ,
+	            { "mDataProp" : 'reg_user' },
+	            { "mDataProp" : 'dev_id' },
+	            { "mDataProp" : 'reg_date' } ,
+	            { "mDataProp" : 'resolve_date' } 
+	            //
 	        ],
 	        "language": {
 		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
-		    
+//		    select  row_number() OVER () as rnum, 
+//			cs.case_code,  --케이스명 
+//			cs.case_name,  --케이스명 
+//			cs.scenario_code,
+//			sc.scenario_name,
+//		
+//			 df.test_type_id,
+//			 ntm_schemas.GET_CODENAME('A001', df.test_type_id),
+//			 df.defect_code,
+//			 ntm_schemas.GET_CODENAME('B001', df.defect_code),
+//			 df.title,
+//			 df.description,
+//			 df.reg_user,
+//	 		 to_char(df.reg_date, 'YYYY-MM-DD') reg_date
 			lengthChange: false, 	// 표시 건수기능 숨기기
 			searching: true,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기
@@ -118,9 +138,9 @@ var callBackE = function(tran, data){
 }
 
 var selectDefectByDevIdList = function(){
-	
 	var jsonObj = {
-		"dev_id" : $("#selectUser").val()
+		"dev_id" : $("#selectUser").val(),
+		"team_id" : $("#selectTeam").val()
 	}
 	ajaxTranCall("scenario/selectDefectByDevIdList.do", jsonObj, callbackS, callBackE);
 }

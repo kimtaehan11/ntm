@@ -207,12 +207,38 @@
      <!-- 사용자 조회 -->
 	<!-- {"depthA":"A0003","depthB":"B0023","depthC":"C0009"} -->
 	<select id="selectDefectByDevIdList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	   select * 
+	   select  row_number() OVER () as rnum, 
+			cs.case_code,  --케이스명 
+			cs.case_name,  --케이스명 
+			cs.scenario_code,
+			sc.scenario_name,
+		
+			 df.test_type_id,
+			 ntm_schemas.GET_CODENAME('A001', df.test_type_id) as test_type_name,
+			 df.defect_code,
+			 ntm_schemas.GET_CODENAME('B001', df.defect_code) as defect_name,
+			 df.title,
+			 df.description,
+			 cs.dev_id,
+			 df.reg_user,
+	 		 to_char(df.reg_date, 'YYYY-MM-DD') reg_date,
+	 		 to_char(df.resolve_date, 'YYYY-MM-DD') resolve_date
+	 		 
+	 		 
 		from ntm_schemas.itm_test_case cs, 
-			ntm_schemas.itm_defect df
-		where cs.dev_id = 'N00435'
+			ntm_schemas.itm_defect df,
+			ntm_schemas.itm_scenario sc
+		where 1=1
+		<if test="dev_id != null and dev_id != ''">
+			and cs.dev_id = #{dev_id} 
+		</if>
+		<if test="team_id != null and team_id != ''">
+			and cs.dev_id IN (SELECT user_id FROM ntm_schemas.itm_user where team_id = #{team_id}::bigint  )
+		</if>
 		and cs.scenario_code = df.scenario_code
 		and cs.case_code = df.case_code
+		and cs.scenario_code = sc.scenario_code
+		;
 		        
 	</select>
 </mapper>

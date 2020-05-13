@@ -58,102 +58,35 @@ public class DefectService {
 	}
 
 	@Transactional 
-	public Map<String, Object> insertDefect(MultipartHttpServletRequest mtfRequest) {
+	public Map<String, Object> insertDefect( Map<String, Object> reqMap ) {	
+			
+		Map<String, Object> response = new HashMap<String, Object>();
 		
-		String fileLength = mtfRequest.getParameter("fileLength");
-		if(fileLength == null) {
-			fileLength = "0";
-		}
-		 
-		int count = Integer.parseInt(mtfRequest.getParameter("fileLength"));
-		int resImgKey = -1;
-		if(count > 0) {
-			
-			
-			//이미지키 조회
-			//key는 중복처리 되지 않게 커밋 작업
-			resImgKey = sqlSession.selectOne("ImgDAO.selectImgId"); 
-			
-			for (int i = 0; i < count; i++) {
-				
-				Map<String, Object> reqMap = new HashMap<String, Object>();
-				MultipartFile mf = mtfRequest.getFile("file" + i);
-				
-				
-				String originFileName = mf.getOriginalFilename(); // 원본 파일 명
-				long fileSize = mf.getSize(); // 파일 사이즈
-
-				System.out.println("originFileName : " + originFileName);
-				System.out.println("fileSize : " + fileSize);
-				System.out.println("file_Path : " + mtfRequest.getSession().getServletContext().getRealPath("/"));
-				
-				
-				String[] fileNameList = originFileName.split("\\.");
-				String ext = "";
-				
-				if(fileNameList.length > 1) {
-					ext = fileNameList[fileNameList.length-1];
-				}
-				String safeFile = mtfRequest.getParameter("user_id") + "_" + System.currentTimeMillis() + "." + ext;
-				SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat ( "yyyyMMdd", Locale.KOREA );
-				Date currentTime = new Date ();
-				String mTime = mSimpleDateFormat.format ( currentTime );
-
-				
-				reqMap.put("id", resImgKey);
-				reqMap.put("tbName", "itm_defect");
-				reqMap.put("tbDate", mTime);
-				reqMap.put("saveFileName", safeFile);
-				reqMap.put("originFileName", originFileName);
-				reqMap.put("fileLength", fileSize);
-				reqMap.put("user_id", mtfRequest.getParameter("user_id"));
-				reqMap.put("ext", ext);
-				
-					
-				try {
-					mf.transferTo(new File(file_Path + "//" + safeFile));
-					int result = sqlSession.insert("ImgDAO.insertImg", reqMap);
-					
-				} catch (IllegalStateException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			} // for(int i=0; i< count ; i++) {		
-					
-		}
-	
-		
-			
-			
-		Map<String, Object> reqMap2 = new HashMap<String, Object>();
-		reqMap2.put("title", 			mtfRequest.getParameter("title"));
-		reqMap2.put("test_type_id", 	mtfRequest.getParameter("test_type_id"));
-		reqMap2.put("description", 		mtfRequest.getParameter("description"));
-		reqMap2.put("scenario_code", 	mtfRequest.getParameter("scenario_code"));
-		reqMap2.put("case_code", 		mtfRequest.getParameter("case_code"));
-		reqMap2.put("user_id", 			mtfRequest.getParameter("user_id"));
-		reqMap2.put("imgkey",  			resImgKey);
-		
-		int result = sqlSession.insert("DefectDAO.insertDefect", reqMap2);
+		int result = sqlSession.insert("DefectDAO.insertDefect", reqMap);
 		if(result == 1) { 
-			Message.SetSuccesMsg(reqMap2, "insert");
+			Message.SetSuccesMsg(response, "insert");
 		}
-		return reqMap2;
+		return response;
 	}
+	
+	public Map<String, Object> updateDefect( Map<String, Object> reqMap ) {	
+		
+		Map<String, Object> response = new HashMap<String, Object>();
+		
+		int result = sqlSession.insert("DefectDAO.updateDefect", reqMap);
+		if(result == 1) { 
+			Message.SetSuccesMsg(response, "update");
+		}
+		return response;
+	}
+	
+	
 	
 	public Map<String, Object> selectDefectDetail( Map<String, Object> reqMap ) {	
 		
 		
 		//1. image key로 이미지 조회 합니다. 
 		int imgkey = (Integer) reqMap.get("imgkey");
-		
-		log.info("imgkey : "   + imgkey);
-		
-		
 		List<Object> list = sqlSession.selectList("ImgDAO.selectImgById", imgkey);
 		
 		Map<String, Object> response = new HashMap<String, Object>();

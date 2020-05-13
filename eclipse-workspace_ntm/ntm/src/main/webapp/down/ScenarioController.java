@@ -23,7 +23,7 @@ import com.skcc.service.ScenarioService;
  * @see     Controller 
  */
 @Controller
-@RequestMapping("/scenario")
+@RequestMapping("/scenario2")
 public class ScenarioController {
 
 	/**

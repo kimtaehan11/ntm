@@ -1,6 +1,5 @@
 package com.skcc.controller;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -14,12 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.skcc.service.UserService;
+import com.skcc.service.CodeService;
 
 /**
  * @author  Barack Obama
@@ -27,30 +24,37 @@ import com.skcc.service.UserService;
  * @see     Controller 
  */
 @Controller
-@RequestMapping("/user")
-public class UserController {
-
+@RequestMapping("/code2")
+public class CodeController {
+	
 	/**
 	 * log4j 선언
 	 * 
 	 * @see none
 	 */
-	private Logger log = LoggerFactory.getLogger(UserController.class);
-	
+	private Logger log = LoggerFactory.getLogger(CodeController.class);
+
 	/**
-	 * UserService (Autowired service)
+	 * UserService
 	 * 
 	 * @see Autowired
 	 */
 	@Autowired
-	private UserService userService;
+	private CodeService service;
 
+	
+	/**
+     * 로그인 트랜잭션
+     *
+     * @param     reqMap  http요청 request
+     * @return    http요청 response  
+     * @exception 
+     * @see       
+     */
 	@RequestMapping("/*.do")
 	@ResponseBody
 	public HashMap<String, Object> doRequest(@SessionAttribute("user") Map<String, String> authMap, HttpServletRequest req,  @RequestBody Map<String, Object> reqMap) {	
 		
-		// 로그인정보 사용
-		log.info("userId: {}, userName: {}", authMap.get("userId"), authMap.get("userName"));
 		
 		HashMap<String, Object> response = null;
 		Class<?>[] paramTypes = {Map.class};
@@ -59,8 +63,8 @@ public class UserController {
 			
 			String funcName = req.getRequestURI();
 			funcName = funcName.substring(funcName.lastIndexOf("/") + 1).replace(".do", "");
-			Method getNameMethod  = userService.getClass().getMethod(funcName, paramTypes);
-			response = (HashMap<String, Object>) getNameMethod.invoke(userService, reqMap);
+			Method getNameMethod  = service.getClass().getMethod(funcName, paramTypes);
+			response = (HashMap<String, Object>) getNameMethod.invoke(service, reqMap);
 			
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
@@ -77,13 +81,5 @@ public class UserController {
 		return response; 
 	}
 	
-	@RequestMapping("/*.file")     
-	@ResponseBody
-    public HashMap<String, Object> fileRequest( @RequestParam("file1") MultipartFile  uploadFile) throws IOException {   
-		HashMap<String, Object> response = null;
-		
-        return (HashMap<String, Object>) userService.saveUserExcel(uploadFile);
-    }
 	
-
 }

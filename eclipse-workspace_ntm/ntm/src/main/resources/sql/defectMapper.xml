@@ -52,13 +52,23 @@
 			#{ title },
 			#{ description }, 
 			'',
-			#{ user_id },
+			#{ cookieUserId },
 			now()  , 
-			'0',
+			 
+			#{ defect_code },
 			#{ imgkey }::bigint
 		)
   	</insert>
-  	
+  	 <update id="updateDefect" parameterType="map" useGeneratedKeys="true">
+    	UPDATE  ntm_schemas.itm_defect
+		SET title = #{title},
+			description = #{description},
+			defect_code = #{defect_code},
+			test_type_id = #{test_type_id},
+			imgkey = #{ imgkey }::bigint
+			
+		WHERE  id 	= #{id}::bigint
+    </update> 
   	
 	
 </mapper>

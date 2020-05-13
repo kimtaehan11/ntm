@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.skcc.controller.UserController;
+//import com.skcc.controller.UserController;
 
 
 /*
@@ -29,7 +29,7 @@ import com.skcc.controller.UserController;
 @Service
 public class UserService {
 
-	private Logger log = LoggerFactory.getLogger(UserController.class);
+	private Logger log = LoggerFactory.getLogger(UserService.class);
 	/**
 	 * SqlSessionTemplate (Autowired )
 	 * 

@@ -87,3 +87,10 @@ function setCookie(cookie_name, value, days) {
 			+ ((days == null) ? '' : ';    expires=' + exdate.toUTCString());
 	document.cookie = cookie_name + '=' + cookie_value;
 }
+
+
+
+function getFileUrl(id, seq){
+	
+	return location.protocol + "//" + location.host + "/ntm/common/uploadFile.filedown?imgkey=" + id + "&seq=" + seq;
+}

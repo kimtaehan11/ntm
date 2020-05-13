@@ -28,10 +28,16 @@
 		)
   	</insert>
 	
-	
 	<select id="selectImgById" parameterType="java.lang.Integer" resultMap="PackageHeaderMap">
 	    select * 
 	    from ntm_schemas.itm_img 
 	    where id = #{id}::bigint
+	</select>
+	
+	<select id="selectImg" parameterType="java.lang.Integer" resultMap="PackageHeaderMap">
+	    select * 
+	    from ntm_schemas.itm_img 
+	    where id = #{id}::bigint
+	    and seq = #{seq}::bigint
 	</select>
 </mapper>

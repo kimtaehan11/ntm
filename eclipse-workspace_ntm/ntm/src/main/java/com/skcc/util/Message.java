@@ -23,6 +23,9 @@ public class Message {
 		else if("delete".equals(crud)){
 			response.put("message", "정상적으로 삭제되었습니다.");
 		}
+		else if("upload".equals(crud)){
+			response.put("message", "정상적으로 업로드되었습니다.");
+		}
 		response.put("resultCode", "0000");
 	}
 }

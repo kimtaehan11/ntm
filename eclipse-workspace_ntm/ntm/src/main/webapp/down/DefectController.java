@@ -69,8 +69,6 @@ public class DefectController {
 	@ResponseBody
     public HashMap<String, Object> fileRequest( MultipartHttpServletRequest mtfRequest ) throws IOException {   
 		
-		
-
         return   (HashMap<String, Object>) service.insertDefect(mtfRequest);
     }
 }

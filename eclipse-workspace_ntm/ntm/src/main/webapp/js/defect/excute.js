@@ -6,7 +6,7 @@
 var isFirstLoad;
 
 var caseTable, defectTable;
-
+var imgkey = -1;
 $(document).ready(function() { 
 	
 	//팀정보 조회합니다.
@@ -61,10 +61,14 @@ $(document).ready(function() {
 		
 		var data = new FormData();
 		var fileList = $("#files").prop('files');
+		
+		if(fileList.length < 1){
+			insertDefectDO("");
+			return;
+		}
 		for(var i=0; i<fileList.length; i++){
 			data.append( "file"+i, fileList[i] );
 		}
-		
 		
 		if(fileList == null){
 			data.append("fileLength", "0");
@@ -73,17 +77,37 @@ $(document).ready(function() {
 			data.append("fileLength", fileList.length+"");
 		}
 		
-		data.append("title", $("#title").val());
-		data.append("test_type_id", $("#test_type_id").val());
-		data.append("description", $("#description").val());
-		data.append("user_id",getCookie("user_id"));
+		data.append("tbname", "itm_defect");
+		data.append("user_id", getCookie("user_id"));
+		data.append("crud", "I");
 		
-		//scenario_code
-		data.append("scenario_code", $("#scenario_code").val());
-		data.append("case_code", $("#case_code").val());
-		ajaxTranCallWithFile ("defect/insertDefect.file", data,  callbackS, callBackE);
+		ajaxTranCallWithFile ("common/uploadFile.file", data,  callbackS, callBackE);
 	});
-	
+	$("#btnUpdate").on('click', function(){
+		
+		var data = new FormData();
+		var fileList = $("#files").prop('files');
+		
+		if(fileList.length < 1){
+			updateDefectDO(imgkey);
+			return;
+		}
+		for(var i=0; i<fileList.length; i++){
+			data.append( "file"+i, fileList[i] );
+		}
+		
+		if(fileList == null){
+			data.append("fileLength", "0");
+		}
+		else{
+			data.append("fileLength", fileList.length+"");
+		}
+		data.append("crud", "U");
+		data.append("imgkey", imgkey);
+		data.append("tbname", "itm_defect");
+		data.append("user_id", getCookie("user_id"));
+		ajaxTranCallWithFile ("common/uploadFile.file", data,  callbackS, callBackE);
+	});
 	//테스트 상태변경 버튼
 	$("#btnStateChange").on('click', function(){
 		var jsonObj = {
@@ -165,7 +189,25 @@ var callbackS = function(tran, data){
 			}
 		}
 		break;
-	case "defect/insertDefect.file":
+	case "common/uploadFile.file":
+		
+		imgkey = data.imgkey;
+		var crud = data.crud;
+		
+		if(crud == "I")
+			insertDefectDO(data.imgkey);
+		else
+			updateDefectDO(data.imgkey);
+		
+		break;
+	case "defect/insertDefect.do":
+	case "defect/updateDefect.do":
+		alert(data["message"]);
+		if(data["resultCode"] == "0000" ){
+			$('div.modal').modal("hide"); //	
+			selectDefectList();
+		}
+		break;
 	case "scenario/updateTestcaseOnlyState.do":
 		alert(data["message"]);
 		if(data["resultCode"] == "0000" ){
@@ -173,10 +215,28 @@ var callbackS = function(tran, data){
 			selectDefectList();
 		}
 		break;
+		
+		
 		case "defect/selectDefectDetail.do":
-//"ext":"jpg","reg_date":1589247841751,"originfilename":"011.jpg","tbname":"itm_defect","filelength":170510,"reg_user":"307843","savefilename":"307843_1589247841708.jpg","tbdate":"20200512","id":7,"seq":1},
-//"ext":"jpg","reg_date":1589247841796,"originfilename":"012.jpg","tbname":"itm_defect","filelength":86288,"reg_user":"307843","savefilename":"307843_1589247841756.jpg","tbdate":"20200512","id":7,"seq":2}]}
+			
+			var list = data["list"];
+			$("#existingImgs").html("");
+			
+			if(list.length > 0){
+				
+				for(var i=0 ; i<list.length; i++){
+					var htmlStr = '<img id="img'+i+'" style="height:100px;"/>';
+					$("#existingImgs").append(htmlStr);
+					
+					$("#img"+i).attr("src", getFileUrl( list[i].id, list[i].seq) );
+					$("#img"+i).on('click', function(e){
+						$("#fileDownObj").attr('src', $(this).attr("src"));
+					});
+				}
+			}
 			break;
+			
+			
 		//테스트 진행건 조회
 		case "defect/selectDefectList.do":
 			
@@ -211,6 +271,7 @@ var callbackS = function(tran, data){
 		            {
 		                text: '신규 결함 등록',
 		                action: function ( e, dt, node, config ) {
+		                	
 		                	modalOpen("1", e, dt, node, config )
 		                }
 		            },
@@ -301,8 +362,45 @@ var callbackS = function(tran, data){
 var callBackE = function(tran, data){
 	
 }
+var insertDefectDO= function(_imgkey){
+	var data = {
+			"title": $("#title").val(),
+			"test_type_id": $("#test_type_id").val(),
+			"description": $("#description").val(),
+			"user_id": $("#user_id").val(),
+			"scenario_code": $("#scenario_code").val(),
+			"case_code": $("#case_code").val(),
+			"defect_code":$("#defect_code").val(),
+			"imgkey": _imgkey
+		};
+		ajaxTranCall ("defect/insertDefect.do", data,  callbackS, callBackE);
+}
 
-
+var updateDefectDO= function(_imgkey){
+	
+	var id = "";
+	$('#defectTable tr').each(function(){
+		 if ( $(this).hasClass('selected') ){
+			 var datajson = defectTable.row($(this)).data();
+			 id = datajson.id;
+		 }
+	});
+	
+	
+	var data = {
+		"title": $("#title").val(),
+		"test_type_id": $("#test_type_id").val(),
+		"description": $("#description").val(),
+		"user_id": $("#user_id").val(),
+		"scenario_code": $("#scenario_code").val(),
+		"case_code": $("#case_code").val(),
+		"defect_code":$("#defect_code").val(),
+		"imgkey": _imgkey,
+		"id":id
+	};
+	ajaxTranCall ("defect/updateDefect.do", data,  callbackS, callBackE);
+	
+}
 var modalOpen = function(type, e, dt, node, config ) {
 	
 //	modal.modalClear("userTableModal");
@@ -311,7 +409,7 @@ var modalOpen = function(type, e, dt, node, config ) {
 		$('#modalTitle').text("신규결함 등록");
 		$('#btnSave').show();
 		$('#btnUpdate').hide();
-		
+		imgkey = -1;
 		//초기화 작업 필요
 		$("#title").val("");
 		$("#test_type_id").val("0");
@@ -347,7 +445,7 @@ var modalOpen = function(type, e, dt, node, config ) {
 			 if ( $(this).hasClass('selected') ){
 				 var datajson = defectTable.row($(this)).data();
 				 modal.convertJsonObjToModal("defectTableModal", datajson );
-				 
+				 imgkey = datajson.imgkey;
 				//상세조회 이미지 + 자동테스트건
 				ajaxTranCall("defect/selectDefectDetail.do", datajson, callbackS, callBackE);
 			 }

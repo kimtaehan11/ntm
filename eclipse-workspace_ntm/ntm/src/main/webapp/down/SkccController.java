@@ -17,22 +17,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.skcc.service.CodeService;
+import com.skcc.service.DefectService;
+import com.skcc.service.ScenarioService;
+import com.skcc.service.UserService;
 
 /**
  * @author  Barack Obama
  * @version 1.0
  * @see     Controller 
  */
-@Controller
-@RequestMapping("/code")
-public class CodeController {
+@Controller 
+public class SkccController {
 	
 	/**
 	 * log4j 선언
 	 * 
 	 * @see none
 	 */
-	private Logger log = LoggerFactory.getLogger(CodeController.class);
+	private Logger log = LoggerFactory.getLogger(SkccController.class);
 
 	/**
 	 * UserService
@@ -40,7 +42,13 @@ public class CodeController {
 	 * @see Autowired
 	 */
 	@Autowired
-	private CodeService service;
+	private CodeService codeService;
+	@Autowired
+	private DefectService defectService;
+	@Autowired
+	private ScenarioService scenarioService;
+	@Autowired
+	private UserService userService;
 
 	
 	/**
@@ -60,11 +68,14 @@ public class CodeController {
 		Class<?>[] paramTypes = {Map.class};
 		try {
 			
+			String reqUrl = req.getRequestURI();
 			
-			String funcName = req.getRequestURI();
-			funcName = funcName.substring(funcName.lastIndexOf("/") + 1).replace(".do", "");
-			Method getNameMethod  = service.getClass().getMethod(funcName, paramTypes);
-			response = (HashMap<String, Object>) getNameMethod.invoke(service, reqMap);
+			log.info("reqUrl : " +reqUrl);
+			String funcName = reqUrl.substring(reqUrl.lastIndexOf("/") + 1).replace(".do", "");
+			
+			
+			Method getNameMethod  = codeService.getClass().getMethod(funcName, paramTypes);
+			response = (HashMap<String, Object>) getNameMethod.invoke(codeService, reqMap);
 			
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();

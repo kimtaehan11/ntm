@@ -18,7 +18,7 @@ $("#btLogin").click(function(){
 	};
 	
 	$.ajax({
-		url : "http://localhost:8080/ntm/login.do",
+		url : "http://localhost:8080/ntm/user/login.do",
 		method: "POST", 
 		dataType: "json", 
 		contentType : 'application/json',  

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.skcc.controller.UserController;
 import com.skcc.util.Message;
 
 /*
@@ -367,7 +366,7 @@ public class ScenarioService {
 	}
 	
 	/**
-	 * 개발자 아이디 결함을 전부 조회.
+	 * 개발자 아이디 결함을 전부 조회. 결함(개발자) 화면에서 사용함
 	 *
 	 * @param Map (request)
 	 * @return Map (response)
@@ -378,12 +377,24 @@ public class ScenarioService {
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		try {
+			
+			//개발자가 선택시 개발자 ID로만 조회 가능
+			if(!"".equals(reqMap.get("dev_id"))){
+				reqMap.put("team_id", "");
+				
+			}
+			//선택된 개발자가 없는 경우 팀코드로 조회합니다. 
+			else {
+				
+			}
+			
 			List<Object> list = sqlSession.selectList("ScenarioDAO.selectDefectByDevIdList", reqMap);
 			
 			if(list.size() != -1) {
 				Message.SetSuccesMsg(response, "select");
 				response.put("list", list);
 			}
+			
 		}
 		catch(Exception e) {
 //			Message.SetSuccesMsg(response, "select");

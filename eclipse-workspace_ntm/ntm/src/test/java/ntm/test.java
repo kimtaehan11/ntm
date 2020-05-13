@@ -5,10 +5,9 @@ public class test {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("test");
-		String originFileName = "007.jpg";
+		String originFileName = "/ntm/code/selectCodeGroupList.do";
 
-		System.out.println(System.getProperty("user.home"));
-		System.out.println(System.getProperty("user.dir"));
+System.out.println(originFileName.split("/")[2]);
 		
 //		Class<?> c = Class.forName("class name");
 //		Method method = c.getDeclaredMethod("method name", parameterTypes);
