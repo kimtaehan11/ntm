@@ -69,6 +69,9 @@ public class DefectService {
 		return response;
 	}
 	
+	/*
+	 * 테스터가 결함테이블 수정
+	 */
 	public Map<String, Object> updateDefect( Map<String, Object> reqMap ) {	
 		
 		Map<String, Object> response = new HashMap<String, Object>();
@@ -80,11 +83,24 @@ public class DefectService {
 		return response;
 	}
 	
+	/*
+	 * 개발자가 결함테이블 수정
+	 */
+	public Map<String, Object> updateDefectByDev( Map<String, Object> reqMap ) {	
+		
+		Map<String, Object> response = new HashMap<String, Object>();
+		
+		int result = sqlSession.insert("DefectDAO.updateDefectByDev", reqMap);
+		if(result == 1) { 
+			Message.SetSuccesMsg(response, "update");
+		}
+		return response;
+	}
+	
 	
 	
 	public Map<String, Object> selectDefectDetail( Map<String, Object> reqMap ) {	
-		
-		
+
 		//1. image key로 이미지 조회 합니다. 
 		int imgkey = (Integer) reqMap.get("imgkey");
 		List<Object> list = sqlSession.selectList("ImgDAO.selectImgById", imgkey);

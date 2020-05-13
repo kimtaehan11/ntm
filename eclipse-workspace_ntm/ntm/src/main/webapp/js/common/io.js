@@ -47,13 +47,11 @@ var ajaxTranCallWithFile = function(tran, data,  succeesCallback, errorCallback)
 	
 	$.ajax({
         type: "POST",
-        enctype: 'multipart/form-data;char',
+        enctype: 'multipart/form-data',
         url: tran,
-        //data: data,
-        data: encodeURI(data),
+        data: data,
         processData: false,
-        //contentType: false,
-        contentType: "application/x-www-form-urlencoded",
+        contentType: false,
         cache: false,
         timeout: 600000,
         success: function (data) {

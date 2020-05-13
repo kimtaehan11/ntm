@@ -51,7 +51,7 @@
 			#{ case_code },
 			#{ title },
 			#{ description }, 
-			'',
+			(SELECT dev_id FROM ntm_schemas.itm_test_case WHERE case_code = #{ case_code } ),
 			#{ cookieUserId },
 			now()  , 
 			 
@@ -59,7 +59,7 @@
 			#{ imgkey }::bigint
 		)
   	</insert>
-  	 <update id="updateDefect" parameterType="map" useGeneratedKeys="true">
+  	<update id="updateDefect" parameterType="map" useGeneratedKeys="true">
     	UPDATE  ntm_schemas.itm_defect
 		SET title = #{title},
 			description = #{description},
@@ -70,5 +70,16 @@
 		WHERE  id 	= #{id}::bigint
     </update> 
   	
+	<update id="updateDefectByDev" parameterType="map" useGeneratedKeys="true">
+    	UPDATE  ntm_schemas.itm_defect
+		SET  
+			defect_result = #{defect_result},
+			defect_code = #{defect_code}
+<!-- 			<if test="defect_code != null and case_code == ''">  -->
+<!--        		  ,resolve_date = now() -->
+<!--         	</if>   -->
+		WHERE  id 	= #{id}::bigint
+    </update> 
+	
 	
 </mapper>

@@ -417,7 +417,7 @@ var modalOpen = function(type, e, dt, node, config ) {
 		$("#description").val("");
 		$("#files").val("");
 
-		$("#imgs").html("");
+		$("#imgs").html("");$("#existingImgs").html("");
 		$("#existingImgsTr").hide();
 //		 $("#defect_code").val("")
 	 	$("#defect_code option:eq(0)").prop("selected", true);

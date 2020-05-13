@@ -222,15 +222,20 @@
 			 cs.dev_id,
 			 df.reg_user,
 	 		 to_char(df.reg_date, 'YYYY-MM-DD') reg_date,
-	 		 to_char(df.resolve_date, 'YYYY-MM-DD') resolve_date
-	 		 
-	 		 
-		from ntm_schemas.itm_test_case cs, 
-			ntm_schemas.itm_defect df,
+	 		  df.imgkey,
+	 		 COALESCE(to_char(df.resolve_date, 'YYYY-MM-DD'), '-') resolve_date
+	 		 ,COALESCE(dev.name, '') dev_name
+	 		 , COALESCE(reg.name, '') reg_name 
+	 		  ,df.id
+	 		  ,df.defect_result
+		from ntm_schemas.itm_test_case cs ,
+			ntm_schemas.itm_defect df
+				LEFT JOIN ntm_schemas.itm_user dev ON df.defect_user = dev.user_id
+				LEFT JOIN ntm_schemas.itm_user reg ON df.reg_user = reg.user_id,
 			ntm_schemas.itm_scenario sc
 		where 1=1
 		<if test="dev_id != null and dev_id != ''">
-			and cs.dev_id = #{dev_id} 
+			and df.defect_user = #{dev_id} 
 		</if>
 		<if test="team_id != null and team_id != ''">
 			and cs.dev_id IN (SELECT user_id FROM ntm_schemas.itm_user where team_id = #{team_id}::bigint  )
