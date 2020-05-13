@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +21,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.skcc.service.CodeService;
@@ -172,5 +172,13 @@ public class SkccController {
 		}
 		
 	}
+	
+	@RequestMapping("/*/*.excel")
+	@ResponseBody
+    public HashMap<String, Object> fileRequest( @RequestParam("file1") MultipartFile  uploadFile) throws IOException {   
+		HashMap<String, Object> response = null;
+		
+        return (HashMap<String, Object>) userService.saveUserExcel(uploadFile);
+    }
 	
 }

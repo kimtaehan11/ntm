@@ -42,7 +42,7 @@ $(document).ready(function() {
 //	            }
 	        });
 		        
-	        ajaxFormExcel("user/uploadExcel.file", "file1", callbackS);
+	        ajaxFormExcel("user/uploadExcel.excel", "file1", callbackS);
 
 		});
 });
@@ -66,7 +66,7 @@ var callbackS = function(tran, data){
 	case "user/saveUser.do":
 	case "user/deleteUser.do":
 	case "user/updateUser.do":
-	case "user/uploadExcel.file":
+	case "user/uploadExcel.excel":
 		alert(data["message"]);
 		if(data["resultCode"] == "0000" ){
 			$('div.modal').modal("hide"); //닫기 

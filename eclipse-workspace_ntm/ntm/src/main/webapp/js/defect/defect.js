@@ -66,17 +66,27 @@ $(document).ready(function() {
 	
 	$("#btnSave").on('click', function(){
 		
-		let _id = "";
-//		$('#devDefectTable tr').each(function(){
-//			 if ( $(this).hasClass('selected') ){
-//				 _id = devDefectTable.row($(this)).data().id;
-//			 }
-//		});
-		
 		var dataJson = modal.convertModalToJsonObj("devDefectModalTable" );
-//		dataJson["id"] = _id;
 		ajaxTranCall("defect/updateDefectByDev.do", dataJson, callbackS, callBackE);
 	});
+	
+	//modal user table click 
+	$('#teamUserModalTable').on('click', function(){
+		setTimeout(function() {
+			$('#teamUserModalTable tr').each(function(){
+				if($(this).hasClass('selected') ){
+					var dataJson = teamUserModalTable.row($(this)).data(); 
+					
+					if(confirm("선택한 개발자를 조치자로 변경하시겠습니까?")){
+						$("#defect_user").val(dataJson["user_id"]);
+						$("#defect_user_name").val(dataJson["name"] );
+						
+					}
+				}
+			});
+		}, 100);
+	});
+	
 });
 
 
@@ -134,9 +144,11 @@ var callbackS = function(tran, data){
 	
 	case "defect/updateDefectByDev.do":
 		if(data["resultCode"] == "0000" ){
-			
-			$('div.modal').modal("hide"); //닫기 
+
 			alert(data["message"]);
+			$('div.modal').modal("hide"); //닫기 
+			
+			selectDefectByDevIdList();
 		}
 		break;
 	case "code/selectCodeList.do":
@@ -180,7 +192,7 @@ var callbackS = function(tran, data){
 	            { "mDataProp" : 'test_type_name' } ,
 	            { "mDataProp" : 'defect_name' } ,
 	            { "mDataProp" : 'reg_name' },
-	            { "mDataProp" : 'dev_name' },
+	            { "mDataProp" : 'defect_user_name' },
 	            { "mDataProp" : 'reg_date' } ,
 	            { "mDataProp" : 'resolve_date' } 
 	            //

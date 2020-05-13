@@ -219,12 +219,12 @@
 			 ntm_schemas.GET_CODENAME('B001', df.defect_code) as defect_name,
 			 df.title,
 			 df.description,
-			 cs.dev_id,
+			 df.defect_user,
 			 df.reg_user,
 	 		 to_char(df.reg_date, 'YYYY-MM-DD') reg_date,
 	 		  df.imgkey,
 	 		 COALESCE(to_char(df.resolve_date, 'YYYY-MM-DD'), '-') resolve_date
-	 		 ,COALESCE(dev.name, '') dev_name
+	 		 ,COALESCE(dev.name, '') defect_user_name
 	 		 , COALESCE(reg.name, '') reg_name 
 	 		  ,df.id
 	 		  ,df.defect_result

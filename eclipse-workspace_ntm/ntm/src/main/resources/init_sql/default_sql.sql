@@ -14,9 +14,8 @@ SET search_path = ntm_schemas, pg_catalog;
 ( user_id, password, "name", phone_num, email, organization, "position", description, reg_user, reg_date, modify_user, modify_date, admin)
 VALUES(  'admin', 'admin', '김태한', '010-0000-0000', 'nexcore4u@sk.com', 'SKCC', '1234', '123455', 'nexcore', now(), 'nexcore', now(),'TRUE');
 
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PM', 'PM', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'QA', 'QA', '', 'admin',  now(), 'admin',now() );
-INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PL', 'PL', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'ADMIN', 'ADMIN', '', 'admin',  now(), 'admin',now() );
+INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'PMO', 'PMO', '', 'admin',  now(), 'admin',now() );
 INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'TESTER', 'TESTER', '', 'admin',  now(), 'admin',now() );
 INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'DEV', 'DEV', '', 'admin',  now(), 'admin',now() );
 INSERT INTO itm_role  VALUES (nextval('itm_role_id_seq'::REGCLASS), 0, 'CUSTOM', 'CUSTOM', '', 'admin',  now(), 'admin',now() );
@@ -85,12 +84,12 @@ VALUES ('B001', 'B001_07', '반려', '테스터가 결함건을 반려처리', '
 --C001 테스트케이스상태 
 INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('C001', 'C001_01', '수행대기', '테스트케이스 수행대기', 'Y', 0, 'admin', now());
+VALUES ('C001', '0', '수행대기', '테스트케이스 수행대기', 'Y', 0, 'admin', now());
 
 INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('C001', 'C001_02', '수행중', '테스트케이스 수행중', 'Y', 0, 'admin', now());
+VALUES ('C001', '1', '수행중', '테스트케이스 수행중', 'Y', 0, 'admin', now());
 
 INSERT INTO ntm_schemas.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('C001', 'C001_03', '수행완료', '테스트케이스 수행완료', 'Y', 0, 'admin', now());
+VALUES ('C001', '2', '수행완료', '테스트케이스 수행완료', 'Y', 0, 'admin', now());

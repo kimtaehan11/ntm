@@ -74,7 +74,8 @@
     	UPDATE  ntm_schemas.itm_defect
 		SET  
 			defect_result = #{defect_result},
-			defect_code = #{defect_code}
+			defect_code = #{defect_code},
+			defect_user = #{defect_user}
 <!-- 			<if test="defect_code != null and case_code == ''">  -->
 <!--        		  ,resolve_date = now() -->
 <!--         	</if>   -->

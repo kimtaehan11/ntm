@@ -297,7 +297,7 @@ public class UserService {
                 tempMap.put("team", 		getCellString(row.getCell(3)));
                 tempMap.put("organization", getCellString(row.getCell(4)));
                 tempMap.put("phone_num", 		getCellString(row.getCell(5)));
-                tempMap.put("organization",			getCellString(row.getCell(6)));
+                tempMap.put("position",			getCellString(row.getCell(6)));
                 tempMap.put("email", 		getCellString(row.getCell(7)));
                 tempMap.put("description", 	getCellString(row.getCell(8)));
                 

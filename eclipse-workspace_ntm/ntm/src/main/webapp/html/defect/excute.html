@@ -14,80 +14,89 @@
 </style>
 </head>
 <body>
-	<br/><h6 id="grid-options">BTS 2020 > 수행(테스터) </h6><br/>
+
 	<div class="row">
 		<div class="col-md-6">
-			 
-			<div class="row" style="width:60%" >
-		<div class="col-sm-6 text-left">
-			<select class="form-control" id="selectTeam" name="selectTeam" title=""  ></select>
-        </div>
-        <div class="col-sm-6 text-right">
-        	<select class="form-control" id="selectUser" name="selectUser" title="" > </select>
-        </div> 
-    </div> <br/>
 			
-			<table id="caseTable" class="table " style="width:100%">
-		        <thead>
-		            <tr>
-		                <th>No</th>
-		                <th>시나리오</th>
-		                <th>케이스</th>
-		                <th>테스터</th>
-		                <th>개발자</th> 
-		                <th>상태</th> 
-		            </tr>
-		        </thead>
-		    </table>
+			<br /><h6 id="grid-options">BTS 2020 > 수행(테스터)</h6><br />
+			<div class="row" style="width: 60%">
+				<div class="col-sm-6 text-left">
+					<select class="form-control" id="selectTeam" name="selectTeam"
+						title=""></select>
+				</div>
+				<div class="col-sm-6 text-right">
+					<select class="form-control" id="selectUser" name="selectUser"
+						title="">
+					</select>
+				</div>
+			</div>
+			<br />
+
+			<table id="caseTable" class="table " style="width: 100%">
+				<thead>
+					<tr>
+						<th>No</th>
+						<th>시나리오</th>
+						<th>케이스</th>
+						<th>테스터</th>
+						<th>개발자</th>
+						<th>상태</th>
+					</tr>
+				</thead>
+			</table>
 		</div>
 		<div class="col-md-6">
+			<br /><h6 id="grid-options">BTS 2020 > 시나리오 > 케이스	</h6><br />
 			<table id="caseTableModal" class="table" style="width: 100%">
 				<tbody>
 					<tr>
 						<th>시나리오코드</th>
-						<td style="padding-right:10px;"><input class="form-control" id="scenario_code"/></td>
+						<td style="padding-right: 10px;"><input class="form-control"
+							id="scenario_code" /></td>
 						<th>시나리오명</th>
-						<td><input class="form-control" id="scenario_name"/></td>
+						<td><input class="form-control" id="scenario_name" /></td>
 					</tr>
 					<tr>
 						<th>테스트코드</th>
-						<td style="padding-right:10px;"><input class="form-control" id="case_code"/></td>
+						<td style="padding-right: 10px;"><input class="form-control"
+							id="case_code" /></td>
 						<th>테스트명</th>
-						<td><input class="form-control" id="case_name"/></td>
+						<td><input class="form-control" id="case_name" /></td>
 					</tr>
 					<tr>
 						<th>테스터</th>
-						<td style="padding-right:10px;"><input class="form-control" id="test_name"/></td>
+						<td style="padding-right: 10px;"><input class="form-control"
+							id="test_name" /></td>
 						<th>개발자</th>
-						<td><input class="form-control" id="dev_name"/></td>
+						<td><input class="form-control" id="dev_name" /></td>
 					</tr>
 					<tr>
 						<th>테스트 상태</th>
-						<td style="padding-right:10px;">
-							<select  class="form-control" id="state" title="선택 구분" style="width:100%">
-							</select>
-						</td>
-						<td colspan="2"><button  class="btn btn-success" id="btnStateChange" >테스트 상태변경</button></td>
+						<td style="padding-right: 10px;"><select class="form-control"
+							id="state" title="선택 구분" style="width: 100%">
+						</select></td>
+						<td colspan="2"><button class="btn btn-success"
+								id="btnStateChange">테스트 상태변경</button></td>
 					</tr>
 				</tbody>
 			</table>
-			
-			<table id="defectTable" class="table " style="width:100%">
-		        <thead>
-		            <tr>
-		                <th>No</th>
-		                <th>결함명</th>
-		                <th>결함유형</th>
-		                <th>결함상태</th>
-		                <th>등록일</th> 
-		            </tr>
-		        </thead>
-		    </table>
+
+			<table id="defectTable" class="table " style="width: 100%">
+				<thead>
+					<tr>
+						<th>No</th>
+						<th>결함명</th>
+						<th>결함유형</th>
+						<th>결함상태</th>
+						<th>등록일</th>
+					</tr>
+				</thead>
+			</table>
 		</div>
-		
+
 	</div>
-	
-	
+
+
 	<!-- Modal window  -->
 	<div class="modal fade" id="layerpop">
 		<div class="modal-dialog modal-lg">
