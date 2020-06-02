@@ -11,7 +11,7 @@
 	<select id="selectUser" parameterType="java.util.Map" resultMap="PackageHeaderMap">
 	    SELECT * 
 	    FROM
-	        ntm_schemas.itm_user
+	        sftm.itm_user
 	        <where>
 		        <if test="password != null"> 
 		        AND password = #{password}
@@ -26,26 +26,31 @@
   	<select id="selectTeamList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
 	  	SELECT row_number() OVER () as rnum, team.*, 
 	  		role.name roleName ,
-	  		(SELECT COUNT(*) FROM ntm_schemas.itm_user usr WHERE usr.team_id = team.id) as user_cnt,
+	  		(SELECT COUNT(*) FROM sftm.itm_user usr WHERE usr.team_id = team.id) as user_cnt,
 	  		to_char(team.reg_date, 'YYYY-MM-DD') reg_date_str
-		FROM ntm_schemas.itm_team team, 
-				ntm_schemas.itm_role role
+		FROM sftm.itm_team team, 
+				sftm.itm_role role
 		WHERE team.role_id = role.id
+		
+		<if test="role_id != null and role_id != ''"> 
+			AND team.role_id = #{role_id}::bigint
+		</if>
+		
 		
   	</select>
   	
   	<!-- 팀 조회 -->
   	<select id="selectRoleList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
 	  	SELECT *
-		FROM ntm_schemas.itm_role role
+		FROM sftm.itm_role role
   	</select>
   	
   	
   	<insert id="insertNewTeam" parameterType="map" useGeneratedKeys="true">
   		<selectKey resultType="long" keyProperty="id" order="BEFORE">
-        	SELECT  nextval('ntm_schemas.itm_team_id_seq'::REGCLASS) as id
+        	SELECT  nextval('sftm.itm_team_id_seq'::REGCLASS) as id
         </selectKey>
-        INSERT INTO ntm_schemas.itm_team (
+        INSERT INTO sftm.itm_team (
             id,
             project_id,
             role_id,
@@ -71,7 +76,7 @@
 	<!-- 팀 수정 -->
     <update id="updateTeam" parameterType="java.util.HashMap">
     UPDATE
-        ntm_schemas.itm_team
+        sftm.itm_team
     SET
         name = #{name},
         description = #{description},
@@ -86,14 +91,14 @@
     
      <delete id="deleteUserByTeam" parameterType="java.util.HashMap">
     DELETE FROM
-        ntm_schemas.itm_user
+        sftm.itm_user
     WHERE
         team_id = #{id}::bigint;
     </delete> 
     
     <delete id="deleteTeam" parameterType="java.util.HashMap">
     DELETE FROM
-        ntm_schemas.itm_team
+        sftm.itm_team
     WHERE
         id = #{id}::bigint;
     </delete> 
@@ -110,7 +115,7 @@
 			team.name as team_name,
 			usr.team_id
 		FROM
-		ntm_schemas.itm_user usr, ntm_schemas.itm_team team
+		sftm.itm_user usr, sftm.itm_team team
 		WHERE  usr.team_id = team.id
 	    <if test="team_id != ''"> 
        		 AND usr.team_id = #{team_id}::bigint
@@ -120,10 +125,10 @@
     <update id="upsertUser" parameterType="java.util.HashMap">
 <!--     {role=, phone=, organization=ㅅㄷㄴㅅ, name=이성준, description=, id=02232, team=현업테스터, email=} -->
     	<selectKey resultType="long" keyProperty="team_id" order="BEFORE">
-        	SELECT id FROM ntm_schemas.itm_team where name = #{team}
+        	SELECT id FROM sftm.itm_team where name = #{team}
         </selectKey>
     	WITH upsert AS (
-    						UPDATE ntm_schemas.itm_user
+    						UPDATE sftm.itm_user
     						SET name = #{name},
 						        phone_num = #{phone_num},
 						        email =  #{email},
@@ -135,7 +140,7 @@
 						    WHERE user_id = #{user_id}
 						    RETURNING *
     					)
-    	   INSERT INTO ntm_schemas.itm_user
+    	   INSERT INTO sftm.itm_user
     	   ( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
 			SELECT  
 				#{ user_id }, 
@@ -160,7 +165,7 @@
     
     <insert id="insertUser" parameterType="map" useGeneratedKeys="true">
   		
-         INSERT INTO ntm_schemas.itm_user
+         INSERT INTO sftm.itm_user
 		( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
 		VALUES(  
 			#{ user_id }, 
@@ -183,7 +188,7 @@
   	<!-- 팀 수정 -->
     <update id="updateUser" parameterType="java.util.HashMap">
     UPDATE
-        ntm_schemas.itm_user
+        sftm.itm_user
     SET
         name = #{name},
         phone_num = #{phone_num},
@@ -200,7 +205,7 @@
   	
   	 <delete id="deleteUser" parameterType="java.util.HashMap">
 	    DELETE FROM
-	        ntm_schemas.itm_user
+	        sftm.itm_user
 	    WHERE
 	        user_id = #{user_id}
     </delete> 

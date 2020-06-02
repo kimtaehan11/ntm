@@ -1,51 +1,55 @@
-/**
- * @author  Barack Obama
- * @version 1.0
- * @see     js 
- */
-let userTable;
+
+
+var userTable;
 
 $(document).ready(function() { 
 	
+	selectUserList();
+	
+	ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
+	//신규 저장버튼 click event
+	$("#btnSave").click(function(e){
+		
+		if(!modal.modalCheckInputData("userTableModal")) return;
+		
+		var dataJson = modal.convertModalToJsonObj("userTableModal" );
+		ajaxTranCall("user/saveUser.do", dataJson, callbackS, callBackE);
+	});
+	$("#btnUpdate").click(function(e){
+		
+		if(!modal.modalCheckInputData("userTableModal")) return;
+		
+		var dataJson = modal.convertModalToJsonObj("userTableModal" );
+		ajaxTranCall("user/updateUser.do", dataJson, callbackS, callBackE);
+	});
+	
+	$("#team_id_main").on('change', function(){
 		selectUserList();
-		ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
-		
-		//신규 저장버튼 click event
-		$("#btnSave").click(function(e){
-			var dataJson = modal.convertModalToJsonObj("userTableModal" );
-			ajaxTranCall("user/saveUser.do", dataJson, callbackS, callBackE);
-		});
-		$("#btnUpdate").click(function(e){
-			var dataJson = modal.convertModalToJsonObj("userTableModal" );
-			ajaxTranCall("user/updateUser.do", dataJson, callbackS, callBackE);
-		});
-		
-		$("#team_id_main").on('change', function(){
-			selectUserList();
-		});
-		
-		
-		
-		$('#file1').on('change', function(){
-			
-			fileBuffer = [];
-	        const target = document.getElementsByName('file1');
-	        
-	        Array.prototype.push.apply(fileBuffer, target.files);
-	        var html = '';
-	        $.each(target[0].files, function(index, file){
-	            const fileName = file.name;
-	            const fileEx = fileName.slice(fileName.indexOf(".") + 1).toLowerCase();
-//	            if(fileEx != "jpg" && fileEx != "png" &&  fileEx != "gif" &&  fileEx != "bmp" && fileEx != "wmv" && fileEx != "mp4" && fileEx != "avi"){
-//	                alert("파일은 (jpg, png, gif, bmp, wmv, mp4, avi) 형식만 등록 가능합니다.");
-//	                return false;
-//	            }
-	        });
-		        
-	        ajaxFormExcel("user/uploadExcel.excel", "file1", callbackS);
+	});
+	
+	
+	$('#file1').on('change', function(e){
 
-		});
+		var fileBuffer = [];
+        var target = $("#file1");
+        
+        Array.prototype.push.apply(fileBuffer, target.files);
+        var html = "";
+        $.each(target[0].files, function(index, file){
+            var fileName = file.name;
+            var fileEx = fileName.slice(fileName.indexOf(".") + 1).toLowerCase();
+//            if(fileEx != "jpg" && fileEx != "png" &&  fileEx != "gif" &&  fileEx != "bmp" && fileEx != "wmv" && fileEx != "mp4" && fileEx != "avi"){
+//                alert("파일은 (jpg, png, gif, bmp, wmv, mp4, avi) 형식만 등록 가능합니다.");
+//                return false;
+//            }
+        });
+	        
+        ajaxFormExcel("user/uploadExcel.excel", "file1", callbackS);
+
+	});
 });
+
+
 
 
 
@@ -79,7 +83,7 @@ var callbackS = function(tran, data){
 		
 		var list = data["list"];
 		for(var i=0; i<list.length; i++){
-			appendSelectBox("team_id", list[i].id, list[i].name + "  (" +list[i].rolename +  ")");
+			appendSelectBox("team_id", list[i].id, list[i].name  );
 			appendSelectBox("team_id_main", list[i].id, list[i].name);
 		}
 		
@@ -110,7 +114,7 @@ var callbackS = function(tran, data){
 			"language": {
 		        "emptyTable": "데이터가 없어요." 
 		    },
-		    
+		    pageLength:15, //기본 데이터건수
 			lengthChange: false, 	// 표시 건수기능 숨기기
 			searching: true,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기
@@ -119,7 +123,7 @@ var callbackS = function(tran, data){
 			select: {
 	            style: 'single' //single, multi
 			},
-			"scrollY":        500,
+			"scrollY":        550,
 	        "scrollCollapse": false,
 	        "language": { "search": "검색 : " },
 			
@@ -141,20 +145,21 @@ var callbackS = function(tran, data){
 	            },
 	            {
 	                text: '삭제',
+	                className: 'red',
 	                action: function ( e, dt, node, config ) {
-	                	
-	                	
+	                	var isSelected = false;
 	                    $('#userTable tr').each(function(){
-	           			 if ( $(this).hasClass('selected') ){
-	           				 
-	           				 if(confirm(userTable.row($(this)).data().name + " 을(를) 삭제하시겠습니까?")){
-	           					var dataJson = {
-	           						user_id : userTable.row($(this)).data().user_id
-           						};
-           						ajaxTranCall("user/deleteUser.do", dataJson, callbackS, callBackE);
-	           				 }
-	           			 }
-	                  });
+		           			 if ( $(this).hasClass('selected') ){
+		           				 if(confirm(userTable.row($(this)).data().name + " 을(를) 삭제하시겠습니까?")){
+		           					var dataJson = {
+		           						user_id : userTable.row($(this)).data().user_id
+	           						};
+	           						ajaxTranCall("user/deleteUser.do", dataJson, callbackS, callBackE);
+		           				 }
+		           				isSelected = true;;
+		           			 }
+	                    });
+	                    if(!isSelected) alert("삭제할 사용자를 선택해주세요.");
 	                }
 	            },
 	            {
@@ -205,12 +210,17 @@ var modalOpen = function(type, e, dt, node, config ) {
 		$('#btnSave').hide();
 		$('#btnUpdate').show();
 		
-		
+		var isSelected = false;
 		$('#userTable tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
-				 modal.convertJsonObjToModal("userTableModal", userTable.row($(this)).data() )
+				 modal.convertJsonObjToModal("userTableModal", userTable.row($(this)).data() );
+				 isSelected = true;
 			 }
 		});
+		if(!isSelected){
+			alert("수정할 사용자를 선택해주세요.");
+			return;
+		}
 	}
 	
 	$('div.modal').modal();

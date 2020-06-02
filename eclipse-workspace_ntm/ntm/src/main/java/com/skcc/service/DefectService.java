@@ -39,6 +39,10 @@ public class DefectService {
 	@Autowired 
 	private SqlSessionTemplate sqlSession;
 	
+
+	@Autowired
+	private PushService pushService;
+	
 	@Value("${file.path}") private String file_Path;
 
 	 
@@ -56,14 +60,22 @@ public class DefectService {
 		}
 		return response;
 	}
-
+	
+	
+	/*
+	 * insertDefect 결함 등록
+	 */
 	@Transactional 
 	public Map<String, Object> insertDefect( Map<String, Object> reqMap ) {	
 			
 		Map<String, Object> response = new HashMap<String, Object>();
+		int id =  sqlSession.selectOne("DefectDAO.selectDefectId"); 
 		
+		
+		reqMap.put("id", id);
 		int result = sqlSession.insert("DefectDAO.insertDefect", reqMap);
 		if(result == 1) { 
+			pushService.insertPushmsg ( id );
 			Message.SetSuccesMsg(response, "insert");
 		}
 		return response;

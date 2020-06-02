@@ -1,44 +1,38 @@
-var t;
 
+var t, t2;
 
 $(document).ready(function() { 
+	
 	
 	ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
 	ajaxTranCall("user/searchRoleList.do", {}, callbackS, callBackE);
 	
 	//신규 저장버튼 click event
 	$("#btnSave").click(function(e){
-		
-		if(modal.modalCheckInputData("teamTableModal")){
-			
-			var dataJson = modal.convertModalToJsonObj("teamTableModal" );
-			ajaxTranCall("user/saveNewTeam.do", dataJson, callbackS, callBackE);
-		}
-		
+
+		var dataJson = modal.convertModalToJsonObj("teamTableModal" );
+		ajaxTranCall("user/saveNewTeam.do", dataJson, callbackS, callBackE);
 	});
 	
 	$("#btnUpdate").click(function(e){
+		var id = "";
+		$('#teamTable tr').each(function(){
+			 if ( $(this).hasClass('selected') ){
+				 id = t.row($(this)).data().id;
+			 }
+		});
 		
-		if(modal.modalCheckInputData("teamTableModal")){
-			var id = "";
-			$('#teamTable tr').each(function(){
-				 if ( $(this).hasClass('selected') ){
-					 id = t.row($(this)).data().id;
-				 }
-			});
-			var dataJson = modal.convertModalToJsonObj("teamTableModal" );
-			dataJson["id"] = id;
-			ajaxTranCall("user/updateTeamInfo.do", dataJson, callbackS, callBackE);
-		}
-	});
-	
-	//전체역할 select box 값 체인지
-	$("#role_id_main").on('change', function(){
-		
-		ajaxTranCall("user/searchTeamList.do", {role_id : $(this).val()}, callbackS, callBackE);
+		var dataJson = modal.convertModalToJsonObj("teamTableModal" );
+		dataJson["id"] = id;
+		debugger;
+		ajaxTranCall("user/updateTeamInfo.do", dataJson, callbackS, callBackE);
 	});
 });
 
+
+/*
+ * btLogin_onClick
+ */
 
 
 
@@ -64,7 +58,6 @@ var callbackS = function(tran, data){
 			"language": {
 		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
-		    pageLength:15, //기본 데이터건수
 			lengthChange: false, 	// 표시 건수기능 숨기기
 			searching: true,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기
@@ -73,7 +66,7 @@ var callbackS = function(tran, data){
 			select: {
 	            style: 'single' //single, multi
 			},
-			"scrollY":        550,
+			"scrollY":        500,
 	        "scrollCollapse": false,
 	        
 //	        //컬럼속성
@@ -91,7 +84,6 @@ var callbackS = function(tran, data){
 	        	
 	            {
 	                text: '추가',
-	               
 	                action: function ( e, dt, node, config ) {
 	                	modalOpen("1", e, dt, node, config )
 	                }
@@ -104,23 +96,18 @@ var callbackS = function(tran, data){
 	            },
 	            {
 	                text: '삭제',
-	                className: 'red',
 	                action: function ( e, dt, node, config ) {
-	                	var isSelected = false;
 	                    $('#teamTable tr').each(function(){
 	           			 if ( $(this).hasClass('selected') ){
-	           				 isSelected = true;
+	           				 
 	           				 if(confirm(t.row($(this)).data().name + " 을(를) 삭제하시겠습니까? \n 등록된 사용자도 같이 삭제됩니다.")){
 	           					var dataJson = {
-           							id : t.row($(this)).data().id
+           							id          : t.row($(this)).data().id
            						};
            						ajaxTranCall("user/deleteTeamInfo.do", dataJson, callbackS, callBackE);
 	           				 }
 	           			 }
-	           			 
-	           			
 	                  });
-                    if(!isSelected) alert("삭제할 대상을 선택해주세요.");
 	                }
 	            },
 	            {
@@ -140,8 +127,6 @@ var callbackS = function(tran, data){
 		var list = data["list"];
 		for(var i=0; i<list.length; i++){
 			appendSelectBox("role_id", list[i].id, list[i].name);
-			appendSelectBox("role_id_main", list[i].id, list[i].name);
-			
 		}
 		
 		
@@ -176,18 +161,19 @@ var modalOpen = function(type, e, dt, node, config ) {
 		$('#modalTitle').text("팀 수정");
 		$('#btnSave').hide();
 		$('#btnUpdate').show();
-		var isSelected = false;
+		
+//		$('#userTable tr').each(function(){
+//			 if ( $(this).hasClass('selected') ){
+//				 modal.convertJsonObjToModal("userTableModal", userTable.row($(this)).data() )
+//			 }
+//		});
 		$('#teamTable tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
-				 isSelected = true;
+				 
+				 
 				 modal.convertJsonObjToModal("teamTableModal", t.row($(this)).data() )
 			 }
        });
-		
-		if(!isSelected){
-			alert("수정할 대상을 선택해주세요.");
-			return;
-		}
 	}
 	
 	$('div.modal').modal();

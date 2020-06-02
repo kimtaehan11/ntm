@@ -42,6 +42,8 @@ public class UserService {
 		
 		List<Object> list = sqlSession.selectList("UserDAO.selectUser", reqMap);
 		Map<String, Object> response = new HashMap<String, Object>();
+		
+		log.debug("list.size() ; " + list.size());
 		if(list.size() ==1) { 
 			response =  ( Map<String, Object>) list.get(0);
 			response.put("resultCode", "0000");
@@ -56,6 +58,9 @@ public class UserService {
 	}
 	
 	
+	/*
+	 * Team List 조회 로직
+	 */
 	public Map<String, Object> searchTeamList( Map<String, Object> reqMap ) {	
 		
 		List<Object> list = sqlSession.selectList("UserDAO.selectTeamList", reqMap);
@@ -136,13 +141,8 @@ public class UserService {
 		
 		Map<String, Object> response = new HashMap<String, Object>();
 
-		
-		
-
 		int result = sqlSession.update("UserDAO.deleteUserByTeam", reqMap);
-		
-		
-		if(result > 0) {
+		if(result > -1) {
 			 result = sqlSession.update("UserDAO.deleteTeam", reqMap);
 		}
 		else {

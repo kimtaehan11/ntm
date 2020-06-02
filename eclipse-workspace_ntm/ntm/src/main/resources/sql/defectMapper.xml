@@ -9,26 +9,42 @@
     
     <!-- 사용자 조회 -->
 	<select id="selectDefectList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	    SELECT row_number() OVER () as rnum,   defect.* ,
-	    ntm_schemas.GET_CODENAME('B001', defect.defect_code) defect_name,
-		ntm_schemas.GET_CODENAME('A001', defect.test_type_id) test_type_name,
-		 to_char(defect.reg_date, 'YYYY-MM-DD') reg_date_str
-	    FROM ntm_schemas.itm_defect defect 
-	    
-		
+	    SELECT row_number() OVER () as rnum,   
+	    		defect.* ,
+	    		sftm.GET_CODENAME('B001', defect.defect_code) defect_name,
+				sftm.GET_CODENAME('A001', defect.test_type_id) test_type_name,
+		 		to_char(defect.reg_date, 'YYYY-MM-DD') reg_date_str
+	    		FROM sftm.itm_defect defect 
 	    WHERE 1=1
 	    <if test="scenario_code != null and scenario_code != ''"> 
        		 AND defect.scenario_code = #{scenario_code} 
         </if>    
         <if test="case_code != null and case_code != ''"> 
        		 AND defect.case_code = #{case_code} 
+        </if>  
+    
+	</select>
+	<!-- 사용자 조회 -->
+	<select id="selectDefectById" parameterType="int" resultMap="PackageHeaderMap">
+	    SELECT row_number() OVER () as rnum,   
+	    		defect.* ,
+	    		sftm.GET_CODENAME('B001', defect.defect_code) defect_name,
+				sftm.GET_CODENAME('A001', defect.test_type_id) test_type_name,
+		 		to_char(defect.reg_date, 'YYYY-MM-DD') reg_date_str
+	    		FROM sftm.itm_defect defect 
+	    WHERE 1=1
+	   
+        <if test="id != null and id != ''"> 
+       		 AND defect.id = #{id}::bigint
         </if>    
 	</select>
-	
+	<!-- 사용자 조회 -->
+	<select id="selectDefectId" resultType="java.lang.Integer">
+	    select nextval('sftm.itm_defect_id_seq'::regclass);
+	</select>
 	
 	<insert id="insertDefect" parameterType="map" useGeneratedKeys="true">
-  		
-       INSERT INTO ntm_schemas.itm_defect
+       INSERT INTO sftm.itm_defect
 		(	
 			id , 
 			project_id, 
@@ -44,14 +60,16 @@
 			imgkey
 		)
 		VALUES (
-			nextval('ntm_schemas.itm_defect_id_seq'::REGCLASS),
+			
+			#{ id }::bigint,
+			--nextval('sftm.itm_defect_id_seq'::REGCLASS),
 			0,
 			#{ scenario_code },
 			#{ test_type_id },
 			#{ case_code },
 			#{ title },
 			#{ description }, 
-			(SELECT dev_id FROM ntm_schemas.itm_test_case WHERE case_code = #{ case_code } ),
+			(SELECT dev_id FROM sftm.itm_test_case WHERE case_code = #{ case_code } ),
 			#{ cookieUserId },
 			now()  , 
 			 
@@ -60,7 +78,7 @@
 		)
   	</insert>
   	<update id="updateDefect" parameterType="map" useGeneratedKeys="true">
-    	UPDATE  ntm_schemas.itm_defect
+    	UPDATE  sftm.itm_defect
 		SET title = #{title},
 			description = #{description},
 			defect_code = #{defect_code},
@@ -71,7 +89,7 @@
     </update> 
   	
 	<update id="updateDefectByDev" parameterType="map" useGeneratedKeys="true">
-    	UPDATE  ntm_schemas.itm_defect
+    	UPDATE  sftm.itm_defect
 		SET  
 			defect_result = #{defect_result},
 			defect_code = #{defect_code},

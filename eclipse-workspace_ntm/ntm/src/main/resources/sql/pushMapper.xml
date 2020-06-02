@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PushDAO">
+ 	<resultMap id="PackageHeaderMap"               type="java.util.HashMap">
+       <result property="java.lang.String"         column="row_id"/>
+       <result property="object"                   column="PackageBeanResult"/>
+    </resultMap>
+    
+  <insert id="insertPushDev" parameterType="map" useGeneratedKeys="true">
+		INSERT INTO sftm.itm_push
+		(	
+			id , 
+			title, 
+			msg, 
+			user_id, 
+			recv_yn, 
+			reg_user, 
+			reg_date 
+		)
+		VALUES (
+			nextval('sftm.itm_push_id_seq'::REGCLASS),
+			#{ defect_name },
+			#{ title} , 
+			#{ defect_user, }, 
+			'N', 
+			#{ reg_user },
+			now()
+		)
+  	</insert>
+  	
+  	<insert id="insertPushTest" parameterType="map" useGeneratedKeys="true">
+		INSERT INTO sftm.itm_push
+		(	
+			id , 
+			title, 
+			msg, 
+			user_id, 
+			recv_yn, 
+			reg_user, 
+			reg_date 
+		)
+		VALUES (
+			nextval('sftm.itm_push_id_seq'::REGCLASS),
+			#{ defect_name },
+			#{ title} , 
+			#{ reg_user, }, 
+			'N', 
+			#{ reg_user },
+			now()
+		)
+  	</insert>
+	
+	<select id="selectPushListById" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	    select * 
+	    from sftm.itm_push
+	    where user_id = #{cookieUserId}
+	    and recv_yn != 'Y'
+	</select>
+	
+	
+	<!-- 팀 수정 -->
+    <update id="updatePushListById" parameterType="java.util.HashMap">
+    UPDATE
+        sftm.itm_push
+    SET
+        recv_yn = 'Y',
+        recv_date =NOW() 
+    WHERE
+       user_id = #{cookieUserId}
+    </update> 
+    
+    
+    <insert id="insertAuto" parameterType="map" useGeneratedKeys="true">
+		INSERT INTO sftm.itm_auto
+		(	
+			id , 
+			defect_id,  
+			html,  
+			reg_user, 
+			reg_date 
+		)
+		VALUES (
+			nextval('sftm.itm_auto_id_seq'::REGCLASS),
+			#{ defect_id }, 
+			#{ html, }, 
+			#{ reg_user },
+			now()
+		)
+  	</insert>
+  	
+  	<select id="selectAutoList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	    select id, defect_id, reg_user, to_char(reg_date, 'YYYY-MM-DD') reg_date
+	    from sftm.itm_auto
+	    where defect_id = #{defect_id}::bigint
+	</select>
+	
+	<select id="selectAutoDetail" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	    select   *
+	    from sftm.itm_auto
+	    where id = #{id}::bigint
+	</select>
+  	
+    
+	
+</mapper>

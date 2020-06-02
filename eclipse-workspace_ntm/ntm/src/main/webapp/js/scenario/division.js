@@ -16,6 +16,7 @@ $(document).ready(function() {
 	//modalType
 	//신규 저장버튼 click event
 	$("#btnSave").click(function(e){
+		if(!modal.modalCheckInputData("teamTableModal")) return;
 		var dataJson = modal.convertModalToJsonObj("teamTableModal" );
 		dataJson["depth"] = modalType; 
 		ajaxTranCall("scenario/insertDivision.do", dataJson, callbackS, callBackE);
@@ -239,7 +240,8 @@ var searchDivListSetTable = function ( detpth, list){
 		select: {
             style: 'single' //single, multi
 		},
-		"scrollY":        500,
+		 pageLength:15, //기본 데이터건수
+		"scrollY":        550,
         "scrollCollapse": false,
        
         dom : 'Bfrtip',
@@ -258,9 +260,9 @@ var searchDivListSetTable = function ( detpth, list){
                 }
             },
             {
-                text: '삭제',
+                text: '삭제', className: 'red',
                 action: function ( e, dt, node, config ) {
-           			
+                	var isSelected = false;
                 	
                 	if(!confirm("삭제시에 하위뎁스에 데이터도 전부삭제 됩니다.")){
                 		return;
@@ -269,6 +271,7 @@ var searchDivListSetTable = function ( detpth, list){
                 		$('#tableC tr').each(function(){
 							if($(this).hasClass('selected') ){
 								var dataJson = tableC.row($(this)).data();
+								isSelected = true;
 								ajaxTranCall("scenario/deleteDivision.do", {"depth":"C", "id":dataJson.id}, callbackS, callBackE);
 							}
 						});
@@ -277,6 +280,7 @@ var searchDivListSetTable = function ( detpth, list){
                 		$('#tableB tr').each(function(){
 							if($(this).hasClass('selected') ){
 								var dataJson = tableB.row($(this)).data();
+								isSelected = true;
 								ajaxTranCall("scenario/deleteDivision.do", {"depth":"B", "id":dataJson.id}, callbackS, callBackE);
 							}
 						});
@@ -285,9 +289,15 @@ var searchDivListSetTable = function ( detpth, list){
                 		$('#tableA tr').each(function(){
 							if($(this).hasClass('selected') ){
 								var dataJson = tableA.row($(this)).data();
+								isSelected = true;
 								ajaxTranCall("scenario/deleteDivision.do", {"depth":"B", "id":dataJson.id}, callbackS, callBackE);
 							}
 						});
+                	}
+                	
+                	if(!isSelected){
+                		alert("삭제할 데이터를 선택해주세요.");
+                		
                 	}
                 }
             },
@@ -295,14 +305,31 @@ var searchDivListSetTable = function ( detpth, list){
                 text: '전체',
                 action: function ( e, dt, node, config ) {
                 	
-                	if(detpth == "B" || detpth == "A"){
-                		serchDivList("A");serchDivList("B");serchDivList("C");
+                	if(detpth == "A"){
+                		serchDivList("A");
+                		serchDivList("B");
+                		serchDivList("C");
+                	}
+                	if(detpth == "B"  ){
+                		serchDivList("B");
+                		serchDivList("C");
                 		$('#tableThC').text("전체");
                 		$('#tableThB').text("전체");
+                		
+                		$('#tableA tr').each(function(){
+            				if($(this).hasClass('selected') ){
+            					$(this).removeClass('selected');
+            				}
+            			});
                 	}
                 	if(detpth == "C"){
                 		serchDivList("C");
                 		$('#tableThC').text("전체");
+                		$('#tableB tr').each(function(){
+            				if($(this).hasClass('selected') ){
+            					$(this).removeClass('selected');
+            				}
+            			});
                 	}
                 	
                 }
@@ -319,6 +346,7 @@ var callBackE = function(tran, data){
 
 var modalOpen = function( crType, divType, e, dt, node, config ) {
 	
+	var isSelected = false;
 	modalType = divType;
 	$('#name').val("");
 	if(divType == "A"){
@@ -330,10 +358,11 @@ var modalOpen = function( crType, divType, e, dt, node, config ) {
 			if($(this).hasClass('selected') ){
 				var dataJson = tableA.row($(this)).data();
 				$('#name').val(dataJson.name);
-				
+				isSelected = true;
 			}
 		});
-		
+		$("#selectA").removeClass("required");
+		$("#selectB").removeClass("required");
 	}
 	else if(divType == "B"){
 		
@@ -346,9 +375,12 @@ var modalOpen = function( crType, divType, e, dt, node, config ) {
 			if($(this).hasClass('selected') ){
 				var dataJson = tableB.row($(this)).data();
 				$('#name').val(dataJson.name);
+				isSelected = true;
 			}
 		});
-		
+
+		$("#selectA").addClass("required");
+		$("#selectB").removeClass("required");
 		
 	}
 	else{
@@ -362,9 +394,14 @@ var modalOpen = function( crType, divType, e, dt, node, config ) {
 			if($(this).hasClass('selected') ){
 				var dataJson = tableC.row($(this)).data();
 				$('#name').val(dataJson.name);
+				isSelected = true;
 			}
 		});
+		$("#selectA").addClass("required");
+		$("#selectB").addClass("required");
 	}
+	
+	
 
 
 	if(crType == "1"){
@@ -373,6 +410,11 @@ var modalOpen = function( crType, divType, e, dt, node, config ) {
 		$('#btnUpdate').hide();
 	}
 	else{
+		
+		if(!isSelected){
+			alert("수정할 데이터를 선택해주세요.");
+			return;
+		}
 		$("#modalTitle").text($("#modalTitle").text() + " 수정");
 		$('#btnSave').hide();
 		$('#btnUpdate').show();

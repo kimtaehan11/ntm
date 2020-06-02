@@ -403,4 +403,24 @@ public class ScenarioService {
 		return response;
 	}
 	
+	/**
+	 * 개발자 아이디 결함을 전부 조회. 결함(개발자) 화면에서 사용함
+	 *
+	 * @param Map (request)
+	 * @return Map (response)
+	 * @exception 예외사항한 라인에 하나씩
+	 */
+	public Map<String, Object> selectDivDepth( Map<String, Object> reqMap ) {	
+		
+		Map<String, Object> response = new HashMap<String, Object>();
+		List<Object> list = sqlSession.selectList("ScenarioDAO.selectDivDepth", reqMap);
+		
+		if(list.size() == 1) {
+			response = (Map<String, Object>) list.get(0);
+			Message.SetSuccesMsg(response, "select");
+		}
+		
+		return response;
+	}
+	
 }

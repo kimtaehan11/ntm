@@ -8,13 +8,11 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.css"/>
 <!-- <link rel="stylesheet" type="text/css" href="https://editor.datatables.net/extensions/Editor/css/editor.dataTables.min.css"/> -->
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap.min.css"/>   
- <link href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet">
+<link href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" type="text/css" rel="stylesheet">
 
 
-
-<!--  -->
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>테스트 프로그램</title>
+<title>SFTM 2020</title>
 </head>
 <body>
 <%
@@ -37,7 +35,11 @@
    </div>
    
    
-   <iframe id="fileDownObj" style="display:none"></iframe>
+   <iframe id="fileDownObj" style="display:none; height:100%; "></iframe>
+   
+<!--    <footer class="container-fluid navbar-fixed-bottom"> -->
+<!-- 		<p>Copyright ⓒ 1999 - 2020 dcinside. All rights reserved.</p> -->
+<!-- 	</footer> -->
 </div>
 
  
@@ -55,10 +57,15 @@
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js" 
+	integrity="sha384-FzT3vTVGXqf7wRfy8k4BiyzvbNfeYjK+frTVqZeNDFl8woCbF0CYG6g2fMEFFo/i" 
+	crossorigin="anonymous"></script>
 
+<script src="js/util/io.js"></script>
+<script src="js/util/common.js"></script>
+<script src="js/util/window.js"></script>
+<script src="js/util/msg.js"></script>
 <script src="js/<%=pagePath%>.js"></script>
-<script src="js/common/io.js"></script>
-<script src="js/common/common.js"></script>
+
 </body>
 </html>

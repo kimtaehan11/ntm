@@ -7,8 +7,9 @@ var isFirstLoad;
 
 var caseTable, defectTable;
 var imgkey = -1;
+var crud = "I";
+
 $(document).ready(function() { 
-	
 	//팀정보 조회합니다.
 	ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
 	ajaxTranCall("code/selectCodeList.do", {"code_group":"C001"}, callbackS, callBackE);
@@ -23,6 +24,23 @@ $(document).ready(function() {
 	$("#selectUser").on('change', function(){
 		selectTestCaseList();
 	});
+	
+	//Test 자동화 버튼 선택
+	$("#btnRecording").on('click', function(){ 
+		
+		var datajson;
+		$('#defectTable tr').each(function(){
+			 if ( $(this).hasClass('selected') ){
+				   datajson = defectTable.row($(this)).data();
+//				ajaxTranCall("defect/selectDefectDetail.do", datajson, callbackS, callBackE);
+				
+			 }
+		});
+
+		skInterface.autoTestRecording(getCookie("user_id"), datajson["id"] + "", datajson["title"] );
+		
+	});
+	
 	
 	//서브시스템 Table click event
 	$('#caseTable').on('click', function(){
@@ -63,7 +81,7 @@ $(document).ready(function() {
 		var fileList = $("#files").prop('files');
 		
 		if(fileList.length < 1){
-			insertDefectDO("");
+			insertDefectDO("-1");
 			return;
 		}
 		for(var i=0; i<fileList.length; i++){
@@ -79,7 +97,8 @@ $(document).ready(function() {
 		
 		data.append("tbname", "itm_defect");
 		data.append("user_id", getCookie("user_id"));
-		data.append("crud", "I");
+		crud = "I";
+		data.append("crud", crud);
 		
 		ajaxTranCallWithFile ("common/uploadFile.file", data,  callbackS, callBackE);
 	});
@@ -102,7 +121,9 @@ $(document).ready(function() {
 		else{
 			data.append("fileLength", fileList.length+"");
 		}
-		data.append("crud", "U");
+		
+		crud = "U";
+		data.append("crud", crud);
 		data.append("imgkey", imgkey);
 		data.append("tbname", "itm_defect");
 		data.append("user_id", getCookie("user_id"));
@@ -175,6 +196,7 @@ var callbackS = function(tran, data){
 		if(code_group == "C001"){
 			for(var i=0; i<list.length; i++){
 				appendSelectBox2( $("#state"), list[i].code_id, list[i].code_name);
+				appendSelectBox2( $("#selectState"), list[i].code_id, list[i].code_name);
 			}
 		}
 		else if(code_group == "B001"){
@@ -192,8 +214,6 @@ var callbackS = function(tran, data){
 	case "common/uploadFile.file":
 		
 		imgkey = data.imgkey;
-		var crud = data.crud;
-		
 		if(crud == "I")
 			insertDefectDO(data.imgkey);
 		else
@@ -263,7 +283,7 @@ var callbackS = function(tran, data){
 				select: {
 		            style: 'single' //single, multi
 				},
-				"scrollY":        300,
+				"scrollY":       400,
 		        "scrollCollapse": false,
 		        dom : 'Bfrtip',
 		        buttons: [
@@ -289,7 +309,7 @@ var callbackS = function(tran, data){
 		//팀 정보 전체 조회
 		case "user/searchTeamList.do":
 			var list = data["list"];
-			htmlSelectBox2($("#selectTeam"), "", "전체");
+			htmlSelectBox2($("#selectTeam"), "", "팀 전체");
 			for(var i=0; i<list.length; i++){
 				appendSelectBox2( $("#selectTeam"), list[i].id, list[i].name);
 			}
@@ -302,7 +322,7 @@ var callbackS = function(tran, data){
 		//user 정보 조회함
 		case "user/selectUserList.do":
 			var list = data["list"];
-			htmlSelectBox2($("#selectUser"), "", "전체");
+			htmlSelectBox2($("#selectUser"), "", "테스터 전체");
 			for(var i=0; i<list.length; i++){
 				appendSelectBox2( $("#selectUser"), list[i].user_id, list[i].name);
 			}
@@ -321,10 +341,7 @@ var callbackS = function(tran, data){
 			break;
 			
 		case "scenario/selectTestCaseList.do":
-//			{"dev_name":"김태한","case_code":"A_CASE_0001","reg_user":"admin","modify_user":"admin",
-//			"case_name":"화면 일반 테스트1","tester_id":"307843","description":"화면 일반 테스트1","dev_id":"N00435",
-//			"scenario_code":"CLUZ0922U","reg_date":1589065603800,"project_id":0,
-//			"reg_name":"","state":"0","modify_date":1589065603800,"test_name":"홍석운"}
+			
 			var list = data["list"];
 			caseTable = $('#caseTable').DataTable ({
 				destroy: true,
@@ -340,7 +357,8 @@ var callbackS = function(tran, data){
 		        "language": {
 			        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 			    },
-			    
+
+			    pageLength:15, //기본 데이터건수
 				lengthChange: false, 	// 표시 건수기능 숨기기
 				searching: true,  		// 검색 기능 숨기기
 				ordering: false,  		// 정렬 기능 숨기기
@@ -349,7 +367,7 @@ var callbackS = function(tran, data){
 				select: {
 		            style: 'single' //single, multi
 				},
-				"scrollY":        500,
+				"scrollY":        550,
 		        "scrollCollapse": false
 				
 		    });

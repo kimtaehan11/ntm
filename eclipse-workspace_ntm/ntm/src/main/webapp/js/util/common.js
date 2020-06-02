@@ -24,6 +24,34 @@ table.getSelectedRowData = function(obj){
 
 
 var modal = {};
+
+/*
+ * 필수값 체크 로직입니다.
+ * 테이블명 입력하시면 됩니다. 
+ * 필수값 class required 추가 하시고
+ */
+modal.modalCheckInputData = function(obj){
+	
+	var result = true;
+	$("#"+obj+" tbody tr td").each(function(){
+		var element =  $(this).children().first();
+		var type = element.prop('nodeName');
+		
+		var isRequired = element.hasClass("required");
+	    if(isRequired){
+			var value = element.val();
+			if(value == ""){
+				alert("필수 입력값을 입력해주세요.");
+				element.focus();
+				result = false;
+				return false;
+			}
+		}
+	});
+	
+	return result;
+}
+
 modal.modalClear = function(obj){
 	$('#' +obj +' input').each(function(){
 		$(this).val("");

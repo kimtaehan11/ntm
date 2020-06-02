@@ -18,8 +18,8 @@ $(document).ready(function() {
 	//업무구분 A selectbox 변경시
 	$("select[name=selectA]").on('change', function(){
 		$("select[name=selectA]").val($(this).val());
-		htmlSelectBox2($("select[name=selectB]"), "", "전체");
-		htmlSelectBox2($("select[name=selectC]"), "", "전체");
+		htmlSelectBox2($("select[name=selectB]"), "", "업무구분 전체");
+		htmlSelectBox2($("select[name=selectC]"), "", "대상업무 전체");
 		
 		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"B", "upcode": $(this).val()}, callbackS, callBackE);
 		selectScenario();
@@ -27,7 +27,7 @@ $(document).ready(function() {
 	
 	$("select[name=selectB]").on('change', function(){
 		$("select[name=selectB]").val($(this).val());
-		htmlSelectBox2($("select[name=selectC]"), "", "전체");
+		htmlSelectBox2($("select[name=selectC]"), "", "대상업무 전체");
 		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"C", "upcode": $(this).val()}, callbackS, callBackE);
 		selectScenario();
 	});
@@ -37,18 +37,36 @@ $(document).ready(function() {
 		selectScenario();
 	});
 	
+	$("select[name=modalSelectA]").on('change', function(){
+		$("select[name=modalSelectA]").val($(this).val());
+		htmlSelectBox2($("select[name=modalSelectB]"), "", "업무구분 전체");
+		htmlSelectBox2($("select[name=modalSelectC]"), "", "대상업무 전체");
+		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"B", "upcode": $(this).val()}, callbackModalS, callBackE);
+	});
+	$("select[name=modalSelectB]").on('change', function(){
+		$("select[name=modalSelectB]").val($(this).val());
+		htmlSelectBox2($("select[name=modalSelectC]"), "", "대상업무 전체");
+		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"C", "upcode": $(this).val()}, callbackModalS, callBackE);
+	});
+	
+	
 	//modalType
 	//신규 저장버튼 click event
 	$("#btnSave").click(function(e){
 		var dataJson = modal.convertModalToJsonObj("seTableModal" );
-		ajaxTranCall("scenario/insertScenario.do", dataJson, callbackS, callBackE);
+		if(modal.modalCheckInputData("seTableModal")){
+			ajaxTranCall("scenario/insertScenario.do", dataJson, callbackS, callBackE);
+		}
+		
 	});
 	
 	//modalType
 	//신규 저장버튼 click event
 	$("#btnUpdate").click(function(e){
 		var dataJson = modal.convertModalToJsonObj("seTableModal" );
-		ajaxTranCall("scenario/updateScenario.do", dataJson, callbackS, callBackE);
+		if(modal.modalCheckInputData("seTableModal")){
+			ajaxTranCall("scenario/updateScenario.do", dataJson, callbackS, callBackE);
+		}
 	});
 	
 	
@@ -75,11 +93,11 @@ $(document).ready(function() {
 //	$("button[name=btnUp]").on('click', function(){
 	$("#btnTester").on('click', function(){
 		isTester = true;
-		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
+//		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
 	});
 	$("#btnDeveloper").on('click', function(){
 		isTester = false;
-		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
+//		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
 	});
 	$('#tcTableModalUser').on('click', function(){
 
@@ -103,11 +121,19 @@ $(document).ready(function() {
 	
 	$('#btnSaveTc').on('click', function(){
 		var dataJson = modal.convertModalToJsonObj("tcTableModal" );
-		ajaxTranCall("scenario/insertTestcase.do", dataJson, callbackS, callBackE);
+		
+		if(modal.modalCheckInputData("tcTableModal")){
+			ajaxTranCall("scenario/insertTestcase.do", dataJson, callbackS, callBackE);
+		}
+		
 	});
 	$('#btnUpdateTc').on('click', function(){
 		var dataJson = modal.convertModalToJsonObj("tcTableModal" );
-		ajaxTranCall("scenario/updateTestcase.do", dataJson, callbackS, callBackE);
+		
+		if(modal.modalCheckInputData("tcTableModal")){
+			ajaxTranCall("scenario/updateTestcase.do", dataJson, callbackS, callBackE);
+		}
+		
 	});
 	
 });
@@ -123,8 +149,63 @@ var selectScenario = function (){
 	}
 	ajaxTranCall("scenario/selectScenario.do", jsonObj, callbackS, callBackE);
 }
+var detpth1 = "";
+var detpth2 = "";
+var detpth3 = "";
+var callbackModalS = function(tran, data){
+	
+	var list = data["list"];
+	switch(tran){
+	//시나리오 상단 업무구분 정보 조회
+	case "scenario/searchDivListWithCombo.do":
+		
+		if(data["resultCode"] == "0000" ){
+			var detpth = data["depth"];
+			if(detpth == "B"){
+				htmlSelectBox("modalSelectB", "", "업무구분 전체");
+				for(var i=0; i<list.length; i++){
+					appendSelectBox2($("select[name=modalSelectB]"), list[i].id, list[i].name);
+				}
+				
+				if(detpth2 != ""){
+					$('#modalSelectB').val(detpth2);
+					detpth2 = "";
+				}
+			}
+			else if(detpth == "C"){
+				htmlSelectBox("modalSelectC", "", "대상업무 전체");
+				for(var i=0; i<list.length; i++){
+					appendSelectBox2($("select[name=modalSelectC]"), list[i].id, list[i].name);
+				}
+				
+				if(detpth3 != ""){
+					$('#modalSelectC').val(detpth3);
+					detpth3 = "";
+				}
+			}
+		}
+		
+		break;
+	
+	case "scenario/selectDivDepth.do":
+		
+		if(data["resultCode"] == "0000" ){
+			
+			 detpth1 = data["detpth1"];
+			 detpth2 = data["detpth2"];
+			 detpth3 = data["detpth3"];
+			 
+			$('#modalSelectA').val(detpth1);
+			
 
-
+			ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"B", "upcode": detpth1 }, callbackModalS, callBackE);
+			ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"C", "upcode": detpth2 }, callbackModalS, callBackE);
+			$("#layerModalScenario").modal();
+		}
+		
+		break;
+	}
+}
 
 var callbackS = function(tran, data){
 	
@@ -203,8 +284,6 @@ var callbackS = function(tran, data){
 		        "columns" : [
 		            { "mDataProp" : 'case_code' },
 		            { "mDataProp" : 'case_name' },
-//		            { "mDataProp" : 'description' },
-
 		            { "mDataProp" : 'reg_name' },
 		            { "mDataProp" : 'test_name' },
 		            { "mDataProp" : 'dev_name' },
@@ -213,7 +292,8 @@ var callbackS = function(tran, data){
 		        "language": {
 			        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 			    },
-			    
+
+			    pageLength:15, //기본 데이터건수
 				lengthChange: true, 	// 표시 건수기능 숨기기
 				searching: true,  		// 검색 기능 숨기기
 				ordering: false,  		// 정렬 기능 숨기기
@@ -222,7 +302,8 @@ var callbackS = function(tran, data){
 				select: {
 		            style: 'single' //single, multi
 				},
-				"scrollY":        500,
+				pageLength:15, //기본 데이터건수
+				"scrollY":        550,
 		        "scrollCollapse": false,
 		       
 		        dom : 'Bfrtip',
@@ -242,18 +323,39 @@ var callbackS = function(tran, data){
 		                }
 		            },
 		            {
-		                text: '삭제',
+		                text: '삭제',className: 'red',
 		                action: function ( e, dt, node, config ) { 
 		                	
-		                	if(!confirm("선택된 테스트 케이스를 삭제하시겠습니까?")) return;
+		                	var isSelected = false;
+		                	
+		                	
 		                	$('#tableTestcase tr').each(function(){
 		        				if($(this).hasClass('selected') ){
-		        					var dataJson = tableTestcase.row($(this)).data(); 
-		        					ajaxTranCall("scenario/deleteTestcase.do", dataJson, callbackS, callBackE);
+		        					isSelected = true;
+		        					if(confirm("선택된 테스트 케이스를 삭제하시겠습니까?")){
+		        						var dataJson = tableTestcase.row($(this)).data(); 
+			        					ajaxTranCall("scenario/deleteTestcase.do", dataJson, callbackS, callBackE);
+		        					}
 		        				}
 		        			});
+		                	
+		                	if(!isSelected){
+		                		alert(MSG.SELETED_DELETE_OBJ);
+		                	}
 		                }
-		            } 
+		            } ,
+		            {
+		                text: '다운로드',
+		                action: function ( e, dt, node, config ) {
+//		                	modalOpen("4", detpth, e, dt, node, config );
+		                }
+		            },
+		            {
+		                text: '업로드',
+		                action: function ( e, dt, node, config ) {
+//		                	modalOpen("4", detpth, e, dt, node, config );
+		                }
+		            },
 		        ]
 				
 		    });
@@ -264,22 +366,22 @@ var callbackS = function(tran, data){
 	case "scenario/searchDivListWithCombo.do":
 		if(data["resultCode"] == "0000" ){
 			var detpth = data["depth"];
-			
-			
 			if(detpth == "A"){
-				htmlSelectBox("selectA", "", "전체");
+				htmlSelectBox("selectA", "", "서브시스템 전체");
+				htmlSelectBox("modalSelectA", "", "서브시스템 전체");
 				for(var i=0; i<list.length; i++){
 					appendSelectBox2($("select[name=selectA]"), list[i].id, list[i].name);
+					appendSelectBox2($("select[name=modalSelectA]"), list[i].id, list[i].name);
 				}
 			}
 			else if(detpth == "B"){
-				htmlSelectBox("selectB", "", "전체");
+				htmlSelectBox("selectB", "", "업무구분 전체");
 				for(var i=0; i<list.length; i++){
 					appendSelectBox2($("select[name=selectB]"), list[i].id, list[i].name);
 				}
 			}
 			else if(detpth == "C"){
-				htmlSelectBox("selectC", "", "전체");
+				htmlSelectBox("selectC", "", "대상업무 전체");
 				for(var i=0; i<list.length; i++){
 					appendSelectBox2($("select[name=selectC]"), list[i].id, list[i].name);
 				}
@@ -289,12 +391,14 @@ var callbackS = function(tran, data){
 	break;
 	case "scenario/selectScenario.do":
 		
-		
 		tableScenario = $('#tableScenario').DataTable ({
 			destroy: true,
 	        "aaData" : list,
 	        "columns" : [
-	            { "mDataProp" : 'scenario_name' } 
+	            { "mDataProp" : 'scenario_code' },
+	            { "mDataProp" : 'scenario_name' } ,
+	            { "mDataProp" : 'is_batch' } 
+	            
 	        ],
 	        "language": {
 		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
@@ -308,7 +412,8 @@ var callbackS = function(tran, data){
 			select: {
 	            style: 'single' //single, multi
 			},
-			"scrollY":        500,
+			pageLength:15, //기본 데이터건수
+			"scrollY":        550	,
 	        "scrollCollapse": false,
 	       
 	        dom : 'Bfrtip',
@@ -328,18 +433,28 @@ var callbackS = function(tran, data){
 	            },
 	            {
 	                text: '삭제',
+	                className: 'red',
 	                action: function ( e, dt, node, config ) {
 //	                	if(!confirm("선택된 테스트 케이스를 삭제하시겠습니까?")) return;
+	                	
+	                	var isSelected = false;
 	                	$('#tableTestcase tr').each(function(){
 	        				if($(this).hasClass('selected') ){
 	        					var dataJson = tableTestcase.row($(this)).data(); 
 	        					ajaxTranCall("scenario/deleteTestcase.do", dataJson, callbackS, callBackE);
+	        					isSelected = true;
 	        				}
 	        			});
 	                	
+	                	
+	                	if(!isSelected){
+	                		alert(MSG.SELETED_DELETE_OBJ);
+	                		return;
+	                	}
 	                	if(!confirm("시나리오 삭제시에 하위 테스트 케이스도 삭제됩니다.")){
 	                		return;
 	                	}
+	                	
 
 	                	$('#tableScenario tr').each(function(){
 	        				if($(this).hasClass('selected') ){
@@ -374,21 +489,50 @@ var modalOpen = function( crType , e, dt, node, config ) {
 		$('#scenario_name').val("");
 		$('#description').val("");
 		
+		
+		$('#modalSelectA').val("");
+		$('#modalSelectB').val("");
+		$('#modalSelectC').val("");
+		
+		
+		
 		$("#layerModalScenario").modal();
 	}
 	//2. 시나리오 수정
 	else if(crType == "2"){
-		
+		var isSelected = false;
+		var div_id = ""
 		$("#modalTitle").text("시나리오 수정");
 		$('#btnSave').hide();
 		$('#btnUpdate').show();
 		$('#tableScenario tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
-				 
-				 modal.convertJsonObjToModal("seTableModal", tableScenario.row($(this)).data() )
+				 isSelected = true;
+
+				 var dataJson = tableScenario.row($(this)).data();
+				 div_id = dataJson.div_id;
+				 modal.convertJsonObjToModal("seTableModal", dataJson );
 			 }
 		});
-		$("#layerModalScenario").modal();
+		
+		if(isSelected){
+			
+			if(div_id == ""){
+				$('#modalSelectA').val("");
+				$('#modalSelectB').val("");
+				$('#modalSelectC').val("");
+				
+				$("#layerModalScenario").modal();
+			}
+			else{
+				
+				ajaxTranCall("scenario/selectDivDepth.do", {id:div_id}, callbackModalS, callBackE);
+			}
+			
+		}
+		else{
+			alert("수정할 대상을 선택해주세요.");
+		}
 	}
 	//3. 테스트케이스 추가
 	else if(crType == "3"){
@@ -412,7 +556,7 @@ var modalOpen = function( crType , e, dt, node, config ) {
 	//4. 테스트케이스 수정
 	else if(crType == "4"){
     	
-    	
+		var isSelected = false;
     	$('#tableTestcase tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
 //				 modal.convertJsonObjToModal("tcTableModal",  )
@@ -422,7 +566,7 @@ var modalOpen = function( crType , e, dt, node, config ) {
 				 //"case_name":"화면 일반 테스트2","tester_id":"N00001","description":"화면 일반 테스트2 설명","dev_id":"",
 				 //"scenario_code":"CLUZ0922U","reg_date":1589065643270,"project_id":0,
 				 //"reg_name":"","state":"0","modify_date":1589065643270,"test_name":"홍길동"}
-				 
+				 isSelected = true;
 				 $("#tester").val(dataJson["tester_id"]);
 				 $("#tester_nm").val(dataJson["test_name"]);
 				 $("#developer").val(dataJson["dev_id"]);
@@ -434,12 +578,17 @@ var modalOpen = function( crType , e, dt, node, config ) {
 				 
 			 }
 		});
+    	if(isSelected){
+    		$("#modalTitleTc").text("테스트케이스 수정");
+        	$("#layerModalTestCase").modal();
+        	
+        	$('#btnSaveTc').hide();
+    		$('#btnUpdateTc').show();
+		}
+    	else{
+    		alert(MSG.SELETED_UPDATE_OBJ);
+    	}
     	
-    	$("#modalTitleTc").text("테스트케이스 수정");
-    	$("#layerModalTestCase").modal();
-    	
-    	$('#btnSaveTc').hide();
-		$('#btnUpdateTc').show();
 				
 	}
 	

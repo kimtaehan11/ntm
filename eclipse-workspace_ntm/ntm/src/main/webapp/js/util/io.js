@@ -6,6 +6,8 @@
 
 
 //
+
+
 function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
 	
 	jsonBody["cookieUserId"] = getCookie("user_id");
@@ -18,11 +20,15 @@ function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
 		data : JSON.stringify(jsonBody),
 		statusCode: {
 			999:function(data) {
+				setCookie("user_id", "");
 				alert("세션이 만료되었습니다.\n로그인 화면으로 이동합니다.");
 				location.href = "/ntm";
 			}
 		},
 		success : function(data){
+			
+			
+//			alert(JSON.stringify(data)  );
 			
 			if(data["resultCode"] == "0000"){
 				succeesCallback(tran, data);
@@ -42,8 +48,7 @@ function ajaxTranCall(tran, jsonBody, succeesCallback, errorCallback){
  * 파일도 같이 보낼때..
  */
 var ajaxTranCallWithFile = function(tran, data,  succeesCallback, errorCallback){
-	
-	
+
 	
 	$.ajax({
         type: "POST",
@@ -52,17 +57,15 @@ var ajaxTranCallWithFile = function(tran, data,  succeesCallback, errorCallback)
         data: data,
         processData: false,
         contentType: false,
-        cache: false,
+//        cache: false,
         timeout: 600000,
-        success: function (data) {
+        success: function (resData) {
         	
-        	if(data["resultCode"] == "0000"){
-        		succeesCallback(tran, data);
-			}
-			else{
-				
-			}
-        	
+    		var tempJson = {
+    			"imgkey":	resData,
+    			"crud" : data["crud"]
+    		}
+    		succeesCallback(tran, tempJson);
         },
         error: function (e) {
         	alert("시스템 오류");

@@ -34,11 +34,21 @@ $(document).ready(function() {
 		if(type=="1"){
 			$("#teamUserModalTable").show();
 			$("#autoTestModalTable").hide();
+			$("#teamUserModalTable_filter").show();
+			$("#autoTestModalTable_filter").hide();
+			 
+			$("#selectTeam2").show();
 			ajaxTranCall("user/selectUserList.do", {team_id:$("#selectTeam2").val()}, callbackPupupS, callBackE);
 		}
 		else{
 			$("#teamUserModalTable").hide();
 			$("#autoTestModalTable").show();
+			$("#teamUserModalTable_filter").hide();
+			$("#autoTestModalTable_filter").show();
+			$("#selectTeam2").hide();
+			
+			ajaxTranCall("auto/selectAutoList.do", {"defect_id":$("#id").val()}, callbackPupupS, callBackE);
+			
 		}
 	});
 	$("#selectTeam2").on('change', function(){
@@ -65,7 +75,6 @@ $(document).ready(function() {
 	});
 	
 	$("#btnSave").on('click', function(){
-		
 		var dataJson = modal.convertModalToJsonObj("devDefectModalTable" );
 		ajaxTranCall("defect/updateDefectByDev.do", dataJson, callbackS, callBackE);
 	});
@@ -82,6 +91,19 @@ $(document).ready(function() {
 						$("#defect_user_name").val(dataJson["name"] );
 						
 					}
+				}
+			});
+		}, 100);
+	});
+	
+	
+	//modal user table click 
+	$('#autoTestModalTable').on('click', function(){
+		setTimeout(function() {
+			$('#autoTestModalTable tr').each(function(){
+				if($(this).hasClass('selected') ){
+					var dataJson = autoTestModalTable.row($(this)).data(); 
+					ajaxTranCall("auto/selectAutoDetail.do", {"id": dataJson["id"]}, callbackPupupS, callBackE);
 				}
 			});
 		}, 100);
@@ -110,6 +132,40 @@ var selectUserList = function(team_id){
  */
 var callbackPupupS = function(tran, data){
 	switch(tran){
+	
+	case "auto/selectAutoDetail.do":
+		var list = data["list"];
+		
+		skInterface.autoTestShow(list[0].title, list[0].html);
+		
+		break;
+	//테스트 자동화 목록 조회시 (defect_id로 조회 가능)
+	case "auto/selectAutoList.do":
+		
+		var list = data["list"];
+		autoTestModalTable = $('#autoTestModalTable').DataTable ({
+			destroy: true,
+	        "aaData" : list,
+	        "columns" : [
+	            { "mDataProp" : 'reg_user' },
+	            { "mDataProp" : 'reg_date' } 
+	        ],
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
+		    },
+		    
+			lengthChange: false, 	// 표시 건수기능 숨기기
+			searching: true,  		// 검색 기능 숨기기
+			ordering: false,  		// 정렬 기능 숨기기
+			info: false,			// 정보 표시 숨기기
+			paging: false, 			// 페이징 기능 숨기기
+			select: {
+	            style: 'single' //single, multi
+			}
+			
+	    });
+		break;
+		
 	case "user/selectUserList.do":
 		var list = data["list"];
 		
@@ -262,8 +318,7 @@ var callbackS = function(tran, data){
 		case "defect/selectDefectDetail.do":
 			
 			var list = data["list"];
-			
-			
+			$("#existingImgs").html("");
 			if(list.length > 0){
 				
 				for(var i=0 ; i<list.length; i++){
@@ -277,6 +332,8 @@ var callbackS = function(tran, data){
 				}
 			}
 			break;	
+			
+		
 		
 	}
 }

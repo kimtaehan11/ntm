@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,8 +106,13 @@ public class SkccController {
 			 * login 처리
 			 */
 			if ("login".equals(funcName)) {
+				
+				
 				if (response != null && "0000".equals(response.get("resultCode"))) {
 					Map<String, String> authMap = new HashMap<String, String>();
+					
+					
+					log.error("USER_ID "  + (String) response.get("user_id"));
 					authMap.put("userId", (String) response.get("user_id"));
 					authMap.put("userName", (String) response.get("name"));
 					req.getSession(false).setAttribute("user", authMap);
@@ -130,8 +136,8 @@ public class SkccController {
 
 	@RequestMapping("/*/*.file")
 	@ResponseBody
-	public HashMap<String, Object> fileRequest(MultipartHttpServletRequest mtfRequest) throws IOException {
-
+	//public HashMap<String, Object> fileRequest(MultipartHttpServletRequest mtfRequest) throws IOException {
+	public String fileRequest(MultipartHttpServletRequest mtfRequest) throws IOException {
 		return commonService.uploadMutipartFile(mtfRequest);
 	}
 	
@@ -156,11 +162,25 @@ public class SkccController {
 		
 		File file =new File(file_Path + "//" + saveFileName);
 		if (file.exists() && file.isFile()) {
-			response.setContentType("application/octet-stream; charset=utf-8");
+			response.setContentType("image/jpeg; charset=utf-8");
 			response.setContentLength((int) file.length());
-			
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + originfilename +"\" ;");
+//
+			String userAgent = request.getHeader("User-Agent");
+			boolean ie = userAgent.indexOf("MSIE") > -1;
+	        String fileName = null;
+	        if(ie){
+	             
+	            fileName = URLEncoder.encode(file.getName(), "utf-8");
+	                         
+	        } else {
+	             
+	            fileName = new String(file.getName().getBytes("utf-8"));
+	             
+	        }// end if;
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName +"\" ;");
 			response.setHeader("Content-Transfer-Encoding", "binary");
+//			response.setHeader("Content-Type", "image/jpg");
 			OutputStream out = response.getOutputStream();
 			FileInputStream fis = null;
 			fis = new FileInputStream(file);
@@ -177,8 +197,19 @@ public class SkccController {
 	@ResponseBody
     public HashMap<String, Object> fileRequest( @RequestParam("file1") MultipartFile  uploadFile) throws IOException {   
 		HashMap<String, Object> response = null;
-		
         return (HashMap<String, Object>) userService.saveUserExcel(uploadFile);
     }
 	
+	
+	@RequestMapping("/*.at")
+	@ResponseBody
+	public HashMap<String, Object> atRequest(HttpServletRequest req, @RequestBody Map<String, Object> reqMap) {
+		
+
+		log.info((String) reqMap.get("htmlFileStr"));
+		log.info((String) reqMap.get("sftm_id"));
+//		
+//		HashMap<String, Object> response = new HashMap<String, Object>();
+		return commonService.insertAutoRecording(reqMap);
+	}
 }

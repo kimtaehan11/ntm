@@ -41,6 +41,9 @@ public class CommonService {
 	 */
 	@Autowired 
 	private SqlSessionTemplate sqlSession;
+	
+	@Autowired
+	private PushService pushService;
 
 	@Value("${file.path}") private String file_Path;
 	/**
@@ -51,8 +54,8 @@ public class CommonService {
 	 * @exception 예외사항한 라인에 하나씩
 	 */
 	@Transactional 
-	public HashMap<String, Object> uploadMutipartFile(MultipartHttpServletRequest mtfRequest) {
-		
+	public String uploadMutipartFile(MultipartHttpServletRequest mtfRequest) {
+		log.info("uploadMutipartFile CALL"  );
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		
 		String fileLength = mtfRequest.getParameter("fileLength");
@@ -62,6 +65,8 @@ public class CommonService {
 		 
 		int count = Integer.parseInt(mtfRequest.getParameter("fileLength"));
 		int resImgKey = -1;
+		
+		log.info("uploadMutipartFile count : " + count  );
 		if(count > 0) {
 			
 
@@ -76,6 +81,7 @@ public class CommonService {
 			}
 			//이미지키 조회
 			//key는 중복처리 되지 않게 커밋 작업
+			log.info("uploadMutipartFile resImgKey : " + resImgKey  );
 			
 			String tbname = mtfRequest.getParameter("tbname");
 			response.put("imgkey", resImgKey);
@@ -112,10 +118,13 @@ public class CommonService {
 				
 					
 				try {
+					
+					log.info("reqMap : " + reqMap.toString());
 					mf.transferTo(new File(file_Path + "//" + safeFile));
 					int result = sqlSession.insert("ImgDAO.insertImg", reqMap);
 					
-					Message.SetSuccesMsg(response, "upload");
+
+					log.info("result : " + result);
 					
 //					{"imgId":10}
 				} catch (IllegalStateException e) {
@@ -127,10 +136,11 @@ public class CommonService {
 				}
 
 			} // for(int i=0; i< count ; i++) {		
-					
+//			Message.SetSuccesMsg(response, "upload");	
+//			log.info("response : " + response.toString());
 		}
 	
-		return response;
+		return resImgKey + "";
 	}
 	
 	public Map<String, Object> selectImg( Map<String, Object> reqMap ) {	
@@ -143,5 +153,65 @@ public class CommonService {
 		}
 		return response;
 	}
+	
+	/*
+	 * 사번으로 PUSH 수신건 확인
+	 */
+	public Map<String, Object> selectPushListById( Map<String, Object> reqMap ) {	
+		
+		List<Object> list = sqlSession.selectList("PushDAO.selectPushListById", reqMap);
+		Map<String, Object> response = new HashMap<String, Object>();
+		if(list.size() != -1) { 
+			sqlSession.update("PushDAO.updatePushListById", reqMap);
+			Message.SetSuccesMsg(response, "select");
+			response.put("list", list);
+		}
+		return response;
+	}
 
+	public HashMap<String, Object> insertAutoRecording(Map<String, Object> reqMap) {
+		// TODO Auto-generated method stub
+		
+		int defect_id = Integer.parseInt((String) reqMap.get("sftm_id"));
+		reqMap.put("defect_id",defect_id);
+		reqMap.put("reg_user", reqMap.get("sftm_user_id"));
+		reqMap.put("html", reqMap.get("htmlFileStr"));
+		
+		
+		
+		HashMap<String, Object> response = new HashMap<String, Object>();
+		int result = sqlSession.insert("PushDAO.insertAuto", reqMap);
+		
+		
+		if(result == 1) {
+			Message.SetSuccesMsg(response, "insert");
+			pushService.insertPushmsg(defect_id);
+		}
+		
+		return response;
+	}
+	
+	//
+	public Map<String, Object> selectAutoList( Map<String, Object> reqMap ) {	
+		
+		List<Object> list = sqlSession.selectList("PushDAO.selectAutoList", reqMap);
+		Map<String, Object> response = new HashMap<String, Object>();
+		if(list.size() != -1) { 
+			Message.SetSuccesMsg(response, "select");
+			response.put("list", list);
+		}
+		return response;
+	}
+
+	public Map<String, Object> selectAutoDetail( Map<String, Object> reqMap ) {	
+		
+		List<Object> list = sqlSession.selectList("PushDAO.selectAutoDetail", reqMap);
+		Map<String, Object> response = new HashMap<String, Object>();
+		if(list.size() != -1) { 
+			Message.SetSuccesMsg(response, "select");
+			response.put("list", list);
+		}
+		return response;
+	}
+	
 }

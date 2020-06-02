@@ -11,11 +11,11 @@
 	<select id="selectScenarioList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
 	    SELECT div.* 
 	    	, CASE WHEN div.depth = 'C' 
-			THEN (SELECT UPCODE FROM ntm_schemas.itm_div sdiv 
+			THEN (SELECT UPCODE FROM sftm.itm_div sdiv 
 			WHERE sdiv.id = div.upcode ) 
 			ELSE '' END AS upupcode
 	    FROM
-	        ntm_schemas.itm_div div
+	        sftm.itm_div div
 	    WHERE 1=1
         <if test="depth != null"> 
         AND depth = #{depth}
@@ -24,7 +24,7 @@
         AND upcode = #{upcode}
         </if>    
         <if test="upupcode != null"> 
-        AND upcode in (SELECT div2.id FROM ntm_schemas.itm_div div2 WHERE div2.depth = 'B' AND div2.upcode = #{upupcode})
+        AND upcode in (SELECT div2.id FROM sftm.itm_div div2 WHERE div2.depth = 'B' AND div2.upcode = #{upupcode})
         </if>   
         
         order by id 
@@ -34,9 +34,9 @@
 	
     <insert id="insertDivision" parameterType="map" useGeneratedKeys="true">
   		
-           INSERT INTO ntm_schemas.itm_div
+           INSERT INTO sftm.itm_div
 			VALUES(
-			 #{depth} ||  LPAD( nextval('ntm_schemas.itm_div_id_seq'::REGCLASS)||'', 4, '0'), 
+			 #{depth} ||  LPAD( nextval('sftm.itm_div_id_seq'::REGCLASS)||'', 4, '0'), 
 			 0,
 			 #{name},
 			 #{depth},
@@ -48,10 +48,18 @@
 			 ) 
   	</insert>
   	
-  	
+  	<select id="selectDivDepth" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+  		select div.id as detpth3
+			, div.upcode as detpth2 
+			, div2.upcode as detpth1 
+		from sftm.itm_div div, sftm.itm_div div2
+		 where div.upcode = div2.id
+		 and div.id = #{id}
+  	</select>
+
   	<!-- 팀 수정 -->
     <update id="updateDivision" parameterType="java.util.HashMap">
-    UPDATE ntm_schemas.itm_div 
+    UPDATE sftm.itm_div 
 		SET name = #{name}, 
 			upcode =  #{upcode}
 		WHERE id = #{id}
@@ -61,10 +69,10 @@
     
     <delete id="deleteDivision" parameterType="java.util.HashMap">
 		DELETE
-		FROM ntm_schemas.itm_div div
+		FROM sftm.itm_div div
 		WHERE id = #{id}
 		OR UPCODE = #{id}
-		OR UPCODE IN (SELECT ID FROM ntm_schemas.itm_div indiv WHERE indiv.upcode = #{id})
+		OR UPCODE IN (SELECT ID FROM sftm.itm_div indiv WHERE indiv.upcode = #{id})
     </delete> 
 
 
@@ -73,18 +81,18 @@
 	<select id="selectScenario" parameterType="java.util.Map" resultMap="PackageHeaderMap">
 	    SELECT *
 	    FROM
-	        ntm_schemas.itm_scenario
+	        sftm.itm_scenario
 	    WHERE 1=1
 	    <if test="depthC != ''"> 
         AND div_id = #{depthC}
         </if>
         <if test="depthB != ''"> 
-        AND div_id IN (select id from ntm_schemas.itm_div where upcode = #{depthB})
+        AND div_id IN (select id from sftm.itm_div where upcode = #{depthB})
         </if>
      	 <if test="depthA != ''"> 
         AND div_id IN (
 			select C.ID 
-			from ntm_schemas.itm_div B, ntm_schemas.itm_div C
+			from sftm.itm_div B, sftm.itm_div C
 			where B.UPCODE = #{depthA}
 			AND C.UPCODE = B.ID
 		)
@@ -96,12 +104,13 @@
 	
 	 <insert id="insertScenario" parameterType="map" useGeneratedKeys="true">
   		
-         INSERT INTO ntm_schemas.itm_scenario
+         INSERT INTO sftm.itm_scenario
 			VALUES(
 			#{scenario_code},
 			#{scenario_name},
 			#{div_id},
-			'0', 
+			#{is_batch},
+			'C001_01', 
 			#{description},
 			'admin',
 			now(),
@@ -113,10 +122,11 @@
   	<update id="updateScenario" parameterType="map" useGeneratedKeys="true">
   		
   		
-  		  UPDATE ntm_schemas.itm_scenario 
+  		  UPDATE sftm.itm_scenario 
 				SET scenario_name = #{scenario_name}, 
 					description =  #{description},
-					div_id =  #{div_id}
+					div_id =  #{div_id},
+					is_batch =  #{is_batch}
 					
 				WHERE scenario_code = #{scenario_code}
   	</update>
@@ -124,13 +134,13 @@
   	
   	<delete id="deleteTestcaseByUp" parameterType="java.util.HashMap">
 		DELETE
-		FROM ntm_schemas.itm_test_case
+		FROM sftm.itm_test_case
 		WHERE scenario_code 	= #{scenario_code}
     </delete>
     
     <delete id="deleteScenario" parameterType="java.util.HashMap">
 		DELETE
-		FROM ntm_schemas.itm_scenario
+		FROM sftm.itm_scenario
 		WHERE scenario_code 	= #{scenario_code}
     </delete>
   	
@@ -138,17 +148,17 @@
 	<select id="selectTestCaseList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
 	   SELECT row_number() OVER () as rnum,
 			cs.*, 
-			ntm_schemas.GET_CODENAME('C001', cs.state) as stateStr,
+			COALESCE(sftm.GET_CODENAME('C001', cs.state), '') as stateStr,
 			COALESCE(test.name, '') test_name, 
 			COALESCE(dev.name, '') dev_name, 
 			COALESCE(reg.name, '') reg_name, 
 			COALESCE(sc.scenario_name, '') scenario_name
 	    FROM
-		ntm_schemas.itm_test_case cs
-	     LEFT JOIN ntm_schemas.itm_user test ON cs.tester_id = test.user_id
-		 LEFT JOIN ntm_schemas.itm_user dev ON cs.dev_id = dev.user_id   
-		 LEFT JOIN ntm_schemas.itm_user reg ON cs.reg_user = reg.user_id
-		 LEFT JOIN ntm_schemas.itm_scenario sc ON cs.scenario_code = sc.scenario_code
+		sftm.itm_test_case cs
+	     LEFT JOIN sftm.itm_user test ON cs.tester_id = test.user_id
+		 LEFT JOIN sftm.itm_user dev ON cs.dev_id = dev.user_id   
+		 LEFT JOIN sftm.itm_user reg ON cs.reg_user = reg.user_id
+		 LEFT JOIN sftm.itm_scenario sc ON cs.scenario_code = sc.scenario_code
 	    WHERE 1=1
 		<if test="scenario_code != null and scenario_code != ''">
         AND cs.scenario_code = #{scenario_code}
@@ -163,7 +173,7 @@
 	
 	<insert id="insertTestcase" parameterType="map" useGeneratedKeys="true">
    
-		INSERT INTO ntm_schemas.itm_test_case
+		INSERT INTO sftm.itm_test_case
 		VALUES(
 			#{testcase_code},
 			#{testcase_name},
@@ -171,7 +181,7 @@
 			#{scenario_code},
 			#{tester_id},
 			#{dev_id},
-			'0', --state
+			'C001_01', --state
 			#{description},
 			'admin',
 			now(),
@@ -181,7 +191,7 @@
   	</insert>
   	
   	<update id="updateTestcase" parameterType="map" useGeneratedKeys="true">
-    	UPDATE ntm_schemas.itm_test_case 
+    	UPDATE sftm.itm_test_case 
 		SET case_name 	= #{case_name}, 
 			tester_id 		=  #{tester_id}, 
 			dev_id 			=  #{dev_id}, 
@@ -191,7 +201,7 @@
     </update> 
     
     <update id="updateTestcaseOnlyState" parameterType="map" useGeneratedKeys="true">
-    	UPDATE ntm_schemas.itm_test_case 
+    	UPDATE sftm.itm_test_case 
 		SET state = #{state} 
 		WHERE case_code = #{case_code} 
 		AND scenario_code 	= #{scenario_code}
@@ -199,7 +209,7 @@
     
   	<delete id="deleteTestcase" parameterType="java.util.HashMap">
 		DELETE
-		FROM ntm_schemas.itm_test_case
+		FROM sftm.itm_test_case
 		WHERE case_code 	= #{case_code} 
 		AND scenario_code 	= #{scenario_code}
     </delete>
@@ -214,9 +224,9 @@
 			sc.scenario_name,
 		
 			 df.test_type_id,
-			 ntm_schemas.GET_CODENAME('A001', df.test_type_id) as test_type_name,
+			 sftm.GET_CODENAME('A001', df.test_type_id) as test_type_name,
 			 df.defect_code,
-			 ntm_schemas.GET_CODENAME('B001', df.defect_code) as defect_name,
+			 sftm.GET_CODENAME('B001', df.defect_code) as defect_name,
 			 df.title,
 			 df.description,
 			 df.defect_user,
@@ -228,17 +238,17 @@
 	 		 , COALESCE(reg.name, '') reg_name 
 	 		  ,df.id
 	 		  ,df.defect_result
-		from ntm_schemas.itm_test_case cs ,
-			ntm_schemas.itm_defect df
-				LEFT JOIN ntm_schemas.itm_user dev ON df.defect_user = dev.user_id
-				LEFT JOIN ntm_schemas.itm_user reg ON df.reg_user = reg.user_id,
-			ntm_schemas.itm_scenario sc
+		from sftm.itm_test_case cs ,
+			sftm.itm_defect df
+				LEFT JOIN sftm.itm_user dev ON df.defect_user = dev.user_id
+				LEFT JOIN sftm.itm_user reg ON df.reg_user = reg.user_id,
+			sftm.itm_scenario sc
 		where 1=1
 		<if test="dev_id != null and dev_id != ''">
 			and df.defect_user = #{dev_id} 
 		</if>
 		<if test="team_id != null and team_id != ''">
-			and cs.dev_id IN (SELECT user_id FROM ntm_schemas.itm_user where team_id = #{team_id}::bigint  )
+			and cs.dev_id IN (SELECT user_id FROM sftm.itm_user where team_id = #{team_id}::bigint  )
 		</if>
 		and cs.scenario_code = df.scenario_code
 		and cs.case_code = df.case_code

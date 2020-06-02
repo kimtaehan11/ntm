@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <body>
+ 	<h6 id="grid-options" class="title">SFTM 2020 > 사용자  > 사용자관리</h6>
 	
-	<br/><h6 id="grid-options">BTS 2020 > 사용자  > 사용자관리</h6><br/>
-	
-	<select  class="form-control" id="team_id_main" title="" style="width:200px">
-		<option selected="selected" value="">전체</option>
+	<select  class="form-control" id="team_id_main" title="" style="width:200px;">
+		<option selected="selected" value="">전체 팀</option>
 	</select>
 	<br/>
+	
 	<table id="userTable" class="table table-bordered" style="width:100%">
         <thead>
             <tr>
@@ -49,31 +49,31 @@
 				       	  <tr>
 				       	 		<th>팀</th>
 				       	  		<td>
-				       	  			<select  class="form-control" id="team_id" title="선택 구분" style="width:100%">
+				       	  			<select  class="form-control required" id="team_id" title="선택 구분" style="width:100%">
 											<option selected="selected" value="">선택해 주세요</option>
 									</select>
 								</td>	
 				       	  </tr>	
 				       	  <tr>
 				       	 		<th>조직</th>
-				       	  		<td><input class="form-control required" style="width:100%" id="organization"   /></td>	
+				       	  		<td><input class="form-control " style="width:100%" id="organization"   /></td>	
 				       	  </tr>	 
 				       	  <tr>
 				       	 		<th>직급</th>
-				       	  		<td><input class="form-control required" style="width:100%" id="position"   /></td>	
+				       	  		<td><input class="form-control " style="width:100%" id="position"   /></td>	
 				       	  </tr>	
 				       	  <tr>
 				       	 		<th>전화번호</th>
-				       	  		<td><input class="form-control required" style="width:100%" id="phone_num"   /></td>	
+				       	  		<td><input class="form-control " style="width:100%" id="phone_num"   /></td>	
 				       	  </tr>	
 				       	 	
 				       	  <tr>
 				       	 		<th>이메일</th>
-				       	  		<td><input class="form-control required" style="width:100%" id="email"   /></td>	
+				       	  		<td><input class="form-control " style="width:100%" id="email"   /></td>	
 				       	  </tr>	
 				       	  <tr>
 				       	 		<th>Desc</th>
-				       	  		<td><input class="form-control required" style="width:100%" id="description"   /></td>	
+				       	  		<td><input class="form-control " style="width:100%" id="description"   /></td>	
 				       	  </tr>		
 				       </tbody>
 				    </table>

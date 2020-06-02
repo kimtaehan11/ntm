@@ -9,14 +9,14 @@
     
     <!-- 사용자 조회 -->
 	<select id="selectImgId" resultType="java.lang.Integer">
-	    select nextval('ntm_schemas.itm_img_id_seq'::regclass);
+	    select nextval('sftm.itm_img_id_seq'::regclass);
 	</select>
 	
 	<insert id="insertImg" parameterType="map" useGeneratedKeys="true">
-		INSERT INTO ntm_schemas.itm_img
+		INSERT INTO sftm.itm_img
 		VALUES(
 			#{id}::bigint,
-			(SELECT COUNT(*)+1 FROM ntm_schemas.itm_img WHERE id = #{id}),
+			(SELECT COUNT(*)+1 FROM sftm.itm_img WHERE id = #{id}),
 			#{tbName},
   			#{tbDate},
  			#{saveFileName},
@@ -30,13 +30,13 @@
 	
 	<select id="selectImgById" parameterType="java.lang.Integer" resultMap="PackageHeaderMap">
 	    select * 
-	    from ntm_schemas.itm_img 
+	    from sftm.itm_img 
 	    where id = #{id}::bigint
 	</select>
 	
 	<select id="selectImg" parameterType="java.lang.Integer" resultMap="PackageHeaderMap">
 	    select * 
-	    from ntm_schemas.itm_img 
+	    from sftm.itm_img 
 	    where id = #{id}::bigint
 	    and seq = #{seq}::bigint
 	</select>

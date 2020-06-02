@@ -5,30 +5,49 @@
 	
 	<div class="row">
 		<div class="col-md-4">
-			<br/><h6 id="grid-options">BTS 2020 > 사용자 > 시나리오</h6><br/> 
-			<div>
-				<select  class="" id="selectA" name="selectA" title="" style="width:30%">
-					<option selected="selected" value="">전체</option>
-				</select>
-				<select  class="" id="selectB" name="selectB" title="" style="width:30%">
-					<option selected="selected" value="">전체</option>
-				</select>
-				<select  class="" id="selectC" name="selectC" title="" style="width:30%">
-					<option selected="selected" value="">전체</option>
-				</select>
+			 <h6 id="grid-options" class="title">SFTM 2020 > 사용자 > 시나리오</h6> 
+			
+			<div class="row">
+				<div class="col-md-4">
+					<select class="form-control" id="selectA" name="selectA" title="" >
+						<option selected="selected" value="">서브시스템 전체</option>
+					</select>
+				</div>
+				<div class="col-md-4">
+					<select  class="form-control" id="selectB" name="selectB" title="" >
+						<option selected="selected" value="">업무구분 전체</option>
+					</select>
+				</div>
+				<div class="col-md-4">
+					<select  class="form-control" id="selectC" name="selectC" title="" >
+						<option selected="selected" value="">대상업무 전체</option>
+					</select>
+				</div>
 			</div>
 			<br/> 
 			<table id="tableScenario" class="table table-bordered" style="width:100%">
 		        <thead>
 		            <tr>
+		                <th>코드</th>
 		                <th>시나리오</th>
+		                <th>배치여부</th>
 		            </tr>
 		        </thead>
 		    </table>
 		</div>
 		<div class="col-md-8">
 		
-			<br/><h6 id="grid-options">BTS 2020 > 사용자 > 시나리오 > 테스트케이스 > <span id="spanTCName"></h6><br/> 
+			 <h6 id="grid-options"  class="title">SFTM 2020 > 사용자 > 시나리오 > 테스트케이스 </h6> 
+			 <div class="row">
+				<div class="col-md-8">
+					<span id="spanTCName"></span>
+				</div>
+				<div class="col-md-4">
+					<select  class="form-control" id=" " name=" " title="" style=" visibility:hidden">
+					</select>
+				</div>
+				
+			</div><br/> 
 			<table id="tableTestcase" class="table table-bordered" style="width:100%">
 		        <thead>
 		            <tr>
@@ -53,14 +72,13 @@
 					<h6 id="modalTitle" class="modal-title color-white"></h6>
 				</div>
 				<div class="modal-body">
-				
 					<table id="seTableModal"  class="table table-bordered" style="width:100%">
 				       <tbody>
           				  <tr >
 				       	 		<th>서브시스템</th>
 				       	 		<td>
-				       	  			<select  class="form-control" name="selectA" id="modalSelectA" title="선택 구분" style="width:100%">
-											<option selected="selected"  value="">전체</option>
+				       	  			<select  class="form-control" name="modalSelectA" id="modalSelectA" title="선택 구분" style="width:100%">
+											<option selected="selected"  value="">서브시스템 전체</option>
 									</select>
 								</td>	
 				       	  		
@@ -68,30 +86,39 @@
 				       	  <tr >
 				       	 		<th>업무구분</th>
 				       	  		<td>
-				       	  			<select  class="form-control" name="selectB" id="modalSelectB" title="선택 구분" style="width:100%">
-											<option selected="selected" value="">전체</option>
+				       	  			<select  class="form-control" name="modalSelectB" id="modalSelectB" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">업무구분 전체</option>
 									</select>
 								</td>	
 				       	  </tr>	
 				       	  <tr >
 				       	 		<th>대상업무</th>
 				       	  		<td>
-				       	  			<select  class="form-control" name="selectC" id="modalSelectC" title="선택 구분" style="width:100%">
-											<option selected="selected" value="">전체</option>
+				       	  			<select  class="form-control" name="modalSelectC" id="modalSelectC" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">대상업무 전체</option>
 									</select>
 								</td>	
 				       	  </tr>	
 				       	  <tr>
 				       	 		<th>시나리오코드</th>
-				       	  		<td><input id="scenario_code" class="form-control required" style="width:100%"   /></td>	
+				       	  		<td><input id="scenario_code" class="form-control required" style="width:100%" maxlength="20"  /></td>	
 				       	  </tr>	
 				       	  <tr>
 				       	 		<th>시나리오명</th>
-				       	  		<td><input id="scenario_name" class="form-control required" style="width:100%"   /></td>	
+				       	  		<td><input id="scenario_name" class="form-control required" style="width:100%" maxlength="50"  /></td>	
 				       	  </tr>	
 				       	   <tr>
 				       	 		<th>설명</th>
-				       	  		<td><input id="description" class="form-control required" style="width:100%"   /></td>	
+				       	  		<td><textarea id="description" class="form-control"  rows="5" style="width:100%"   ></textarea></td>	
+				       	  </tr>		
+				       	   <tr>
+				       	 		<th>타입</th>
+				       	  		<td>
+				       	  			<select  class="form-control" name="is_batch" id="is_batch" title="선택 구분" style="width:100%">
+											<option selected="selected"  value="N">온라인</option>
+											<option value="Y">배치</option>
+									</select>
+								</td>	
 				       	  </tr>		 
 				       </tbody>
 				    </table>
@@ -144,27 +171,52 @@
 						       	  <tr>
 						       	 		<th>테스터</th>
 						       	 		<td>
-						       	 			<input id="tester" class="" style="display:none;"   />
-						       	 			<input id="tester_nm" class="" style="width:70%" readonly="true"/>
-						       	 			<button type="button" id="btnTester" name="btnUp" class="btn btn-success">변경</button>
+						       	 			<div class="row">
+												<div class="col-md-8">
+													<input id="tester" class="form-control" style="display:none;"   />
+						       	 					<input id="tester_nm" class="form-control" readonly="true"/>
+												</div>
+												<div class="col-md-4">
+													<button type="button" id="btnTester" name="btnUp" class="btn btn-success">변경</button>
+												</div>
+											</div>
+						       	 			
+						       	 			
 						       	  		</td>	
 						       	  </tr>	
 						       	  <tr>
 						       	 		<th>개발자</th>
 						       	 		<td>
-						       	 			<input id="developer" class="" style="display:none;"  />
-						       	 			<input id="developer_nm" class="" style="width:70%" readonly="true"/>
-						       	 			<button type="button" id="btnDeveloper" name="btnUp" class="btn btn-success">변경</button>
+						       	 			<div class="row">
+												<div class="col-md-8">
+													<input id="developer" class="form-control" style="display:none;"  />
+							       	 				<input id="developer_nm" class="form-control" readonly="true"/>
+												</div>
+												<div class="col-md-4">
+													<button type="button" id="btnDeveloper" name="btnUp" class="btn btn-success">변경</button>
+												</div>
+											</div>
 						       	  		</td>	
 						       	  </tr>		
 				       	  		 <tr>
 						       	 		<th>설명</th>
-						       	  		<td><input id="tc_description" class="form-control required" style="width:100%"   /></td>	
+						       	  		<td>
+						       	  			<textarea id="tc_description" class="form-control"  rows="5" style="width:100%"   ></textarea>	
+						       	  		</td>	
 						       	  </tr>		 
 						       </tbody>
 						    </table>
 				    	</div>	
 						<div class="col-md-5">
+						
+							<div class="row" style="width:100%" >
+								<div class="col-sm-6 text-left">
+									
+						        </div>
+						        <div class="col-sm-6 text-right">
+						        	<select class="form-control" id="selectTeam2" name="selectUser" title="" > </select>
+						        </div> 
+						    </div> <br/>
 							<table id="tcTableModalUser"  class="table table-bordered" style="width:100%">
 								<thead>
 						            <tr>
