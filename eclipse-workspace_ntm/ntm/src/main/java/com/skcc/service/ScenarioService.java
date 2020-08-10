@@ -67,6 +67,7 @@ public class ScenarioService {
 	public Map<String, Object> insertDivision( Map<String, Object> reqMap ) {	
 		
 		String depth = (String) reqMap.get("depth");
+		String team_id = (String) reqMap.get("team_id");
 		//{"name":"ㅅㄷㄴㅅ2","selectA":"A0003","selectB":"","depth":"B"}
 		if("C".equals(depth)) {
 			reqMap.put("upcode", reqMap.get("selectB") );
@@ -77,6 +78,13 @@ public class ScenarioService {
 		else{
 			reqMap.put("upcode", "" );
 		}
+		
+		if("".equals(team_id)) {
+			reqMap.put("team_id", null );
+		}
+		
+		
+		
 		Map<String, Object> response = new HashMap<String, Object>();
 		int result = sqlSession.insert("ScenarioDAO.insertDivision", reqMap);
 		if(result == 1) {
@@ -165,17 +173,31 @@ public class ScenarioService {
 		return response;
 	}
 	
-	//시나리오 추가 
-	//{"scenario_code":"","scenario_name":"","description":"","modalSelectA":"","modalSelectB":"","modalSelectC":""}
+	/*
+	 * 신규 시나리오 추가하는 화면입니다.
+	 * scenario.html 
+	 */
 	public Map<String, Object> insertScenario( Map<String, Object> reqMap ) {	
-	
 		
+		
+		Map<String, Object> response = new HashMap<String, Object>();
 		String modalSelectC = (String) reqMap.get("modalSelectC");
 		if(modalSelectC != null && !"".equals(modalSelectC) ) {
 			reqMap.put("div_id", modalSelectC );
 		}
+		else {
+			return response;
+		}
 		
-		Map<String, Object> response = new HashMap<String, Object>();
+		//get sequence
+		int scenario_id =  sqlSession.selectOne("ScenarioDAO.selectScenarioId"); 
+		log.debug("get scenario_id : " + scenario_id);
+		reqMap.put("scenario_id", scenario_id);
+		
+		
+		//test case 유형
+		String case_pattern =  (String) reqMap.get("case_pattern");
+		
 		int result = sqlSession.insert("ScenarioDAO.insertScenario", reqMap);
 		if(result == 1) {
 			Message.SetSuccesMsg(response, "insert");
@@ -307,6 +329,44 @@ public class ScenarioService {
 		reqMap.put("description", reqMap.get("tc_description"));
 		try {
 			int result = sqlSession.update("ScenarioDAO.updateTestcase", reqMap);
+			if(result == 1) {
+				Message.SetSuccesMsg(response, "insert");
+			}
+		}
+		catch(Exception e) {
+//			Message.SetSuccesMsg(response, "select");
+		}
+		return response;
+		
+	}
+	
+	
+	/**
+	 * 테스트케이스 UPDATE (BY TESTER only state)
+	 *
+	 * @param Map (request)
+	 * @return Map (response)
+	 * @exception 예외사항한 라인에 하나씩
+	 */
+	public Map<String, Object> updateTestCaseOnlyState( Map<String, Object> reqMap ) {	
+			
+		Map<String, Object> response = new HashMap<String, Object>();
+		try {
+			
+
+			//상태가 C001_02 인경우에는 
+			String state = (String) reqMap.get("state");
+			if("C001_01".equals(state)){
+				reqMap.put("state", "C001_02");
+			}
+			else if("C001_02".equals(state)){
+				reqMap.put("state", "C001_03");
+			}	
+			else  if("C001_03".equals(state)){
+				reqMap.put("state", "C001_02");
+			}	
+			
+			int result = sqlSession.update("ScenarioDAO.updateTestCaseOnlyState", reqMap);
 			if(result == 1) {
 				Message.SetSuccesMsg(response, "insert");
 			}

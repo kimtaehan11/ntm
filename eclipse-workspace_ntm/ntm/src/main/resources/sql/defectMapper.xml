@@ -7,15 +7,22 @@
        <result property="object"                   column="PackageBeanResult"/>
     </resultMap>
     
-    <!-- 사용자 조회 -->
+    <!-- 결함 리스트 조회 -->
 	<select id="selectDefectList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	    SELECT row_number() OVER () as rnum,   
-	    		defect.* ,
-	    		sftm.GET_CODENAME('B001', defect.defect_code) defect_name,
-				sftm.GET_CODENAME('A001', defect.test_type_id) test_type_name,
-		 		to_char(defect.reg_date, 'YYYY-MM-DD') reg_date_str
-	    		FROM sftm.itm_defect defect 
-	    WHERE 1=1
+	   SELECT row_number() OVER () as rnum,   
+				defect.* ,his.defect_code, his.test_type,
+				sftm.GET_CODENAME('B001', his.defect_code) defect_name,
+				sftm.GET_CODENAME('A001', his.test_type)  test_type_name,
+				to_char(defect.reg_date, 'YYYY-MM-DD') reg_date_str,
+				COALESCE(dev.name, '') defect_user_name, 
+	 		 	COALESCE(reg.name, '') reg_name 
+			FROM sftm.itm_defect defect 
+				LEFT JOIN sftm.itm_user dev ON defect.defect_user = dev.user_id
+				LEFT JOIN sftm.itm_user reg ON defect.reg_user = reg.user_id
+				,sftm.itm_defect_history his
+		WHERE 1=1
+		AND defect.id = his.id
+		AND his.seq = (SELECT MAX(seq) FROM sftm.itm_defect_history his2 where defect.id = his2.id)
 	    <if test="scenario_code != null and scenario_code != ''"> 
        		 AND defect.scenario_code = #{scenario_code} 
         </if>    
@@ -27,13 +34,16 @@
 	<!-- 사용자 조회 -->
 	<select id="selectDefectById" parameterType="int" resultMap="PackageHeaderMap">
 	    SELECT row_number() OVER () as rnum,   
-	    		defect.* ,
-	    		sftm.GET_CODENAME('B001', defect.defect_code) defect_name,
-				sftm.GET_CODENAME('A001', defect.test_type_id) test_type_name,
+	    		defect.* , 
+	    		his.defect_code, his.test_type,
+	    		sftm.GET_CODENAME('B001', his.defect_code) defect_name,
+				sftm.GET_CODENAME('A001', his.test_type) test_type_name,
 		 		to_char(defect.reg_date, 'YYYY-MM-DD') reg_date_str
 	    		FROM sftm.itm_defect defect 
+	    			,sftm.itm_defect_history his
 	    WHERE 1=1
-	   
+	   	AND defect.id = his.id
+		AND his.seq = (SELECT MAX(seq) FROM sftm.itm_defect_history his2 where defect.id = his2.id)
         <if test="id != null and id != ''"> 
        		 AND defect.id = #{id}::bigint
         </if>    
@@ -43,48 +53,76 @@
 	    select nextval('sftm.itm_defect_id_seq'::regclass);
 	</select>
 	
+	<select id="selectTestCaseDevId" resultType="java.lang.String" parameterType="java.util.Map">
+	     SELECT COALESCE(dev_id, '') FROM sftm.itm_test_case WHERE case_code = #{ case_code }
+	</select>
+	
 	<insert id="insertDefect" parameterType="map" useGeneratedKeys="true">
        INSERT INTO sftm.itm_defect
 		(	
 			id , 
 			project_id, 
 			scenario_code, 
-			test_type_id, 
-			case_code, 
+			case_code,  
 			title, 
 			description, 
 			defect_user, 
 			reg_user, 
 			reg_date, 
-			defect_code, 
 			imgkey
 		)
 		VALUES (
 			
 			#{ id }::bigint,
-			--nextval('sftm.itm_defect_id_seq'::REGCLASS),
 			0,
 			#{ scenario_code },
-			#{ test_type_id },
-			#{ case_code },
+			#{ case_code }, 
 			#{ title },
 			#{ description }, 
-			(SELECT dev_id FROM sftm.itm_test_case WHERE case_code = #{ case_code } ),
+			( SELECT dev_id FROM sftm.itm_test_case WHERE case_code = #{ case_code } ),
 			#{ cookieUserId },
 			now()  , 
-			 
-			#{ defect_code },
 			#{ imgkey }::bigint
 		)
   	</insert>
+  	
+  	
+<!-- 	<select id="selectDefectHistory" parameterType="java.util.Map" resultMap="PackageHeaderMap"> -->
+<!-- 	    select * -->
+<!-- 	    from sftm.itm_defect_history his -->
+<!-- 	    where 1=1 -->
+<!-- 	    <if test="id != null and id != ''">  -->
+<!--        		 AND his.id = #{id}::bigint -->
+<!--         </if>     -->
+<!--         and his.seq = (select MAX(his2.seq) from sftm.itm_defect_history his2 where his.id = his2.id ) -->
+<!-- 	</select> -->
+	
+  	<insert id="insertDefectHistory" parameterType="map" useGeneratedKeys="true">
+       INSERT INTO sftm.itm_defect_history
+		(	
+			id , 
+			seq, 
+			defect_code,
+			test_type,
+			reg_user, 
+			reg_date 
+		)
+		VALUES (
+			#{ id }::bigint,
+			(select COALESCE(max(seq), 0)+1 FROM sftm.itm_defect_history where id=#{ id }::bigint),
+			#{ defect_code },
+			#{ test_type },
+			#{ reg_user },
+			now()  
+		)
+  	</insert>
+  	
+  	
   	<update id="updateDefect" parameterType="map" useGeneratedKeys="true">
     	UPDATE  sftm.itm_defect
 		SET title = #{title},
 			description = #{description},
-			defect_code = #{defect_code},
-			test_type_id = #{test_type_id},
 			imgkey = #{ imgkey }::bigint
-			
 		WHERE  id 	= #{id}::bigint
     </update> 
   	
@@ -92,13 +130,25 @@
     	UPDATE  sftm.itm_defect
 		SET  
 			defect_result = #{defect_result},
-			defect_code = #{defect_code},
+<!-- 			defect_code = #{defect_code}, -->
 			defect_user = #{defect_user}
-<!-- 			<if test="defect_code != null and case_code == ''">  -->
-<!--        		  ,resolve_date = now() -->
-<!--         	</if>   -->
 		WHERE  id 	= #{id}::bigint
     </update> 
 	
-	
+	<!-- 사용자 조회 -->
+	<select id="selectDefectHistory" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	    select his.id
+			,his.seq
+			,sftm.GET_CODENAME('A001',  his.test_type) as test_type
+			,sftm.GET_CODENAME('B001',  his.defect_code) as defect_code
+			,COALESCE(us.name, '자동배정') as name
+			,to_char(his.reg_date, 'YYYY-MM-DD HH24:MI') reg_date
+		from sftm.itm_defect_history his
+			LEFT OUTER JOIN sftm.itm_user us
+			ON his.reg_user = us.user_id
+			, sftm.itm_defect df
+	    where his.id = #{id}::bigint
+	    and his.id = df.id
+	    order by his.reg_date
+    </select>
 </mapper>

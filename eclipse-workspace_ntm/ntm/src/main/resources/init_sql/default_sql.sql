@@ -9,10 +9,10 @@ INSERT INTO sftm.itm_user
 ( user_id, password, "name", phone_num, email, organization, "position", description, reg_user, reg_date, modify_user, modify_date, admin)
 VALUES(  'admin', 'admin', '김태한', '010-0000-0000', 'nexcore4u@sk.com', 'SKCC', '1234', '123455', 'nexcore', now(), 'nexcore', now(),'TRUE');
 
-INSERT INTO sftm.itm_role  VALUES (nextval('sftm.itm_role_id_seq'::REGCLASS), 0, 'ADMIN', 'ADMIN', '', 'admin',  now(), 'admin',now() );
-INSERT INTO sftm.itm_role  VALUES (nextval('sftm.itm_role_id_seq'::REGCLASS), 0, 'TESTER', 'TESTER', '', 'admin',  now(), 'admin',now() );
-INSERT INTO sftm.itm_role  VALUES (nextval('sftm.itm_role_id_seq'::REGCLASS), 0, 'DEV', 'DEV', '', 'admin',  now(), 'admin',now() );
-INSERT INTO sftm.itm_role  VALUES (nextval('sftm.itm_role_id_seq'::REGCLASS), 0, 'CUSTOM', 'CUSTOM', '', 'admin',  now(), 'admin',now() );
+INSERT INTO sftm.itm_role  VALUES ( 0, 'ADMIN', 	'관리자', '', 'admin',  now(), 'admin',now() );
+INSERT INTO sftm.itm_role  VALUES ( 0, 'TESTER', 	'테스터', '', 'admin',  now(), 'admin',now() );
+INSERT INTO sftm.itm_role  VALUES ( 0, 'DEV', 		'개발자', '', 'admin',  now(), 'admin',now() );
+INSERT INTO sftm.itm_role  VALUES ( 0, 'ETC', 	     '기타', '', 'admin',  now(), 'admin',now() );
 
 
 --itm_code_group
@@ -37,40 +37,42 @@ VALUES ('A001', 'A001_01', '코딩오류', '코딩오류', 'Y', 10, 'admin', now
 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('A001', 'A001_02', '요건변경', '요건변경', 'Y', 20, 'admin', now());
+VALUES ('A001', 'A001_02', '변경요청', '변경요청', 'Y', 20, 'admin', now());
 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('A001', 'A001_03', '디자인변경', '디자인변경', 'Y', 30, 'admin', now());
+VALUES ('A001', 'A001_03', '협의완료', '협의완료 (비결함이거나 수정을 하지 않기로 협의한경우)', 'Y', 30, 'admin', now());
+
 
 --B001 결함상태 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('B001', 'B001_01', '등록', '테스터가 결함 등록', 'Y', 0, 'admin', now());
+VALUES ('B001', 'B001_01', '결함등록', '테스터가 결함을 등록', 'Y', 0, 'admin', now());
+--이거는 PL에이 확인하여 처리 필요 
+INSERT INTO sftm.itm_code
+		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
+VALUES ('B001', 'B001_02', '배정완료', '개발자에게 결함이 배정된 단계', 'Y', 10, 'admin', now());
 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('B001', 'B001_02', '배정', '개발자 배정되지 않는 케이스', 'Y', 10, 'admin', now());
+VALUES ('B001', 'B001_03', '조치완료', '개발자가 결함또는 변경사항을 조치완료', 'Y', 20, 'admin', now());
 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('B001', 'B001_03', '종료', '테스터가 결함수정 확인', 'Y', 20, 'admin', now());
+VALUES ('B001', 'B001_04', '미조치건', '비결함이거나 수정을 반영하기 힘든경우', 'Y', 30, 'admin', now());
 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('B001', 'B001_04', '조치중', '개발자가 결함을 수정중', 'Y', 30, 'admin', now());
+VALUES ('B001', 'B001_05', '개발지연', '타팀연계로 인해 개발이 지연되는 경우', 'Y', 40, 'admin', now());
+
 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('B001', 'B001_05', '조치완료', '개발자가 결함을 수정완료', 'Y', 40, 'admin', now());
-
+VALUES ('B001', 'B001_06', '결함종료', '테스터가 확인하여 결함이 종료', 'Y', 50, 'admin', now());
+ 
 INSERT INTO sftm.itm_code
 		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('B001', 'B001_06', '지연', '불가항력 이유로 지연건', 'Y', 50, 'admin', now());
-
-INSERT INTO sftm.itm_code
-		(code_group, code_id, code_name, description, use_yn, priority, reg_user, reg_date)
-VALUES ('B001', 'B001_07', '반려', '테스터가 결함건을 반려처리', 'Y', 60, 'admin', now());
+VALUES ('B001', 'B001_07', '결함반려', '테스터가 확인하여 결함을 반려한 경우', 'Y', 60, 'admin', now());
 
 --C001 테스트케이스상태 
 INSERT INTO sftm.itm_code

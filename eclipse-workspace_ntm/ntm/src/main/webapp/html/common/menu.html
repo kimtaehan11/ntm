@@ -19,10 +19,7 @@
 					<a class="nav-link nav_color_white" href="/ntm?path=main">Home</a>
 				</li>
 <!-- 						<span class="sr-only">(current)</span> -->
-				
 				<!-- Link 메뉴 -->
-				
-				
 				<!-- Dropdown 메뉴 -->
 				<li class="nav-item dropdown"><a
 					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
@@ -45,17 +42,23 @@
 <!-- 						<a class="dropdown-item" href="#">Something else here</a> -->
 					</div>
 				</li>
-				
-
-				
+			
 				<li class="nav-item">
-					<a class="nav-link" href="/ntm?path=defect/excute">수행(테스터)</a>
+					<a class="nav-link" href="/ntm?path=defect/excute">테스트 수행(현업)</a>
 				</li>	
 				<li class="nav-item">
-					<a class="nav-link" href="/ntm?path=defect/defect">결함(개발자)</a>
+					<a class="nav-link" href="/ntm?path=defect/defect">결함 처리(개발자)</a>
 				</li>	
 				
-				
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false">통계</a>
+					<div class="dropdown-menu bg-ntm" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="/ntm?path=stat/statUser">개인별 통계</a> 
+						<a class="dropdown-item" href="/ntm?path=stat/statTeam">팀별 통계</a>
+					</div>
+				</li>
 				
 				<li class="nav-item dropdown"><a
 					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
@@ -63,20 +66,12 @@
 					aria-expanded="false">환경설정</a>
 					<div class="dropdown-menu bg-ntm" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="/ntm?path=common/code">코드 속성</a> <div class="dro	pdown-divider"></div>
-<!-- 						<a class="dropdown-item" href="/ntm?path=scenario/scenario">시나리오</a> -->
-						
+						<a class="dropdown-item" href="/ntm?path=common/code">테스트케이스 유형</a> <div class="dro	pdown-divider"></div>
 					</div>
 				</li>
 				
 				
-				<li class="nav-item dropdown"><a
-					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-					role="button" data-toggle="dropdown" aria-haspopup="true"
-					aria-expanded="false">통계</a>
-					<div class="dropdown-menu bg-ntm" aria-labelledby="navbarDropdown">
-<!-- 						<a class="dropdown-item" href="/ntm?path=common/code">코드 속성</a> <div class="dro	pdown-divider"></div> -->
-					</div>
-				</li>
+				
 			</ul>
 		</div>
 	</nav>

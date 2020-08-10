@@ -119,16 +119,12 @@ var callbackS = function(tran, data){
 			select: {
 	            style: 'single' //single, multi
 			},
-			"scrollY":        500,
+			"scrollY":        550,
 	        "scrollCollapse": false,
+	        pageLength:15, //기본 데이터건수
 	        dom : 'Bfrtip',
 	        buttons: [
-	            {
-	                text: '신규',
-	                action: function ( e, dt, node, config ) {
-	                	codeModalOpen("1", e, dt, node, config )
-	                }
-	            },
+	           
 	            {
 	                text: '수정',
 	                action: function ( e, dt, node, config ) {
@@ -164,16 +160,17 @@ var callbackS = function(tran, data){
 			select: {
 	            style: 'single' //single, multi
 			},
-			"scrollY":        500,
+			"scrollY":        550,
 	        "scrollCollapse": false,
+	        pageLength:15, //기본 데이터건수
 	        dom : 'Bfrtip',
 	        buttons: [
-	            {
-	                text: '신규',
-	                action: function ( e, dt, node, config ) {
-	                	groupModalOpen("1", e, dt, node, config )
-	                }
-	            },
+//	            {
+//	                text: '신규',
+//	                action: function ( e, dt, node, config ) {
+//	                	groupModalOpen("1", e, dt, node, config )
+//	                }
+//	            },
 	            {
 	                text: '수정',
 	                action: function ( e, dt, node, config ) {

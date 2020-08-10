@@ -22,18 +22,26 @@
 	        </where>
 	</select>
     
-  	<!-- 팀 조회 -->
+  	<!-- SFTM 2020 > 사용자 > 팀관리 > 팀원조회 -->
   	<select id="selectTeamList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	  	SELECT row_number() OVER () as rnum, team.*, 
-	  		role.name roleName ,
-	  		(SELECT COUNT(*) FROM sftm.itm_user usr WHERE usr.team_id = team.id) as user_cnt,
-	  		to_char(team.reg_date, 'YYYY-MM-DD') reg_date_str
-		FROM sftm.itm_team team, 
-				sftm.itm_role role
-		WHERE team.role_id = role.id
-		
-		<if test="role_id != null and role_id != ''"> 
-			AND team.role_id = #{role_id}::bigint
+	  	SELECT 
+	  		row_number() OVER () as rnum
+	  		, team.id
+	  		, team.name
+	  		, team.role_code
+	  		, team.description
+	  		, team.reg_user
+	  		, COALESCE(team.reader_id, '') reader_id
+	  		, COALESCE(us.name, 'TBD') reader_name
+	  		, role.name roleName 
+	  		, (SELECT COUNT(*) FROM sftm.itm_user usr WHERE usr.team_id = team.id) as user_cnt
+	  		, to_char(team.reg_date, 'YYYY-MM-DD HH24:MI') reg_date_str
+		FROM sftm.itm_team team
+		  LEFT OUTER JOIN sftm.itm_user us ON team.reader_id = us.user_id
+		     ,sftm.itm_role role
+		WHERE team.role_code = role.code
+		<if test="role_code != null and role_code != ''"> 
+			AND team.role_code = #{role_code} 
 		</if>
 		
 		
@@ -53,7 +61,7 @@
         INSERT INTO sftm.itm_team (
             id,
             project_id,
-            role_id,
+            role_code,
             name,
             description,
             reg_user,
@@ -63,7 +71,7 @@
         ) VALUES (
             #{ id },
             #{ project_id }::bigint,
-            #{ role_id }::bigint,
+            #{ role_code },
             #{ name },
             #{ description },
             #{ reg_user },
@@ -87,6 +95,14 @@
         id = #{id}::bigint;
     </update> 
     
+    <update id="updateTeamReader" parameterType="java.util.HashMap">
+    UPDATE
+        sftm.itm_team
+    SET
+        reader_id = #{user_id}
+    WHERE
+        id = #{team_id}::bigint;
+    </update> 
     
     
      <delete id="deleteUserByTeam" parameterType="java.util.HashMap">
@@ -103,23 +119,44 @@
         id = #{id}::bigint;
     </delete> 
     
+    
+    <select id="selectTeamUserList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
+	   select '팀장' as team_state, us.* 
+			from sftm.itm_user us, sftm.itm_team tm
+			where us.user_id = tm.reader_id
+			and tm.id = #{id}::bigint
+		union all
+			select  '팀원' as team_state, us.* 
+			from sftm.itm_user us, sftm.itm_team tm
+			where us.team_id = tm.id
+			and us.user_id != COALESCE(tm.reader_id, '')
+			and tm.id = #{id}::bigint
+			
+	</select>
+	
+	
     <select id="selectUserList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	   SELECT  row_number() OVER () as rnum, 
+	   SELECT  
+	   		password,
 			user_id, 
 			usr.name,
 			phone_num, 
-			email, 
+			COALESCE(sex, '') sex, 
 			organization,
 			COALESCE(usr.position, '') AS position,
-			usr.description,
+			COALESCE(birth, '') birth,
 			team.name as team_name,
 			usr.team_id
 		FROM
 		sftm.itm_user usr, sftm.itm_team team
 		WHERE  usr.team_id = team.id
-	    <if test="team_id != ''"> 
+	    <if test="team_id != null and team_id != ''"> 
        		 AND usr.team_id = #{team_id}::bigint
-        </if>     
+        </if> 
+        <if test="role_code != null and role_code != ''"> 
+			AND team.role_code = #{role_code} 
+		</if>
+		ORDER BY usr.reg_date
 	</select>
 	
     <update id="upsertUser" parameterType="java.util.HashMap">
@@ -131,8 +168,8 @@
     						UPDATE sftm.itm_user
     						SET name = #{name},
 						        phone_num = #{phone_num},
-						        email =  #{email},
-						        description =  #{description},
+						        sex =  #{sex},
+						        birth =  #{birth},
 						         organization = #{organization},
 						        "position" = #{position},
 						        team_id = #{team_id}::bigint, 
@@ -141,16 +178,16 @@
 						    RETURNING *
     					)
     	   INSERT INTO sftm.itm_user
-    	   ( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
+    	   ( user_id, password, "name", phone_num, sex, organization, "position", birth, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
 			SELECT  
 				#{ user_id }, 
 				#{ user_id }, 
 				#{ name }, 
 				#{ phone_num }, 
-				#{ email }, 
+				#{ sex }, 
 				#{ organization }, 
 				#{ position }, 
-				#{ description }, 
+				#{ birth }, 
 				#{ team_id }::bigint,
 				#{ reg_user }, 
 				now(), 
@@ -166,16 +203,16 @@
     <insert id="insertUser" parameterType="map" useGeneratedKeys="true">
   		
          INSERT INTO sftm.itm_user
-		( user_id, password, "name", phone_num, email, organization, "position", description, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
+		( user_id, password, "name", phone_num, birth, organization, "position", sex, team_id,  reg_user, reg_date, modify_user, modify_date, admin)
 		VALUES(  
 			#{ user_id }, 
 			#{ user_id }, 
 			#{ name }, 
 			#{ phone_num }, 
-			#{ email }, 
+			#{ birth }, 
 			#{ organization }, 
 			#{ position }, 
-			#{ description }, 
+			#{ sex }, 
 			#{ team_id }::bigint,
 			#{ reg_user }, 
 			now(), 
@@ -192,8 +229,8 @@
     SET
         name = #{name},
         phone_num = #{phone_num},
-        email =  #{email},
-        description =  #{description},
+        sex =  #{sex},
+        birth =  #{birth},
         organization = #{organization},
         "position" = #{position},
         team_id = #{team_id}::bigint, 

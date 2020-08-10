@@ -6,19 +6,27 @@
 
 var tableA, tableB, tableC;
 var modalType = "";
+var teamUserModalTable;
 
-$(document).ready(function() { 
+var initDoucument = function(){
+	
+	
+	searchDivListSetTable("A", {list:[]});
+	searchDivListSetTable("B", {list:[]});
+	searchDivListSetTable("C", {list:[]});
+	
 	
 	serchDivList("A");
-	serchDivList("B");
-	serchDivList("C");
+	ajaxTranCall("user/selectTeamList.do", {role_code:"DEV"}, callbackS, callBackE);
 	
 	//modalType
 	//신규 저장버튼 click event
 	$("#btnSave").click(function(e){
-		if(!modal.modalCheckInputData("teamTableModal")) return;
+//		if(!modal.modalCheckInputData("teamTableModal")) return;
 		var dataJson = modal.convertModalToJsonObj("teamTableModal" );
 		dataJson["depth"] = modalType; 
+		dataJson["team_id"] = $("#selectTeam").val(); 
+		
 		ajaxTranCall("scenario/insertDivision.do", dataJson, callbackS, callBackE);
 	});
 	
@@ -31,7 +39,7 @@ $(document).ready(function() {
 		if(modalType == "A"){
 			$('#tableA tr').each(function(){
 				if($(this).hasClass('selected') ){
-					dataJson["id"] =  tableA.row($(this)).data().id;
+					dataJson["div_id"] =  tableA.row($(this)).data().div_id;
 				}
 			});
 		}
@@ -39,7 +47,7 @@ $(document).ready(function() {
 		else if(modalType == "B"){
 			$('#tableB tr').each(function(){
 				if($(this).hasClass('selected') ){
-					dataJson["id"] =  tableB.row($(this)).data().id;
+					dataJson["div_id"] =  tableB.row($(this)).data().div_id;
 				}
 			});
 		}
@@ -48,13 +56,12 @@ $(document).ready(function() {
 		else if(modalType == "C"){
 			$('#tableC tr').each(function(){
 				if($(this).hasClass('selected') ){
-					dataJson["id"] =  tableC.row($(this)).data().id;
+					dataJson["div_id"]  =  tableC.row($(this)).data().div_id;
+					dataJson["team_id"] = $("#selectTeam").val(); 
 				}
 			});
 		}
-//		{"name":"대물_하이유피","selectA":"A0004","selectB":"","depth":"B"}
 		
-		console.log(JSON.stringify(dataJson));
 		ajaxTranCall("scenario/updateDivision.do", dataJson, callbackS, callBackE);
 	});
 	
@@ -65,9 +72,8 @@ $(document).ready(function() {
 				if($(this).hasClass('selected') ){
 					var dataJson = tableA.row($(this)).data();
 					$('#tableThB').text(dataJson.name);
-					$('#tableThC').text("전체");
-					serchDivList("B", dataJson.id);
-					serchDivList("C", "", dataJson.id);
+					serchDivList("B", dataJson.div_id);
+					searchDivListSetTable("C", {list:[]});
 				}
 			});
 		}, 100);
@@ -78,7 +84,7 @@ $(document).ready(function() {
 				if($(this).hasClass('selected') ){
 					var dataJson = tableB.row($(this)).data();
 					$('#tableThC').text(dataJson.name);
-					serchDivList("C", dataJson.id);
+					serchDivList("C", dataJson.div_id);
 				}
 			});
 		}, 100);
@@ -91,7 +97,8 @@ $(document).ready(function() {
 		}
 	});
 	
-});
+	
+}
 
 
 var serchDivList = function(type, upcode, upupcode){
@@ -115,6 +122,15 @@ var callbackS = function(tran, data){
 	
 	switch(tran){
 	
+	case "user/selectTeamList.do":
+		var list = data["list"];
+		
+		for(var i=0; i<list.length; i++){
+			appendSelectBox2($("#selectTeam"), list[i].id, list[i].name + " ( PL : " + list[i].reader_name  + ")");
+		}
+		
+		break;
+		
 	case "scenario/searchDivListWithCombo.do":
 		if(data["resultCode"] == "0000" ){
 			var detpth = data["depth"];
@@ -124,7 +140,7 @@ var callbackS = function(tran, data){
 			if(detpth == "A"){
 				htmlSelectBox("selectA", "", "선택해 주세요");
 				for(var i=0; i<list.length; i++){
-					appendSelectBox("selectA", list[i].id, list[i].name);
+					appendSelectBox("selectA", list[i].div_id, list[i].name);
 				}
 					
 				//수정인 경우 직접 선택되게 수정
@@ -154,7 +170,7 @@ var callbackS = function(tran, data){
 			else if(detpth == "B"){
 				htmlSelectBox("selectB", "", "선택해 주세요");
 				for(var i=0; i<list.length; i++){
-					appendSelectBox("selectB", list[i].id, list[i].name);
+					appendSelectBox("selectB", list[i].div_id, list[i].name);
 				}
 				
 				//수정인 경우 직접 선택되게 수정
@@ -181,14 +197,12 @@ var callbackS = function(tran, data){
 	case "scenario/updateDivision.do":
 	case "scenario/deleteDivision.do":
 		
-		
-		
 		alert(data["message"]);
 		if(data["resultCode"] == "0000" ){
 			$('div.modal').modal("hide"); //닫기 
 			serchDivList("A");
-			serchDivList("B");
-			serchDivList("C");
+			searchDivListSetTable("B", {list:[]});
+			searchDivListSetTable("C", {list:[]});
 		}
 		
 		break;
@@ -213,130 +227,181 @@ var callbackS = function(tran, data){
 var searchDivListSetTable = function ( detpth, list){
 	
 	
-
-//	else if(detpth == "B"){
-//		htmlSelectBox("selectB", "", "선택해 주세요");
-//		for(var i=0; i<list.length; i++){
-//			appendSelectBox("selectB", list[i].id, list[i].name);
-//		}
-//	}
+	for(var i=0 ; i< list.length; i++){
+		
+		if(detpth == "A"){
+			list[i].name_all = list[i].name;
+		}
+		else if(detpth == "B"){
+			list[i].name_all = list[i].up_name + " > " + list[i].name;
+		}
+		else if(detpth == "C"){
+			list[i].name_all = list[i].upup_name + " > " + list[i].up_name + " > " + list[i].name;
+		}
+//		list[i].rnum = i+1;
+//		var phone_num = list[i].phone_num;
+	}
 	
 	
-	return $('#table'+ detpth).DataTable ({
-		destroy: true,
-        "aaData" : list,
-        "columns" : [
-            { "mDataProp" : 'name' } 
-        ],
-        "language": {
-	        "emptyTable": "데이터가 없어요." , "search": "검색 : "
-	    },
-	    
-		lengthChange: false, 	// 표시 건수기능 숨기기
-		searching: false,  		// 검색 기능 숨기기
-		ordering: false,  		// 정렬 기능 숨기기
-		info: false,			// 정보 표시 숨기기
-		paging: true, 			// 페이징 기능 숨기기
-		select: {
-            style: 'single' //single, multi
-		},
-		 pageLength:15, //기본 데이터건수
-		"scrollY":        550,
-        "scrollCollapse": false,
-       
-        dom : 'Bfrtip',
-        buttons: [
-        	
-            {
-                text: '추가',
-                action: function ( e, dt, node, config ) {
-                	modalOpen("1", detpth, e, dt, node, config )
-                }
-            },
-            {
-                text: '수정',
-                action: function ( e, dt, node, config ) {
-                	modalOpen("2", detpth, e, dt, node, config )
-                }
-            },
-            {
-                text: '삭제', className: 'red',
-                action: function ( e, dt, node, config ) {
-                	var isSelected = false;
-                	
-                	if(!confirm("삭제시에 하위뎁스에 데이터도 전부삭제 됩니다.")){
-                		return;
-                	}
-                	if(detpth == "C"){
+	if(detpth != "C"){
+		return $('#table'+ detpth).DataTable ({
+			destroy: true,
+	        "aaData" : list,
+	        
+	        "columns" : [
+	            { "mDataProp" : 'name_all' } 
+	        ],
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
+		    },
+		    
+			lengthChange: false, 	// 표시 건수기능 숨기기
+			searching: false,  		// 검색 기능 숨기기
+			ordering: false,  		// 정렬 기능 숨기기
+			info: false,			// 정보 표시 숨기기
+			paging: true, 			// 페이징 기능 숨기기
+			select: {
+	            style: 'single' //single, multi
+			},
+			 pageLength:15, //기본 데이터건수
+			"scrollY":        550,
+	        "scrollCollapse": false,
+	       
+	        dom : 'Bfrtip',
+	        buttons: [
+	        	
+	            {
+	                text: '추가',
+	                action: function ( e, dt, node, config ) {
+	                	modalOpen("1", detpth, e, dt, node, config )
+	                }
+	            },
+	            {
+	                text: '수정',
+	                action: function ( e, dt, node, config ) {
+	                	modalOpen("2", detpth, e, dt, node, config )
+	                }
+	            },
+	            {
+	                text: '삭제', className: 'red',
+	                action: function ( e, dt, node, config ) {
+	                	var isSelected = false;
+	                	
+	                	if(!confirm("삭제시에 하위뎁스에 데이터도 전부삭제 됩니다.")){
+	                		return;
+	                	}
+	                	else if(detpth == "B"){
+	                		$('#tableB tr').each(function(){
+								if($(this).hasClass('selected') ){
+									var dataJson = tableB.row($(this)).data();
+									isSelected = true;
+									ajaxTranCall("scenario/deleteDivision.do", {"depth":"B", "div_id":dataJson.div_id}, callbackS, callBackE);
+								}
+							});
+	                	}
+	                	else if(detpth == "A"){
+	                		$('#tableA tr').each(function(){
+								if($(this).hasClass('selected') ){
+									var dataJson = tableA.row($(this)).data();
+									isSelected = true;
+									ajaxTranCall("scenario/deleteDivision.do", {"depth":"B", "div_id":dataJson.div_id}, callbackS, callBackE);
+								}
+							});
+	                	}
+	                	
+	                	if(!isSelected){
+	                		alert("삭제할 데이터를 선택해주세요.");
+	                		
+	                	}
+	                }
+	            },
+	        ]
+			
+	    });
+	}
+	 
+	else{
+		return $('#table'+ detpth).DataTable ({
+			destroy: true,
+	        "aaData" : list,
+	        
+	        "columns" : [
+	            { "mDataProp" : 'name_all' } ,
+	            { "mDataProp" : 'team_name' },
+	            { "mDataProp" : 'reader_name' } 
+	        ],
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
+		    },
+		    
+			lengthChange: false, 	// 표시 건수기능 숨기기
+			searching: false,  		// 검색 기능 숨기기
+			ordering: false,  		// 정렬 기능 숨기기
+			info: false,			// 정보 표시 숨기기
+			paging: true, 			// 페이징 기능 숨기기
+			select: {
+	            style: 'single' //single, multi
+			},
+			 pageLength:15, //기본 데이터건수
+			"scrollY":        550,
+	        "scrollCollapse": false,
+	       
+	        dom : 'Bfrtip',
+	        buttons: [
+	        	
+	            {
+	                text: '추가',
+	                action: function ( e, dt, node, config ) {
+	                	modalOpen("1", detpth, e, dt, node, config )
+	                }
+	            },
+	            {
+	                text: '수정',
+	                action: function ( e, dt, node, config ) {
+	                	modalOpen("2", detpth, e, dt, node, config )
+	                }
+	            },
+	            {
+	                text: '삭제', className: 'red',
+	                action: function ( e, dt, node, config ) {
+	                	var isSelected = false;
+	                	
+	                	if(!confirm("삭제시에 하위뎁스에 데이터도 전부삭제 됩니다.")){
+	                		return;
+	                	}
                 		$('#tableC tr').each(function(){
 							if($(this).hasClass('selected') ){
 								var dataJson = tableC.row($(this)).data();
 								isSelected = true;
-								ajaxTranCall("scenario/deleteDivision.do", {"depth":"C", "id":dataJson.id}, callbackS, callBackE);
+								ajaxTranCall("scenario/deleteDivision.do", {"depth":"C", "div_id":dataJson.div_id}, callbackS, callBackE);
 							}
 						});
-                	}
-                	else if(detpth == "B"){
-                		$('#tableB tr').each(function(){
-							if($(this).hasClass('selected') ){
-								var dataJson = tableB.row($(this)).data();
-								isSelected = true;
-								ajaxTranCall("scenario/deleteDivision.do", {"depth":"B", "id":dataJson.id}, callbackS, callBackE);
-							}
-						});
-                	}
-                	else if(detpth == "A"){
-                		$('#tableA tr').each(function(){
-							if($(this).hasClass('selected') ){
-								var dataJson = tableA.row($(this)).data();
-								isSelected = true;
-								ajaxTranCall("scenario/deleteDivision.do", {"depth":"B", "id":dataJson.id}, callbackS, callBackE);
-							}
-						});
-                	}
-                	
-                	if(!isSelected){
-                		alert("삭제할 데이터를 선택해주세요.");
-                		
-                	}
-                }
-            },
-            {
-                text: '전체',
-                action: function ( e, dt, node, config ) {
-                	
-                	if(detpth == "A"){
-                		serchDivList("A");
-                		serchDivList("B");
-                		serchDivList("C");
-                	}
-                	if(detpth == "B"  ){
-                		serchDivList("B");
-                		serchDivList("C");
-                		$('#tableThC').text("전체");
-                		$('#tableThB').text("전체");
-                		
-                		$('#tableA tr').each(function(){
-            				if($(this).hasClass('selected') ){
-            					$(this).removeClass('selected');
-            				}
-            			});
-                	}
-                	if(detpth == "C"){
-                		serchDivList("C");
-                		$('#tableThC').text("전체");
-                		$('#tableB tr').each(function(){
-            				if($(this).hasClass('selected') ){
-            					$(this).removeClass('selected');
-            				}
-            			});
-                	}
-                	
-                }
-            }
-        ]
-		
-    });
+                
+	                	
+	                	if(!isSelected){
+	                		alert("삭제할 데이터를 선택해주세요.");
+	                		
+	                	}
+	                }
+	            }
+//	            ,{
+//	                text: '전체',
+//	                action: function ( e, dt, node, config ) {
+//	                	
+//                		serchDivList("C");
+//                		$('#tableThC').text("전체");
+//                		$('#tableB tr').each(function(){
+//            				if($(this).hasClass('selected') ){
+//            					$(this).removeClass('selected');
+//            				}
+//            			});
+//	                	
+//	                }
+//	            }
+	        ]
+			
+	    });
+	}
 }
 
 var callBackE = function(tran, data){
@@ -345,6 +410,11 @@ var callBackE = function(tran, data){
 
 
 var modalOpen = function( crType, divType, e, dt, node, config ) {
+
+	$("#selectTeam").val("");
+	$("#selectA").val("");
+	$("#selectB").val("");
+	$("#name").val("");
 	
 	var isSelected = false;
 	modalType = divType;
@@ -352,15 +422,17 @@ var modalOpen = function( crType, divType, e, dt, node, config ) {
 	if(divType == "A"){
 		$("#modalTrA").hide();
 		$("#modalTrB").hide();
+		$("#modalTrC").hide();
 		$("#modalTitle").text("서브시스템");
-		
-		$('#tableA tr').each(function(){
-			if($(this).hasClass('selected') ){
-				var dataJson = tableA.row($(this)).data();
-				$('#name').val(dataJson.name);
-				isSelected = true;
-			}
-		});
+		if(crType == "2"){
+			$('#tableA tr').each(function(){
+				if($(this).hasClass('selected') ){
+					var dataJson = tableA.row($(this)).data();
+					$('#name').val(dataJson.name);
+					isSelected = true;
+				}
+			});
+		}
 		$("#selectA").removeClass("required");
 		$("#selectB").removeClass("required");
 	}
@@ -368,24 +440,37 @@ var modalOpen = function( crType, divType, e, dt, node, config ) {
 		
 		$("#modalTrA").show();
 		$("#modalTrB").hide();
+		$("#modalTrC").hide();
+		
+		 
 		$("#modalTitle").text("업무구분");
 		//서브시스템 콘보 데이터 조회
 		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"A"}, callbackS, callBackE);
-		$('#tableB tr').each(function(){
-			if($(this).hasClass('selected') ){
-				var dataJson = tableB.row($(this)).data();
-				$('#name').val(dataJson.name);
-				isSelected = true;
-			}
-		});
-
+		
+		if(crType == "2"){
+			$('#tableB tr').each(function(){
+				if($(this).hasClass('selected') ){
+					var dataJson = tableB.row($(this)).data();
+					$('#name').val(dataJson.name);
+					isSelected = true;
+				}
+			});
+		}
 		$("#selectA").addClass("required");
 		$("#selectB").removeClass("required");
 		
 	}
 	else{
+
+//		$("#div02").show();
+//		$("#div02").addClass('col-md-5');
+//		$("#div01").removeClass('col-md-12');
+//		$("#div01").addClass('col-md-7');
+		
+		
 		$("#modalTrA").show();
 		$("#modalTrB").show();
+		$("#modalTrC").show();
 		$("#modalTitle").text("대상업무");
 		
 		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"A"}, callbackS, callBackE);
@@ -394,6 +479,8 @@ var modalOpen = function( crType, divType, e, dt, node, config ) {
 			if($(this).hasClass('selected') ){
 				var dataJson = tableC.row($(this)).data();
 				$('#name').val(dataJson.name);
+				$("#selectTeam").val(dataJson.team_id);
+				
 				isSelected = true;
 			}
 		});

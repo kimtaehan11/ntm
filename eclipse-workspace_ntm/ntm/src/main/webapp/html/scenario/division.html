@@ -4,16 +4,16 @@
 <!-- 	<br/><h6 id="grid-options">SFTM 2020 > 시나리오 > 업무분류 > 서브시스템</h6><br/> -->
 	<h6 id="grid-options" class="title">SFTM 2020 > 시나리오 > 업무분류 > 서브시스템</h6>
 	<div class="row">
-		<div class="col-sm">
+		<div class="col-md-3">
 			<table id="tableA" class="table table-bordered" style="width:100%">
 		        <thead>
 		            <tr>
-		                <th>서브시스템 (<span id="tableThA">전체</span>)</th>
+		                <th>서브시스템 </th>
 		            </tr>
 		        </thead>
 		    </table>
 		</div>
-		<div class="col-sm">
+		<div class="col-md-3">
 			<table id="tableB" class="table table-bordered" style="width:100%">
 		        <thead>
 		            <tr>
@@ -22,11 +22,13 @@
 		        </thead>
 		    </table>
 		</div>
-		<div class="col-sm">
+		<div class="col-md-6">
 			<table id="tableC" class="table table-bordered" style="width:100%">
 		        <thead>
 		            <tr>
 		                <th>대상업무 (<span id="tableThC">전체</span>)</th>
+		                <th>개발 팀</th>
+		                <th>개발 팀장</th>
 		            </tr>
 		        </thead>
 		    </table>
@@ -36,7 +38,7 @@
 	
 	<!-- Modal window  -->
 	<div class="modal fade" id="layerpop">
-		<div class="modal-dialog">
+		<div id="modelId" class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header bg-ntm">
 					<h6 id="modalTitle" class="modal-title color-white"></h6>
@@ -65,8 +67,19 @@
 				       	 		<th>이름</th>
 				       	  		<td><input id="name" class="form-control required" maxlength="20" width:100%" id="name"  /></td>	
 				       	  </tr>		
+				       	  <tr id="modalTrC">
+				       	 		<th>개발 팀</th>
+				       	  		<td>
+				       	  			<select  class="form-control required" id="selectTeam" title="선택 구분" style="width:100%">
+											<option selected="selected" value="">선택해 주세요</option>
+									</select>
+				       	  		</td>	
+				       	  </tr>	
+				       	  
+				       	  	
 				       </tbody>
 				    </table>
+						
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-success" id="btnSave" >저장</button>

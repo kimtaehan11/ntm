@@ -34,28 +34,43 @@ public class test {
 					if(file.getName().split("\\.").length == 2) {
 						String ext = file.getName().split("\\.")[1];
 						
-						if("kt".equals(ext)) {
-
+						if("xml".equals(ext)) {
+								
 							BufferedReader inFile = new BufferedReader(new FileReader(file));
 							String sLine = null;
 							int lineCount = 0;
+							
+							
+							System.out.print(   file.getName());
+							System.out.print(  "\t"+  tempSource.replace("C:\\Users\\kimtaehan\\AndroidStudioProjects\\master\\app\\", ""));
+							String temp = "";
 							while ((sLine = inFile.readLine()) != null) {
 								lineCount++;
 								if(sLine.indexOf("@desc") != -1 || sLine.indexOf("@ desc") != -1) {
-									System.out.print( "\t" +  tempSource);
-									System.out.print( "\t" +  file.getName());
-									System.out.print( "\t" +  sLine.split("desc")[1]);
+									
+									
+									temp = sLine.split("desc")[1];
 								} 
 							}
-
+							System.out.println( "\t"  +  temp);
+//							System.out.println( "\t" + lineCount);
+						}
+						else if("xml".equals(ext)) {
+							
+							
+							BufferedReader inFile = new BufferedReader(new FileReader(file));
+							String sLine = null;
+							int lineCount = 0;
+							
+							
+							System.out.print(  tempSource);
+							System.out.print( "\t" +  file.getName());
+							System.out.print( "\t" +  file.getName().split("\\.")[1]);
+							while ((sLine = inFile.readLine()) != null) {
+								lineCount++;
+							}
+							System.out.print( "\t - ");
 							System.out.println( "\t" + lineCount);
-							
-							
-							
-							 
-//								System.out.println(); // 읽어들인 문자열을 출력 합니다.
-
-					
 						}
 						
 					}

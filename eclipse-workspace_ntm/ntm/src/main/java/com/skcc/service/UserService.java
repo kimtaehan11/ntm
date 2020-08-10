@@ -61,7 +61,7 @@ public class UserService {
 	/*
 	 * Team List 조회 로직
 	 */
-	public Map<String, Object> searchTeamList( Map<String, Object> reqMap ) {	
+	public Map<String, Object> selectTeamList( Map<String, Object> reqMap ) {	
 		
 		List<Object> list = sqlSession.selectList("UserDAO.selectTeamList", reqMap);
 		
@@ -98,13 +98,15 @@ public class UserService {
 	}
 	
 	@Transactional 
-	public Map<String, Object> saveNewTeam( Map<String, Object> reqMap ) {	
+	public Map<String, Object> insertNewTeam( Map<String, Object> reqMap ) {	
 		
 		Map<String, Object> response = new HashMap<String, Object>();
 
 		reqMap.put("project_id", 0);
 		reqMap.put("reg_user", "admin");
 		reqMap.put("modify_user", "admin");
+		
+		log.error("role_code : " + reqMap.get("role_code"));
 		
 		int result = sqlSession.insert("UserDAO.insertNewTeam", reqMap);
 		if(result == 1) { 
@@ -180,13 +182,27 @@ public class UserService {
 	}
 	
 	@Transactional 
-	public Map<String, Object> saveUser( Map<String, Object> reqMap ) {	
+	public Map<String, Object> insertUser( Map<String, Object> reqMap ) {	
+		
+		
+//		birth: "222222"
+//		cookieUserId: "D011"
+//		name: "22222"
+//		organization: "222"
+//		password: "2222"
+//		phone_num: "010222222"
+//		phone_num1: "010"
+//		phone_num2: "222222"
+//		position: "222"
+//		sex: "M"
+//		team_id: "8"
+//		user_id: "T2222"
 		
 		Map<String, Object> response = new HashMap<String, Object>();
 
 		reqMap.put("project_id", 0);
-		reqMap.put("reg_user", "admin");
-		reqMap.put("modify_user", "admin");
+		reqMap.put("reg_user", 		reqMap.get("cookieUserId"));
+		reqMap.put("modify_user",   reqMap.get("cookieUserId"));
 		
 		int result = sqlSession.insert("UserDAO.insertUser", reqMap);
 		if(result == 1) { 
@@ -241,8 +257,10 @@ public class UserService {
 	private String getCellString(XSSFCell cell) {
 		
 		String resultStr = "";
-		if(null != cell) {
 		
+		
+		if(null != cell) {
+			log.debug("cell.getCellType() : " + cell.getCellType());
 			switch(cell.getCellType()) {
 			
 			case FORMULA:
@@ -258,7 +276,7 @@ public class UserService {
 				break;
 				
 			case BLANK:
-				resultStr = cell.getBooleanCellValue() + "";
+				resultStr =  "";
 				break;
 				
 			case ERROR:
@@ -293,27 +311,81 @@ public class UserService {
                 
                 // 행의 두번째 열(이름부터 받아오기) 
                 tempMap.put("user_id", 			getCellString(row.getCell(1)));
-                tempMap.put("name", 		getCellString(row.getCell(2)));
-                tempMap.put("team", 		getCellString(row.getCell(3)));
-                tempMap.put("organization", getCellString(row.getCell(4)));
-                tempMap.put("phone_num", 		getCellString(row.getCell(5)));
-                tempMap.put("position",			getCellString(row.getCell(6)));
-                tempMap.put("email", 		getCellString(row.getCell(7)));
-                tempMap.put("description", 	getCellString(row.getCell(8)));
+                tempMap.put("name", 			getCellString(row.getCell(2)));
+                tempMap.put("team", 			getCellString(row.getCell(3)));
+                tempMap.put("organization", 	getCellString(row.getCell(4)));
+                tempMap.put("position",			getCellString(row.getCell(5)));
+                tempMap.put("phone_num", 		getCellString(row.getCell(6)));
+                tempMap.put("sex", 				getCellString(row.getCell(7)));
+                tempMap.put("birth", 			getCellString(row.getCell(8)));
+                
+
+                log.debug(" getCellString(row.getCell(1) : " + getCellString(row.getCell(1)));
+                log.debug(" getCellString(row.getCell(6) : " + getCellString(row.getCell(6)));
+                
                 
                 //예외처리 
                 tempMap.put("user_id", tempMap.get("user_id").toString().replace(".0", ""));
+               
                 
+                String tempSex = (String) tempMap.get("sex");
                 
                 if("".equals( tempMap.get("user_id"))) {
-                	 tempMap.put("result", "-1");
+                	 tempMap.put("result", "사용자 아이디가 없습니다.");
                      arrayList.add(tempMap);
                      continue;
                 }
+                
+                if("".equals( tempMap.get("name"))) {
+                	tempMap.put("result", "사용자 이름이 없습니다.");
+                    arrayList.add(tempMap);
+                    continue;
+                }
+                
+                if("".equals( tempMap.get("birth"))) {
+                	
+                	 
+                	tempMap.put("result", "사용자 셍년월일이 없습니다.");
+                    arrayList.add(tempMap);
+                    continue;
+                }
+                else {
+                	tempMap.put("birth", tempMap.get("birth").toString().replace(".0", ""));
+                }
+                
+                if("".equals( tempMap.get("sex"))) {
+                	tempMap.put("sex", "T");
+                }
+                else {
+                	
+                	if(tempSex.indexOf("남") != -1) {
+                    	tempMap.put("sex", "M");
+                	}
+                	else if(tempSex.indexOf("여") != -1) {
+                    	tempMap.put("sex", "F");
+                	}
+                	else {
+                		tempMap.put("sex", "T");
+                	}
+                }
+                if(!"".equals( tempMap.get("phone_num"))) {
+                	String tempphone_num = (String) tempMap.get("phone_num");
+                	if(tempphone_num.equals("false")) {
+                		tempMap.put("phone_num", "");
+                	}
+                	log.debug("tempphone_num : " + tempphone_num);
+                	tempMap.put("phone_num", tempphone_num.replaceAll("-", ""));
+                }
+                	
+                
+                
                 tempMap.put("reg_user", "admin");
                 int result = sqlSession.insert("UserDAO.upsertUser", tempMap);
+                if(result == -1) {
+                	tempMap.put("result", "원인불명");
+                	arrayList.add(tempMap);
+                }
                 tempMap.put("result", result);
-                arrayList.add(tempMap);
                 
             }
             
@@ -329,4 +401,42 @@ public class UserService {
 		
 		return response;
 	}
+	
+	
+	public Map<String, Object> updateTeamReader( Map<String, Object> reqMap ) {	
+		
+		Map<String, Object> response = new HashMap<String, Object>();
+
+		
+		int result = sqlSession.insert("UserDAO.updateTeamReader", reqMap);
+		if(result == 1) { 
+			response.put("resultCode", "0000");
+			response.put("message", "정상적으로 저장되었습니다.");
+		}
+		else {
+			response.put("resultCode", "0001");
+			response.put("message", "정상적으로 저장에 실패하였습니다.");
+		}
+		return response;
+	}
+	
+	public Map<String, Object> selectTeamUserList( Map<String, Object> reqMap ) {	
+		
+		List<Object> list = sqlSession.selectList("UserDAO.selectTeamUserList", reqMap);
+		
+//		position
+		Map<String, Object> response = new HashMap<String, Object>();
+		if(list.size() != -1) { 
+			response.put("resultCode", "0000");
+			response.put("message", "정상적으로 조회되었습니다.");
+			response.put("list", list);
+		}
+		else {
+			
+			response.put("resultCode", "0001");
+			response.put("message", "정상적으로 조회에 실패했습니다.");
+		}
+		return response;
+	}
+	//
 }

@@ -7,24 +7,37 @@
        <result property="object"                   column="PackageBeanResult"/>
     </resultMap>
     
-    <!-- 사용자 조회 -->
+    <!-- 시나리오 조회 로직 -->
 	<select id="selectScenarioList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	    SELECT div.* 
-	    	, CASE WHEN div.depth = 'C' 
-			THEN (SELECT UPCODE FROM sftm.itm_div sdiv 
-			WHERE sdiv.id = div.upcode ) 
-			ELSE '' END AS upupcode
+	   SELECT div.div_id
+	    	, div.project_id
+	    	, div3.name as upup_name
+	    	, div2.name as up_name
+	    	, div.name 
+	    	, div.depth
+	    	, div3.div_id as upupcode
+	    	, div.upcode
+	    	, div.reg_user
+	    	, div.reg_date 
+	    	, div.team_id
+	    	, COALESCE(tm.name, '') as team_name
+	    	, COALESCE(tm.reader_id, '')
+	    	, COALESCE(us.name , '') as reader_name
 	    FROM
 	        sftm.itm_div div
+	        LEFT OUTER JOIN sftm.itm_div div2 ON div.upcode = div2.div_id
+	        LEFT OUTER JOIN sftm.itm_div div3 ON div2.upcode = div3.div_id
+	        LEFt OUTER JOIN sftm.itm_team tm ON div.team_id = tm.id
+	        LEFT OUTER JOIN sftm.itm_user us ON tm.reader_id = us.user_id
 	    WHERE 1=1
         <if test="depth != null"> 
-        AND depth = #{depth}
+        AND div.depth = #{depth}
         </if>
 	    <if test="upcode != null"> 
-        AND upcode = #{upcode}
+        AND div.upcode = #{upcode}
         </if>    
         <if test="upupcode != null"> 
-        AND upcode in (SELECT div2.id FROM sftm.itm_div div2 WHERE div2.depth = 'B' AND div2.upcode = #{upupcode})
+        AND div.upcode in (SELECT div2.div_id FROM sftm.itm_div div2 WHERE div2.depth = 'B' AND div2.upcode = #{upupcode})
         </if>   
         
         order by id 
@@ -33,142 +46,226 @@
 	
 	
     <insert id="insertDivision" parameterType="map" useGeneratedKeys="true">
-  		
-           INSERT INTO sftm.itm_div
+           	INSERT INTO sftm.itm_div
 			VALUES(
-			 #{depth} ||  LPAD( nextval('sftm.itm_div_id_seq'::REGCLASS)||'', 4, '0'), 
-			 0,
-			 #{name},
-			 #{depth},
-			 #{upcode},
-			 'admin',
-			 now(),
-			 'admin',
-			 now()
+				 #{depth} ||  LPAD( nextval('sftm.itm_div_id_seq'::REGCLASS)||'', 4, '0'), 
+				 0,
+				 #{name},
+				 #{depth},
+				 #{upcode},
+				 #{team_id}::bigint,
+				 'admin',
+				 now(),
+				 'admin',
+				 now()
 			 ) 
   	</insert>
   	
   	<select id="selectDivDepth" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-  		select div.id as detpth3
+  		select div.div_id as detpth3
 			, div.upcode as detpth2 
 			, div2.upcode as detpth1 
 		from sftm.itm_div div, sftm.itm_div div2
-		 where div.upcode = div2.id
-		 and div.id = #{id}
+		 where div.upcode = div2.div_id
+		 and div.div_id = #{div_id}
   	</select>
 
-  	<!-- 팀 수정 -->
+  	<!-- 업무구분코드 수정하기 -->
     <update id="updateDivision" parameterType="java.util.HashMap">
-    UPDATE sftm.itm_div 
+    	UPDATE sftm.itm_div 
 		SET name = #{name}, 
+			<if test="team_id != null and team_id != ''">
+				team_id = #{team_id}::bigint,
+			</if>
 			upcode =  #{upcode}
-		WHERE id = #{id}
-
+		WHERE div_id = #{div_id}
     </update> 
     
     
     <delete id="deleteDivision" parameterType="java.util.HashMap">
 		DELETE
 		FROM sftm.itm_div div
-		WHERE id = #{id}
-		OR UPCODE = #{id}
-		OR UPCODE IN (SELECT ID FROM sftm.itm_div indiv WHERE indiv.upcode = #{id})
+		WHERE div_id = #{div_id}
+		OR UPCODE = #{div_id}
+		OR UPCODE IN (SELECT div_id FROM sftm.itm_div indiv WHERE indiv.upcode = #{div_id})
     </delete> 
 
 
  	<!-- 사용자 조회 -->
 	<!-- {"depthA":"A0003","depthB":"B0023","depthC":"C0009"} -->
 	<select id="selectScenario" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	    SELECT *
+	    SELECT sc.scenario_id
+			, sc.scenario_code
+			, sc.scenario_name
+			, sc.div_id
+			, sc.is_batch
+			, sc.description
+			, div.name div_name1
+			, div2.name div_name2
+			, div3.name div_name3
+			, div3.name || ' > ' || div2.name  || ' > ' || div.name as div_name_total
 	    FROM
-	        sftm.itm_scenario
+	        sftm.itm_scenario sc
+			LEFT OUTER JOIN sftm.itm_div div ON sc.div_id = div.div_id
+			LEFT OUTER JOIN sftm.itm_div div2 ON div2.div_id = div.upcode
+			LEFT OUTER JOIN sftm.itm_div div3 ON div3.div_id = div2.upcode
 	    WHERE 1=1
-	    <if test="depthC != ''"> 
-        AND div_id = #{depthC}
-        </if>
-        <if test="depthB != ''"> 
-        AND div_id IN (select id from sftm.itm_div where upcode = #{depthB})
-        </if>
-     	 <if test="depthA != ''"> 
-        AND div_id IN (
-			select C.ID 
-			from sftm.itm_div B, sftm.itm_div C
-			where B.UPCODE = #{depthA}
-			AND C.UPCODE = B.ID
-		)
-        </if>
-         
-        
+	    	<if test="depthC != null and depthC != ''">
+	        	AND sc.div_id = #{depthC}
+	        </if>
+	    	<if test="depthB != null and depthB != ''">
+	        	AND div2.div_id = #{depthB}
+	        </if>
+	    	<if test="depthA != null and depthA != ''">
+	        	AND div3.div_id = #{depthA}
+	        </if>
+	</select>
+	
+	
+	<!-- 사용자 조회 -->
+	<select id="selectScenarioId" resultType="java.lang.Integer">
+	    select nextval('sftm.itm_defect_id_seq'::regclass);
 	</select>
 	
 	
 	 <insert id="insertScenario" parameterType="map" useGeneratedKeys="true">
-  		
          INSERT INTO sftm.itm_scenario
+         	(
+         		scenario_id,
+         		scenario_code,
+         		scenario_name,
+         		div_id,
+         		is_batch,
+         		project_id,
+         		description,
+         		reg_user, 
+         		reg_date
+         	)
 			VALUES(
-			#{scenario_code},
-			#{scenario_name},
-			#{div_id},
-			#{is_batch},
-			'C001_01', 
-			#{description},
-			'admin',
-			now(),
-			'admin',
-			now()
+				#{scenario_id}::bigint, 
+				#{scenario_code},
+				#{scenario_name},
+				#{div_id},
+				#{is_batch},
+				'0', 
+				#{description},
+				#{cookieUserId},
+				now()
 			)
   	</insert>
   	
+  	
+  	<!-- desc : 시나리오 수정  -->
+  	<!-- html : scenario -->
   	<update id="updateScenario" parameterType="map" useGeneratedKeys="true">
-  		
-  		
-  		  UPDATE sftm.itm_scenario 
-				SET scenario_name = #{scenario_name}, 
-					description =  #{description},
-					div_id =  #{div_id},
-					is_batch =  #{is_batch}
-					
-				WHERE scenario_code = #{scenario_code}
+	  	UPDATE sftm.itm_scenario 
+		SET scenario_name = #{scenario_name}, 
+			scenario_code = #{scenario_code}, 
+			description =  #{description},
+			div_id =  #{div_id},
+			is_batch =  #{is_batch}
+		WHERE scenario_id = #{scenario_id}::bigint
   	</update>
   	
-  	
+  	<!-- desc : 시나리오 삭제시 하위 테스트 케이스도 같이 삭제  -->
+  	<!-- html : scenario -->
   	<delete id="deleteTestcaseByUp" parameterType="java.util.HashMap">
 		DELETE
 		FROM sftm.itm_test_case
-		WHERE scenario_code 	= #{scenario_code}
+		WHERE scenario_id = #{scenario_id} 
     </delete>
     
+    <!-- desc : 시나리오 삭제  -->
+  	<!-- html : scenario -->
     <delete id="deleteScenario" parameterType="java.util.HashMap">
 		DELETE
 		FROM sftm.itm_scenario
-		WHERE scenario_code 	= #{scenario_code}
+		WHERE scenario_id = #{scenario_id} 
     </delete>
   	
 	<!-- testcase Select List  -->
 	<select id="selectTestCaseList" parameterType="java.util.Map" resultMap="PackageHeaderMap">
-	   SELECT row_number() OVER () as rnum,
-			cs.*, 
-			COALESCE(sftm.GET_CODENAME('C001', cs.state), '') as stateStr,
-			COALESCE(test.name, '') test_name, 
-			COALESCE(dev.name, '') dev_name, 
-			COALESCE(reg.name, '') reg_name, 
-			COALESCE(sc.scenario_name, '') scenario_name
-	    FROM
-		sftm.itm_test_case cs
-	     LEFT JOIN sftm.itm_user test ON cs.tester_id = test.user_id
-		 LEFT JOIN sftm.itm_user dev ON cs.dev_id = dev.user_id   
-		 LEFT JOIN sftm.itm_user reg ON cs.reg_user = reg.user_id
-		 LEFT JOIN sftm.itm_scenario sc ON cs.scenario_code = sc.scenario_code
-	    WHERE 1=1
+
+
+
+SELECT row_number() OVER () as rnum
+	,COALESCE(div3.name, '') depth1
+	,COALESCE(div2.name, '') depth2
+	,COALESCE(div.name, '') depth3
+	,COALESCE(div3.name, '') || '-' || COALESCE(div2.name, '') || '-'  || COALESCE(div.name, '') as div_name
+	,COALESCE(sftm.GET_CODENAME('C001', cs.state), '') as stateStr
+	,COALESCE(test.name, '') test_name 
+	,COALESCE(dev.name, '') dev_name
+	,COALESCE(sc.scenario_name, '') scenario_name
+	,cs.scenario_id
+	,cs.case_code
+	,cs.case_name
+	,v1.defect_cnt
+	,v1.A001_01
+	,v1.A001_02
+	,v1.A001_03
+	,v1.A001_03 + A001_02 as not_defect_cnt
+	,v1.B001_01
+	,v1.B001_02
+	,v1.B001_03
+	,v1.B001_04
+	,v1.B001_05
+	,v1.B001_06
+	,v1.B001_07
+	,v1.B001_01 + v1.B001_02 + v1.B001_07 as dev_check_cnt
+	,v1.B001_03 + v1.B001_04 as test_check_cnt 
+	,cs.state
+FROM (
+	select ics.case_code
+		, ics.scenario_id
+		, COALESCE( count(*) FILTER(WHERE his.test_type = 'A001_01'), 0) as A001_01
+		, COALESCE( count(*) FILTER(WHERE his.test_type = 'A001_02'), 0) as A001_02
+		, COALESCE( count(*) FILTER(WHERE his.test_type = 'A001_03'), 0) as A001_03 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code = 'B001_01'), 0) as B001_01 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code = 'B001_02'), 0) as B001_02 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code = 'B001_03'), 0) as B001_03 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code = 'B001_04'), 0) as B001_04 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code = 'B001_05'), 0) as B001_05 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code = 'B001_06'), 0) as B001_06 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code = 'B001_07'), 0) as B001_07 
+		, COALESCE( count(*) FILTER(WHERE his.defect_code != ''), 0) as defect_cnt 
+	FROM sftm.itm_test_case ics
+	 LEFT OUTER JOIN sftm.itm_defect df ON ics.scenario_id = df.scenario_id and ics.case_code = df.case_code
+	 LEFT OUTER JOIN sftm.itm_defect_history his
+		ON df.id = his.id
+		and his.seq = (select max(his2.seq) from  sftm.itm_defect_history his2 where his.id = his2.id)
+		where 1=1
 		<if test="scenario_code != null and scenario_code != ''">
-        AND cs.scenario_code = #{scenario_code}
-        </if>
-        <if test="dev_id != null and dev_id != ''">
-        AND cs.dev_id = #{dev_id}
-        </if>
-		<if test="tester_id != null and tester_id != ''">
-        AND cs.tester_id = #{tester_id}
-        </if>
+			AND ics.scenario_id = #{scenario_id}
+		</if>
+		<if test="case_code != null and case_code != ''">
+			AND ics.case_code = #{case_code}
+		</if>
+		<if test="dev_id != null and dev_id != ''">
+			AND ics.dev_id = #{dev_id}
+		</if>
+			<if test="tester_id != null and tester_id != ''">
+			AND ics.tester_id = #{tester_id}
+		</if>
+		<if test="state != null and state != ''">
+			AND ics.state = #{state}
+		</if>
+	GROUP BY ics.case_code, ics.scenario_id
+) as v1
+, sftm.itm_test_case cs
+	LEFT JOIN sftm.itm_user test ON cs.tester_id = test.user_id
+	LEFT JOIN sftm.itm_user dev ON cs.dev_id = dev.user_id   
+	LEFT JOIN sftm.itm_scenario sc ON cs.scenario_id = sc.id
+	LEFT OUTER JOIN sftm.itm_div div ON sc.div_id = div.id
+	LEFT OUTER JOIN sftm.itm_div div2 ON div2.id = div.upcode
+	LEFT OUTER JOIN sftm.itm_div div3 ON div3.id = div2.upcode
+where v1.scenario_id = cs.scenario_id and v1.case_code = cs.case_code
+
+
+
+		
+		
+        
 	</select>
 	
 	<insert id="insertTestcase" parameterType="map" useGeneratedKeys="true">
@@ -200,6 +297,14 @@
 		AND scenario_code 	= #{scenario_code}
     </update> 
     
+    <update id="updateTestCaseOnlyState" parameterType="map" useGeneratedKeys="true">
+    	UPDATE sftm.itm_test_case 
+		SET state = #{state} 
+		WHERE case_code = #{case_code} 
+		AND scenario_code 	= #{scenario_code}
+    </update> 
+    
+    
     <update id="updateTestcaseOnlyState" parameterType="map" useGeneratedKeys="true">
     	UPDATE sftm.itm_test_case 
 		SET state = #{state} 
@@ -223,10 +328,10 @@
 			cs.scenario_code,
 			sc.scenario_name,
 		
-			 df.test_type_id,
-			 sftm.GET_CODENAME('A001', df.test_type_id) as test_type_name,
-			 df.defect_code,
-			 sftm.GET_CODENAME('B001', df.defect_code) as defect_name,
+			 his.test_type,
+			 sftm.GET_CODENAME('A001', his.test_type) as test_type_name,
+			 his.defect_code,
+			 sftm.GET_CODENAME('B001', his.defect_code) as defect_name,
 			 df.title,
 			 df.description,
 			 df.defect_user,
@@ -243,6 +348,7 @@
 				LEFT JOIN sftm.itm_user dev ON df.defect_user = dev.user_id
 				LEFT JOIN sftm.itm_user reg ON df.reg_user = reg.user_id,
 			sftm.itm_scenario sc
+			, sftm.itm_defect_history his
 		where 1=1
 		<if test="dev_id != null and dev_id != ''">
 			and df.defect_user = #{dev_id} 
@@ -253,7 +359,8 @@
 		and cs.scenario_code = df.scenario_code
 		and cs.case_code = df.case_code
 		and cs.scenario_code = sc.scenario_code
-		;
+		and df.id = his.id
+		and his.seq = (SELECT MAX(seq) FROM sftm.itm_defect_history his2 where df.id = his2.id)
 		        
 	</select>
 </mapper>

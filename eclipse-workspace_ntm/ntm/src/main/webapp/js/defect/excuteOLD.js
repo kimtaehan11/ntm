@@ -6,12 +6,15 @@
 var isFirstLoad;
 
 var caseTable, defectTable;
+var defectHistrotyModalTable, autoTestModalTable;
 var imgkey = -1;
 var crud = "I";
 
+//팝업 호출 타입  1 신규, 2업데이트
+var modalOpenType = "1";
 $(document).ready(function() { 
 	//팀정보 조회합니다.
-	ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
+	ajaxTranCall("user/selectTeamList.do", {role_code:"TEST"}, callbackS, callBackE);
 	ajaxTranCall("code/selectCodeList.do", {"code_group":"C001"}, callbackS, callBackE);
 	ajaxTranCall("code/selectCodeList.do", {"code_group":"A001"}, callbackS, callBackE);
 	ajaxTranCall("code/selectCodeList.do", {"code_group":"B001"}, callbackS, callBackE);
@@ -32,12 +35,22 @@ $(document).ready(function() {
 		$('#defectTable tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
 				   datajson = defectTable.row($(this)).data();
-//				ajaxTranCall("defect/selectDefectDetail.do", datajson, callbackS, callBackE);
-				
 			 }
 		});
-
-		skInterface.autoTestRecording(getCookie("user_id"), datajson["id"] + "", datajson["title"] );
+		
+//		alert(modalOpenType);
+		
+		if(modalOpenType == "1" || modalOpenType == "3"){
+//			modalOpenType = "2";
+			modalOpenType = "3"
+			$("#btnSave").trigger("click");
+			
+		}
+		else if(modalOpenType== "2"){
+			skInterface.autoTestRecording(getCookie("user_id"), datajson["id"] + "", datajson["title"] );
+		}
+		
+		
 		
 	});
 	
@@ -77,6 +90,12 @@ $(document).ready(function() {
 	
 	$("#btnSave").on('click', function(){
 		
+		if( !modal.modalCheckInputData("defectTableModal")){
+			modalOpenType = "1";
+			return;
+		}
+		
+//		
 		var data = new FormData();
 		var fileList = $("#files").prop('files');
 		
@@ -123,10 +142,10 @@ $(document).ready(function() {
 		}
 		
 		crud = "U";
-		data.append("crud", crud);
-		data.append("imgkey", imgkey);
-		data.append("tbname", "itm_defect");
-		data.append("user_id", getCookie("user_id"));
+		data.append("crud", 	crud);
+		data.append("imgkey", 	imgkey);
+		data.append("tbname", 	"itm_defect");
+		data.append("user_id", 	getCookie("user_id"));
 		ajaxTranCallWithFile ("common/uploadFile.file", data,  callbackS, callBackE);
 	});
 	//테스트 상태변경 버튼
@@ -137,6 +156,45 @@ $(document).ready(function() {
 			"state"    		:	$("#state").val()	
 		}
 		ajaxTranCall ("scenario/updateTestcaseOnlyState.do", jsonObj,  callbackS, callBackE);
+	});
+	
+	//modal 결함이력/테스트자동화 selectbox change evnet
+	$("#selectType").on('change', function(){
+		
+		var type = $(this).val();
+		//결함이력
+		if(type=="1"){
+			//결함 이력 조회
+			
+			$('#defectTable tr').each(function(){
+				 if ( $(this).hasClass('selected') ){
+					 var datajson = defectTable.row($(this)).data();
+					 ajaxTranCall("defect/selectDefectHistroty.do", datajson, callbackS, callBackE);
+				 }
+			});
+
+			 $("#selectType").val("1");
+			 $("#autoTestModalTable").hide();
+			 $("#autoTestModalTable_wrapper").hide();
+			 $("#defectHistrotyModalTable").show();
+			 $("#defectHistrotyModalTable_wrapper").show();
+			 $("#btnRecording").hide();
+		}
+		//테스트자동화
+		else{
+			$('#defectTable tr').each(function(){
+				 if ( $(this).hasClass('selected') ){
+					 var datajson = defectTable.row($(this)).data();
+					 ajaxTranCall("auto/selectAutoList.do", {"defect_id":datajson.id}, callbackS, callBackE);
+				 }
+			});
+			
+			$("#autoTestModalTable").show();
+			$("#autoTestModalTable_wrapper").show();
+		    $("#defectHistrotyModalTable").hide();
+	        $("#defectHistrotyModalTable_wrapper").hide();
+	        $("#btnRecording").show();
+		}
 	});
 	
 });
@@ -172,13 +230,13 @@ var selectTestCaseList = function(){
 var selectUserList = function(team_id){
 	var jsonObj = {};
 	if(team_id == null || team_id == ""){
-		
+		jsonObj["role_code"] = "TEST";
 	}
 	else{
 		$("#selectTeam").val(team_id);
 		jsonObj["team_id"] = team_id;
+		jsonObj["role_code"] = "TEST";
 	}
-	
 	ajaxTranCall("user/selectUserList.do", jsonObj, callbackS, callBackE);
 }
 
@@ -187,6 +245,37 @@ var callbackS = function(tran, data){
 	
 	
 	switch(tran){
+	
+	case "defect/selectDefectHistroty.do":
+		
+		var list = data["list"];
+		defectHistrotyModalTable = $('#defectHistrotyModalTable').DataTable ({
+			destroy: true,
+	        "aaData" : list,
+	        "columns" : [
+	            { "mDataProp" : 'test_type' } ,
+	            { "mDataProp" : 'defect_code' } ,
+	            { "mDataProp" : 'name' },
+	            { "mDataProp" : 'reg_date' } 
+	        ],
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
+		    },
+		    
+			lengthChange: false, 	// 표시 건수기능 숨기기
+			searching: false,  		// 검색 기능 숨기기
+			ordering: false,  		// 정렬 기능 숨기기
+			info: false,			// 정보 표시 숨기기
+			paging: true, 			// 페이징 기능 숨기기
+			select: {
+	            style: 'single' //single, multi
+			},
+			"scrollY":       400,
+	        "scrollCollapse": false 
+			
+	    });
+		
+		break;
 	
 	case "code/selectCodeList.do":
 		
@@ -207,7 +296,9 @@ var callbackS = function(tran, data){
 		
 		else if(code_group == "A001"){
 			for(var i=0; i<list.length; i++){
-				appendSelectBox2( $("#test_type_id"), list[i].code_id, list[i].code_name);
+				
+				if(list[i].code_id == "A001_03") continue;
+				appendSelectBox2( $("#test_type"), list[i].code_id, list[i].code_name);
 			}
 		}
 		break;
@@ -224,6 +315,20 @@ var callbackS = function(tran, data){
 	case "defect/updateDefect.do":
 		alert(data["message"]);
 		if(data["resultCode"] == "0000" ){
+			
+			if(modalOpenType == "3"){
+				modalOpenType = "2";
+				
+//				$('#modalTitle').text("결함 수정");
+//				$('#btnSave').hide();
+//				$('#btnUpdate').show();
+//				$("#test_type").val("0");
+//				
+				 // 텍스트 박스 readonly 처리
+		        $("#test_type").attr("readonly",true);
+		        skInterface.autoTestRecording(getCookie("user_id"), data["id"] + "", data["title"] );
+				
+			}
 			$('div.modal').modal("hide"); //	
 			selectDefectList();
 		}
@@ -307,7 +412,7 @@ var callbackS = function(tran, data){
 		    });
 			break;
 		//팀 정보 전체 조회
-		case "user/searchTeamList.do":
+		case "user/selectTeamList.do":
 			var list = data["list"];
 			htmlSelectBox2($("#selectTeam"), "", "팀 전체");
 			for(var i=0; i<list.length; i++){
@@ -345,6 +450,7 @@ var callbackS = function(tran, data){
 			var list = data["list"];
 			caseTable = $('#caseTable').DataTable ({
 				destroy: true,
+				
 		        "aaData" : list,
 		        "columns" : [
 		            { "mDataProp" : 'rnum' },
@@ -383,7 +489,7 @@ var callBackE = function(tran, data){
 var insertDefectDO= function(_imgkey){
 	var data = {
 			"title": $("#title").val(),
-			"test_type_id": $("#test_type_id").val(),
+			"test_type": $("#test_type").val(),
 			"description": $("#description").val(),
 			"user_id": $("#user_id").val(),
 			"scenario_code": $("#scenario_code").val(),
@@ -407,7 +513,7 @@ var updateDefectDO= function(_imgkey){
 	
 	var data = {
 		"title": $("#title").val(),
-		"test_type_id": $("#test_type_id").val(),
+		"test_type": $("#test_type").val(),
 		"description": $("#description").val(),
 		"user_id": $("#user_id").val(),
 		"scenario_code": $("#scenario_code").val(),
@@ -421,7 +527,7 @@ var updateDefectDO= function(_imgkey){
 }
 var modalOpen = function(type, e, dt, node, config ) {
 	
-//	modal.modalClear("userTableModal");
+	modalOpenType = type;
 	
 	if(type == "1"){
 		$('#modalTitle').text("신규결함 등록");
@@ -430,44 +536,78 @@ var modalOpen = function(type, e, dt, node, config ) {
 		imgkey = -1;
 		//초기화 작업 필요
 		$("#title").val("");
-		$("#test_type_id").val("0");
+		$("#test_type").val("0");
 		$("#description").val("");
 		$("#description").val("");
 		$("#files").val("");
 
 		$("#imgs").html("");$("#existingImgs").html("");
 		$("#existingImgsTr").hide();
+		$("#tr_defect_code").hide();
+		
 //		 $("#defect_code").val("")
 	 	$("#defect_code option:eq(0)").prop("selected", true);
-	 	$("#test_type_id option:eq(0)").prop("selected", true);
+	 	$("#test_type option:eq(0)").prop("selected", true);
 
 //		appendSelectBox2( $("#defect_code"), list[i].code_id, list[i].code_name);
-//		appendSelectBox2( $("#test_type_id"), list[i].code_id, list[i].code_name);
+//		appendSelectBox2( $("#test_type"), list[i].code_id, list[i].code_name);
         // readonly 삭제
-        $("#test_type_id").removeAttr("readonly");
-		
+        $("#test_type").removeAttr("readonly");
+        
+        $("#selectType").attr("readonly",true);
+        //팝업 우측 정보 설정 
+        $("#selectType").val("2");
+		$("#autoTestModalTable").show();
+		$("#autoTestModalTable_wrapper").show();
+	    $("#defectHistrotyModalTable").hide();
+        $("#defectHistrotyModalTable_wrapper").hide();
+        $("#btnRecording").show();
+		 
 	}
 	else{
 		
 		$('#modalTitle').text("결함 수정");
 		$('#btnSave').hide();
 		$('#btnUpdate').show();
-		$("#test_type_id").val("0");
-		
+		$("#test_type").val("0");
+		$("#tr_defect_code").show();
 		 // 텍스트 박스 readonly 처리
-        $("#test_type_id").attr("readonly",true);
+        $("#test_type").attr("readonly",true);
  
-
+        var isSelected = false;
 
 		$('#defectTable tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
 				 var datajson = defectTable.row($(this)).data();
 				 modal.convertJsonObjToModal("defectTableModal", datajson );
+				 
+//				 alert(datajson.)
 				 imgkey = datajson.imgkey;
 				//상세조회 이미지 + 자동테스트건
-				ajaxTranCall("defect/selectDefectDetail.do", datajson, callbackS, callBackE);
+				 isSelected = true;
+				 
+				 //저장된 이미지건 조회
+				 ajaxTranCall("defect/selectDefectDetail.do", datajson, callbackS, callBackE);
+				
+				 //결함 이력 조회
+				 ajaxTranCall("defect/selectDefectHistroty.do", datajson, callbackS, callBackE);
+				 
+
+				 $("#selectType").val("1");
+				 $("#autoTestModalTable").hide();
+				 $("#autoTestModalTable_wrapper").hide();
+				 $("#defectHistrotyModalTable").show();
+				 $("#defectHistrotyModalTable_wrapper").show();
+				 $("#btnRecording").hide();
+				 
+				 
 			 }
 		});
+		
+		if(!isSelected) {
+			alert(MSG.SELETED_UPDATE_OBJ);
+			return;
+		}
 		$("#imgs").html("");
 
 		$("#existingImgsTr").show();

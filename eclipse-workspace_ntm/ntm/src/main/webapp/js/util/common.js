@@ -4,6 +4,14 @@
  * @see     js 
  */
 
+function getUrlParams() {
+    var params = {};
+    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+    return params;
+}
+
+
+
 function appendSelectBox(obj, key, value){
 	$('#' +obj).append("<option value='"+key+"'>"+value+"</option>" );
 }
@@ -121,4 +129,45 @@ function setCookie(cookie_name, value, days) {
 function getFileUrl(id, seq){
 	
 	return location.protocol + "//" + location.host + "/ntm/common/uploadFile.filedown?imgkey=" + id + "&seq=" + seq;
+}
+
+/*
+ * phoneFomatter('01000000000');   //010-0000-0000
+ * phoneFomatter('01000000000',0); //010-****-0000
+ * phoneFomatter('0100000000');    //010-000-0000
+ */
+function phoneFomatter(num,type){
+
+    var formatNum = '';
+    
+    try{
+	    if(num.length==11){
+	        if(type==0){
+	            formatNum = num.replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3');
+	        }else{
+	            formatNum = num.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+	        }
+	    }else if(num.length==8){
+	        formatNum = num.replace(/(\d{4})(\d{4})/, '$1-$2');
+	    }else{
+	        if(num.indexOf('02')==0){
+	            if(type==0){
+	                formatNum = num.replace(/(\d{2})(\d{4})(\d{4})/, '$1-****-$3');
+	            }else{
+	                formatNum = num.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+	            }
+	        }else{
+	
+	            if(type==0){
+	                formatNum = num.replace(/(\d{3})(\d{3})(\d{4})/, '$1-***-$3');
+	            }else{
+	                formatNum = num.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+	            }
+	        }
+	    }
+    }catch(e){
+    	
+    }
+    return formatNum;
+
 }

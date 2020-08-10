@@ -9,10 +9,16 @@ var devDefectTable;
 var teamUserModalTable;
 var testAutoModalTable;
 
+var modalTableDevUpdate; //teamUserModalTable
+
+var modalTabledefectHistroty;
+
+var b001List;
+
 $(document).ready(function() { 
 	
 	//팀정보 조회합니다.
-	ajaxTranCall("user/searchTeamList.do", {}, callbackS, callBackE);
+	ajaxTranCall("user/selectTeamList.do", {role_code:"DEV"}, callbackS, callBackE);
 	ajaxTranCall("code/selectCodeList.do", {"code_group":"A001"}, callbackS, callBackE);
 	ajaxTranCall("code/selectCodeList.do", {"code_group":"B001"}, callbackS, callBackE);
 	
@@ -27,33 +33,23 @@ $(document).ready(function() {
 		selectDefectByDevIdList();
 	});
 	
-	$("#selectType").on('change', function(){
-		
-		var type = $(this).val();
-		
-		if(type=="1"){
-			$("#teamUserModalTable").show();
-			$("#autoTestModalTable").hide();
-			$("#teamUserModalTable_filter").show();
-			$("#autoTestModalTable_filter").hide();
-			 
-			$("#selectTeam2").show();
-			ajaxTranCall("user/selectUserList.do", {team_id:$("#selectTeam2").val()}, callbackPupupS, callBackE);
-		}
-		else{
-			$("#teamUserModalTable").hide();
-			$("#autoTestModalTable").show();
-			$("#teamUserModalTable_filter").hide();
-			$("#autoTestModalTable_filter").show();
-			$("#selectTeam2").hide();
-			
-			ajaxTranCall("auto/selectAutoList.do", {"defect_id":$("#id").val()}, callbackPupupS, callBackE);
-			
-		}
-	});
 	$("#selectTeam2").on('change', function(){
-		ajaxTranCall("user/selectUserList.do", {team_id:$(this).val()}, callbackPupupS, callBackE);
+		ajaxTranCall("user/selectUserList.do", {team_id:$(this).val(), role_code:"DEV"}, callbackPupupS, callBackE);
 	});
+	
+	$("#defect_code").on('change', function(){
+		
+		//미조치건 안내
+		if($(this).val() == "B001_04" ){
+			alert("미조치건은 테스터와 협의 후에 진행해주세요 \n테스터가 결함종료를 선택해야지 결함에서 제외됩니다.");
+		}
+		//개발지연건 안내
+		else if($(this).val() == "B001_05" ){
+			alert("개발지연건은 솔루션 또는 타업무와 연관된 지연건만 가능합니다. \n관리자가 반려할 수 있습니다.");
+		}
+		
+	});
+	
 	
 	//서브시스템 Table click event
 	$('#devDefectTable').on('click', function(){
@@ -62,38 +58,98 @@ $(document).ready(function() {
 				if($(this).hasClass('selected') ){
 					var dataJson = devDefectTable.row($(this)).data(); 
 					
+					//결함상태 select box 초기화 및 선택값에 따른 처리 내용 정리
+					$("#defect_code").html("");
+					for(var i=0; i<b001List.length; i++){
+						
+						//결함 상태건은 항상 보여줍니다. 
+						if(dataJson.defect_code == b001List[i].code_id){
+							appendSelectBox2( $("#defect_code"), b001List[i].code_id, b001List[i].code_name);
+						}
+						//결함이 결함등록, 결함종료, 조치완료, 미조치건은  개발자가 건들수 없습니다. 
+						else if(dataJson.defect_code == "B001_01" 
+							|| dataJson.defect_code == "B001_03"
+							|| dataJson.defect_code == "B001_04"
+							|| dataJson.defect_code == "B001_06"){
+						}
+						else if(b001List[i].code_id == "B001_03" 
+							|| b001List[i].code_id == "B001_04"  
+							|| b001List[i].code_id == "B001_05"){
+							appendSelectBox2( $("#defect_code"), b001List[i].code_id, b001List[i].code_name);
+						}
+					}
+					//결함이  결함종료, 조치완료, 미조치건은  개발자변경불가 
+					if(  dataJson.defect_code == "B001_03"
+						|| dataJson.defect_code == "B001_04"
+						|| dataJson.defect_code == "B001_06"){
+						$("#btnDevUpdate").hide();
+					}
+					else{
+						$("#btnDevUpdate").show();
+					}
+					
+					
+					//기본데이터 설정
 					modal.convertJsonObjToModal("devDefectModalTable",dataJson )
+					
+					//저장된 이미지 조회 
 					ajaxTranCall("defect/selectDefectDetail.do", dataJson, callbackS, callBackE);
-					$("#devDefectModal").modal();
-
-					$("#teamUserModalTable").show();
-					$("#autoTestModalTable").hide();
-					ajaxTranCall("user/selectUserList.do", {team_id:$("#selectTeam2").val()}, callbackPupupS, callBackE);
+					
+					//결함이력 조회 
+					ajaxTranCall("defect/selectDefectHistory.do", {"id": dataJson["id"]}, callbackPupupS, callBackE);
+					
+					//테스트자동화 List 조회
+					ajaxTranCall("auto/selectAutoList.do", {"id": dataJson["id"]}, callbackPupupS, callBackE);
+					
+					//개발자 목록 조회
+					ajaxTranCall("user/selectUserList.do", { role_code:"DEV"}, callbackPupupS, callBackE);
+					
+					
+					
 				}
 			});
 		}, 100);
 	});
 	
+	
+	
 	$("#btnSave").on('click', function(){
 		var dataJson = modal.convertModalToJsonObj("devDefectModalTable" );
+		dataJson["defect_code_nm"] = $("#defect_code").text();
 		ajaxTranCall("defect/updateDefectByDev.do", dataJson, callbackS, callBackE);
 	});
 	
+	//modal 1 개발자 변경 관련 이벤트 모음
+	$('#btnDevUpdate').on('click', function(){
+		$('#modalUser').modal();
+	});
+	
 	//modal user table click 
-	$('#teamUserModalTable').on('click', function(){
+	$('#modalTableDevUpdate').on('click', function(){
 		setTimeout(function() {
-			$('#teamUserModalTable tr').each(function(){
+			$('#modalTableDevUpdate tr').each(function(){
 				if($(this).hasClass('selected') ){
-					var dataJson = teamUserModalTable.row($(this)).data(); 
-					
+					var dataJson = modalTableDevUpdate.row($(this)).data(); 
 					if(confirm("선택한 개발자를 조치자로 변경하시겠습니까?")){
 						$("#defect_user").val(dataJson["user_id"]);
 						$("#defect_user_name").val(dataJson["name"] );
-						
+						$('#modalUser').modal("hide"); //닫기 
 					}
 				}
 			});
 		}, 100);
+	});
+	
+	
+	//modal 2 결함 히스토리 확인 
+	$('#btndefectHistory').on('click', function(){
+		$('#modalDefactHistory').modal();
+		//modalTabledefectHistroty
+	});
+	
+	//modal 3 자동테스트
+	$('#btnAutoTest').on('click', function(){
+		$('#modalAutoTest').modal();
 	});
 	
 	
@@ -120,9 +176,19 @@ var selectUserList = function(team_id){
 	else{
 		$("#selectTeam").val(team_id);
 		$("#selectTeam2").val(team_id);
-		jsonObj["team_id"] = team_id;
+		
+		if($("#selectTeam").val() == null){
+			$("#selectTeam").val("");
+			$("#selectTeam2").val("");
+			jsonObj["team_id"] = "";
+			jsonObj["role_code"] = "DEV";
+		}
+		else{
+			jsonObj["team_id"] = team_id;
+			jsonObj["role_code"] = "DEV";
+			
+		}
 	}
-	
 	ajaxTranCall("user/selectUserList.do", jsonObj, callbackS, callBackE);
 }
 
@@ -139,11 +205,48 @@ var callbackPupupS = function(tran, data){
 		skInterface.autoTestShow(list[0].title, list[0].html);
 		
 		break;
-	//테스트 자동화 목록 조회시 (defect_id로 조회 가능)
-	case "auto/selectAutoList.do":
+		
+	case "defect/selectDefectHistory.do":
 		
 		var list = data["list"];
-		autoTestModalTable = $('#autoTestModalTable').DataTable ({
+		$("#spanDefectHistoryCnt").text(list.length + "건");
+		
+		modalTabledefectHistroty = $('#modalTabledefectHistroty').DataTable ({
+			destroy: true,
+	        "aaData" : list,
+	        "columns" : [
+	            { "mDataProp" : 'test_type' },
+	            { "mDataProp" : 'defect_code' } ,
+	            { "mDataProp" : 'name' } ,
+	            { "mDataProp" : 'reg_date' } 
+	        ],
+	        "language": {
+		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
+		    },
+		    pageLength:5, //기본 데이터건수
+//		    pageLength:15, //기본 데이터건수
+//	        "scrollCollapse": false,
+			lengthChange: false, 	// 표시 건수기능 숨기기
+			searching: false,  		// 검색 기능 숨기기
+			ordering: false,  		// 정렬 기능 숨기기
+			info: false,			// 정보 표시 숨기기
+			paging: true, 			// 페이징 기능 숨기기
+			select: {
+	            style: 'single' //single, multi
+			}
+			
+	    });
+		break;
+		
+		
+//		
+		
+		break;
+	//테스트 자동화 목록 조회시 (defect_id로 조회 가능)
+	case "auto/selectAutoList.do":
+		var list = data["list"];
+		$("#spanAutoTestCnt").text(list.length + "건");
+		modalTableautoTest = $('#modalTableautoTest').DataTable ({
 			destroy: true,
 	        "aaData" : list,
 	        "columns" : [
@@ -153,12 +256,13 @@ var callbackPupupS = function(tran, data){
 	        "language": {
 		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
-		    
+		    pageLength:5, //기본 데이터건수
 			lengthChange: false, 	// 표시 건수기능 숨기기
-			searching: true,  		// 검색 기능 숨기기
+			searching: false,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기
 			info: false,			// 정보 표시 숨기기
-			paging: false, 			// 페이징 기능 숨기기
+			paging: true, 			// 페이징 기능 숨기기
+			"scrollCollapse": false,
 			select: {
 	            style: 'single' //single, multi
 			}
@@ -169,7 +273,7 @@ var callbackPupupS = function(tran, data){
 	case "user/selectUserList.do":
 		var list = data["list"];
 		
-		teamUserModalTable = $('#teamUserModalTable').DataTable ({
+		modalTableDevUpdate = $('#modalTableDevUpdate').DataTable ({
 			destroy: true,
 	        "aaData" : list,
 	        "columns" : [
@@ -179,12 +283,14 @@ var callbackPupupS = function(tran, data){
 	        "language": {
 		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
-		    
+		    pageLength:5, //기본 데이터건수
+//		    pageLength:15, //기본 데이터건수
+//	        "scrollCollapse": false,
 			lengthChange: false, 	// 표시 건수기능 숨기기
 			searching: true,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기
 			info: false,			// 정보 표시 숨기기
-			paging: false, 			// 페이징 기능 숨기기
+			paging: true, 			// 페이징 기능 숨기기
 			select: {
 	            style: 'single' //single, multi
 			}
@@ -200,9 +306,11 @@ var callbackS = function(tran, data){
 	
 	case "defect/updateDefectByDev.do":
 		if(data["resultCode"] == "0000" ){
-
 			alert(data["message"]);
 			$('div.modal').modal("hide"); //닫기 
+			
+			//결함이력 재조회 
+			ajaxTranCall("defect/selectDefectHistory.do", {"id": $("#id").val()}, callbackPupupS, callBackE);
 			
 			selectDefectByDevIdList();
 		}
@@ -212,20 +320,17 @@ var callbackS = function(tran, data){
 		var code_group = data["code_group"];
 		var list = data["list"];
 		
-//		if(code_group == "C001"){
-//			for(var i=0; i<list.length; i++){
-//				appendSelectBox2( $("#state"), list[i].code_id, list[i].code_name);
-//			}
-//		}
-		  if(code_group == "B001"){
+		if(code_group == "B001"){
+			
+			b001List = list;
 			for(var i=0; i<list.length; i++){
 				appendSelectBox2( $("#defect_code"), list[i].code_id, list[i].code_name);
 			}
-		}
+		}	
 		
 		else if(code_group == "A001"){
 			for(var i=0; i<list.length; i++){
-				appendSelectBox2( $("#test_type_id"), list[i].code_id, list[i].code_name);
+				appendSelectBox2( $("#test_type"), list[i].code_id, list[i].code_name);
 			}
 		}
 		break;
@@ -242,8 +347,8 @@ var callbackS = function(tran, data){
 	        "aaData" : list,
 	        "columns" : [
 	            { "mDataProp" : 'rnum' },
-	            { "mDataProp" : 'case_name' } ,
 	            { "mDataProp" : 'scenario_name' } ,
+	            { "mDataProp" : 'case_name' } ,
 	            { "mDataProp" : 'title' } ,
 	            { "mDataProp" : 'test_type_name' } ,
 	            { "mDataProp" : 'defect_name' } ,
@@ -256,25 +361,14 @@ var callbackS = function(tran, data){
 	        "language": {
 		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
-//		    select  row_number() OVER () as rnum, 
-//			cs.case_code,  --케이스명 
-//			cs.case_name,  --케이스명 
-//			cs.scenario_code,
-//			sc.scenario_name,
-//		
-//			 df.test_type_id,
-//			 ntm_schemas.GET_CODENAME('A001', df.test_type_id),
-//			 df.defect_code,
-//			 ntm_schemas.GET_CODENAME('B001', df.defect_code),
-//			 df.title,
-//			 df.description,
-//			 df.reg_user,
-//	 		 to_char(df.reg_date, 'YYYY-MM-DD') reg_date
+		    pageLength:15, //기본 데이터건수
 			lengthChange: false, 	// 표시 건수기능 숨기기
 			searching: true,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기
 			info: false,			// 정보 표시 숨기기
-			paging: false, 			// 페이징 기능 숨기기
+			paging: true, 			// 페이징 기능 숨기기
+			"scrollY":        550,
+			"scrollCollapse": false,
 			select: {
 	            style: 'single' //single, multi
 			}
@@ -283,13 +377,14 @@ var callbackS = function(tran, data){
 		break;
 	
 		//팀 정보 전체 조회
-		case "user/searchTeamList.do":
+		case "user/selectTeamList.do":
 			var list = data["list"];
-			htmlSelectBox2($("#selectTeam"), "", "전체");
-			htmlSelectBox2($("#selectTeam2"), "", "전체");
+			htmlSelectBox2($("#selectTeam"), 	"", 	"개발팀 전체");
+			htmlSelectBox2($("#selectTeam2"),	"", 	"개발팀 전체");
+			
 			for(var i=0; i<list.length; i++){
-				appendSelectBox2( $("#selectTeam"), list[i].id, list[i].name);
-				appendSelectBox2( $("#selectTeam2"), list[i].id, list[i].name);
+					appendSelectBox2( $("#selectTeam"), list[i].id, list[i].name);
+					appendSelectBox2( $("#selectTeam2"), list[i].id, list[i].name);
 			}
 			
 			var team_id = getCookie('team_id');
@@ -308,6 +403,9 @@ var callbackS = function(tran, data){
 			var user_id = getCookie('user_id');
 			if( isFirstLoad ){
 				$("#selectUser").val(user_id);
+				if($("#selectUser").val() == null){
+					$("#selectUser").val("");
+				}
 			}
 			else{
 			}
@@ -363,7 +461,7 @@ var modalOpen = function(type, e, dt, node, config ) {
 		
 		//초기화 작업 필요
 		$("#title").val("");
-		$("#test_type_id").val("0");
+		$("#test_type").val("0");
 		$("#description").val("");
 		$("#description").val("");
 		$("#files").val("");
@@ -373,7 +471,7 @@ var modalOpen = function(type, e, dt, node, config ) {
 		
 
         // readonly 삭제
-        $("#test_type_id").removeAttr("readonly");
+        $("#test_type").removeAttr("readonly");
 		
 	}
 	else{
@@ -381,10 +479,10 @@ var modalOpen = function(type, e, dt, node, config ) {
 		$('#modalTitle').text("결함 수정");
 		$('#btnSave').hide();
 		$('#btnUpdate').show();
-		$("#test_type_id").val("0");
+		$("#test_type").val("0");
 		
 		 // 텍스트 박스 readonly 처리
-        $("#test_type_id").attr("readonly",true);
+        $("#test_type").attr("readonly",true);
 		$('#defectTable tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
 				 var datajson = defectTable.row($(this)).data();

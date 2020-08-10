@@ -31,6 +31,7 @@ import com.skcc.service.CodeService;
 import com.skcc.service.CommonService;
 import com.skcc.service.DefectService;
 import com.skcc.service.ScenarioService;
+import com.skcc.service.StatService;
 import com.skcc.service.UserService;
 
 /**
@@ -63,6 +64,8 @@ public class SkccController {
 	private CodeService codeService;
 	@Autowired
 	private CommonService commonService;
+	@Autowired
+	private StatService statService;
 
 	@Value("${file.path}") private String file_Path;
 	/**
@@ -95,6 +98,8 @@ public class SkccController {
 				service = scenarioService;
 			} else if ("user".equals(subDir)) {
 				service = userService;
+			} else if ("stat".equals(subDir)) {
+				service = statService;
 			} else {
 				// 잘못된 서브 디렉토리 오류
 				service = commonService;

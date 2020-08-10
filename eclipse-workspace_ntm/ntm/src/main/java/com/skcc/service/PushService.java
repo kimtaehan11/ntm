@@ -53,6 +53,34 @@ public class PushService {
 		}
 		return true;
 	}
-
+	
+	
+	public boolean insertPushmsg( String title, String msg, String user) {
+		
+		log.debug("푸쉬 등록 요청>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		log.debug("title : " + title);
+		log.debug("msg : " + msg);
+		log.debug("user : " + user);
+		log.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>푸쉬 등록 요청");
+		
+		
+		try {
+			//PUSH로 사용자에게 알려줌
+			Map<String, Object> pushMap = new HashMap<String, Object>();
+			pushMap.put("title", 	title);
+			pushMap.put("msg", 		msg);
+			pushMap.put("user", 	user);
+			
+			int result = sqlSession.insert("PushDAO.insertPush", pushMap);
+			
+			if(result != 1) {
+				return false;
+			}
+		}
+		catch(Exception e) {
+			return false;
+		}
+		return true;
+	}
 	
 }

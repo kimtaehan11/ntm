@@ -1,15 +1,14 @@
 
 
-$(document).ready(function() { 
+//$(document).ready(function() { 
+var initDoucument = function(){
+	
 	/*
 	 * btLogin_onClick
 	 */
-	
 	$("#btLogin").click(function(){ 
 		var inputLoginId  = $("#inputLoginId").val();
 		var inputPassword = $("#inputLoginId").val();
-		
-	
 		
 		var dataJson = {
 			user_id : inputLoginId,
@@ -43,6 +42,6 @@ $(document).ready(function() {
 			}
 		});
 	});
-});
+}
 
 

@@ -8,8 +8,9 @@ var tableScenario, tableTestcase ;
 
 var tcTableModalUser;
 
-var isTester = true;
-$(document).ready(function() { 
+var isTester = "TEST";
+
+var initDoucument = function(){
 	
 	//업무구분 A 조회
 	ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"A"}, callbackS, callBackE);
@@ -37,15 +38,24 @@ $(document).ready(function() {
 		selectScenario();
 	});
 	
+	
+	$("#selectTeam2").on('change', function(){
+		$("select[name=selectC]").val($(this).val());
+//		selectScenario();
+		ajaxTranCall("user/selectUserList.do", {role_code:isTester, team_id:$(this).val()}, callbackS, callBackE);
+	});
+	
+	
 	$("select[name=modalSelectA]").on('change', function(){
 		$("select[name=modalSelectA]").val($(this).val());
-		htmlSelectBox2($("select[name=modalSelectB]"), "", "업무구분 전체");
-		htmlSelectBox2($("select[name=modalSelectC]"), "", "대상업무 전체");
+		htmlSelectBox2($("select[name=modalSelectB]"), "", "선택해주세요.");
+		htmlSelectBox2($("select[name=modalSelectC]"), "", "선택해주세요.");
 		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"B", "upcode": $(this).val()}, callbackModalS, callBackE);
 	});
+	
 	$("select[name=modalSelectB]").on('change', function(){
 		$("select[name=modalSelectB]").val($(this).val());
-		htmlSelectBox2($("select[name=modalSelectC]"), "", "대상업무 전체");
+		htmlSelectBox2($("select[name=modalSelectC]"), "", "선택해주세요.");
 		ajaxTranCall("scenario/searchDivListWithCombo.do", {"depth":"C", "upcode": $(this).val()}, callbackModalS, callBackE);
 	});
 	
@@ -53,6 +63,12 @@ $(document).ready(function() {
 	//modalType
 	//신규 저장버튼 click event
 	$("#btnSave").click(function(e){
+		
+		//필수값 체크 로직 추가
+		if(!modal.modalCheckInputData("seTableModal")) 
+			return;
+		
+		
 		var dataJson = modal.convertModalToJsonObj("seTableModal" );
 		if(modal.modalCheckInputData("seTableModal")){
 			ajaxTranCall("scenario/insertScenario.do", dataJson, callbackS, callBackE);
@@ -63,10 +79,14 @@ $(document).ready(function() {
 	//modalType
 	//신규 저장버튼 click event
 	$("#btnUpdate").click(function(e){
-		var dataJson = modal.convertModalToJsonObj("seTableModal" );
-		if(modal.modalCheckInputData("seTableModal")){
-			ajaxTranCall("scenario/updateScenario.do", dataJson, callbackS, callBackE);
-		}
+		
+		//필수값 체크 로직 추가
+		if(!modal.modalCheckInputData("seTableModal")) 
+			return;
+		
+		
+		var dataJson = modal.convertModalToJsonObj("seTableModal");
+		ajaxTranCall("scenario/updateScenario.do", dataJson, callbackS, callBackE);
 	});
 	
 	
@@ -90,14 +110,20 @@ $(document).ready(function() {
 		}, 100);
 	});
 	
-//	$("button[name=btnUp]").on('click', function(){
+	
+	//테스트 변경
 	$("#btnTester").on('click', function(){
-		isTester = true;
-//		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
+		isTester = "TEST";
+		//테스터 그룹만 조회 selectTeam2
+		ajaxTranCall("user/selectTeamList.do", {role_code:isTester}, callbackS, callBackE);
+		ajaxTranCall("user/selectUserList.do", {role_code:isTester}, callbackS, callBackE);
 	});
 	$("#btnDeveloper").on('click', function(){
-		isTester = false;
-//		ajaxTranCall("user/selectUserList.do", {team_id:''}, callbackS, callBackE);
+		isTester = "DEV";
+		
+		//개발자 그룹만 조회
+		ajaxTranCall("user/selectTeamList.do", {role_code:isTester}, callbackS, callBackE);
+		ajaxTranCall("user/selectUserList.do", {role_code:isTester}, callbackS, callBackE);
 	});
 	$('#tcTableModalUser').on('click', function(){
 
@@ -105,7 +131,7 @@ $(document).ready(function() {
 			$('#tcTableModalUser tr').each(function(){
 				if($(this).hasClass('selected') ){
 					var dataJson = tcTableModalUser.row($(this)).data(); 
-					if(isTester){
+					if(isTester == "TEST"){
 						$("#tester").val(dataJson.user_id);
 						$("#tester_nm").val(dataJson.name);
 					}
@@ -136,7 +162,7 @@ $(document).ready(function() {
 		
 	});
 	
-});
+}
 
 
 //ajaxTranCall("scenario/selectScenario.do", {}, callbackS, callBackE);
@@ -162,9 +188,9 @@ var callbackModalS = function(tran, data){
 		if(data["resultCode"] == "0000" ){
 			var detpth = data["depth"];
 			if(detpth == "B"){
-				htmlSelectBox("modalSelectB", "", "업무구분 전체");
+				htmlSelectBox("modalSelectB", "", "선택해주세요.");
 				for(var i=0; i<list.length; i++){
-					appendSelectBox2($("select[name=modalSelectB]"), list[i].id, list[i].name);
+					appendSelectBox2($("select[name=modalSelectB]"), list[i].div_id, list[i].name);
 				}
 				
 				if(detpth2 != ""){
@@ -173,9 +199,9 @@ var callbackModalS = function(tran, data){
 				}
 			}
 			else if(detpth == "C"){
-				htmlSelectBox("modalSelectC", "", "대상업무 전체");
+				htmlSelectBox("modalSelectC", "", "선택해주세요.");
 				for(var i=0; i<list.length; i++){
-					appendSelectBox2($("select[name=modalSelectC]"), list[i].id, list[i].name);
+					appendSelectBox2($("select[name=modalSelectC]"), list[i].div_id, list[i].name);
 				}
 				
 				if(detpth3 != ""){
@@ -245,7 +271,20 @@ var callbackS = function(tran, data){
 		}
 		break;
 		
-	case "user/selectUserList.do":
+		
+	case "user/selectTeamList.do":
+		
+		if(isTester == "TEST")
+			htmlSelectBox2($("#selectTeam2"), "", "테스터팀 전체");
+		else
+			htmlSelectBox2($("#selectTeam2"), "", "개발팀 전체");
+		for(var i=0; i<list.length; i++){
+			appendSelectBox2($("#selectTeam2"), list[i].id, list[i].name);
+			
+		}
+		break;
+		 
+		case "user/selectUserList.do":
 		
 		tcTableModalUser = $('#tcTableModalUser').DataTable ({
 			destroy: true,
@@ -257,12 +296,12 @@ var callbackS = function(tran, data){
 	        "language": {
 		        "emptyTable": "데이터가 없어요." , "search": "검색 : "
 		    },
-		    
+		    pageLength:5, //기본 데이터건수
 			lengthChange: false, 	// 표시 건수기능 숨기기
-			searching: true,  		// 검색 기능 숨기기
+			searching: false,  		// 검색 기능 숨기기
 			ordering: false,  		// 정렬 기능 숨기기
 			info: false,			// 정보 표시 숨기기
-			paging: false, 			// 페이징 기능 숨기기
+			paging: true, 			// 페이징 기능 숨기기
 			select: {
 	            style: 'single' //single, multi
 			}
@@ -282,9 +321,10 @@ var callbackS = function(tran, data){
 				destroy: true,
 		        "aaData" : list,
 		        "columns" : [
+		            { "mDataProp" : 'scenario_name' },
 		            { "mDataProp" : 'case_code' },
 		            { "mDataProp" : 'case_name' },
-		            { "mDataProp" : 'reg_name' },
+//		            { "mDataProp" : 'reg_name' },
 		            { "mDataProp" : 'test_name' },
 		            { "mDataProp" : 'dev_name' },
 		            { "mDataProp" : 'statestr' }
@@ -302,7 +342,6 @@ var callbackS = function(tran, data){
 				select: {
 		            style: 'single' //single, multi
 				},
-				pageLength:15, //기본 데이터건수
 				"scrollY":        550,
 		        "scrollCollapse": false,
 		       
@@ -368,22 +407,22 @@ var callbackS = function(tran, data){
 			var detpth = data["depth"];
 			if(detpth == "A"){
 				htmlSelectBox("selectA", "", "서브시스템 전체");
-				htmlSelectBox("modalSelectA", "", "서브시스템 전체");
+				htmlSelectBox("modalSelectA", "", "선택해주세요.");
 				for(var i=0; i<list.length; i++){
-					appendSelectBox2($("select[name=selectA]"), list[i].id, list[i].name);
-					appendSelectBox2($("select[name=modalSelectA]"), list[i].id, list[i].name);
+					appendSelectBox2($("select[name=selectA]"), list[i].div_id, list[i].name);
+					appendSelectBox2($("select[name=modalSelectA]"), list[i].div_id, list[i].name);
 				}
 			}
 			else if(detpth == "B"){
 				htmlSelectBox("selectB", "", "업무구분 전체");
 				for(var i=0; i<list.length; i++){
-					appendSelectBox2($("select[name=selectB]"), list[i].id, list[i].name);
+					appendSelectBox2($("select[name=selectB]"), list[i].div_id, list[i].name);
 				}
 			}
 			else if(detpth == "C"){
 				htmlSelectBox("selectC", "", "대상업무 전체");
 				for(var i=0; i<list.length; i++){
-					appendSelectBox2($("select[name=selectC]"), list[i].id, list[i].name);
+					appendSelectBox2($("select[name=selectC]"), list[i].div_id, list[i].name);
 				}
 			}
 		}
@@ -395,8 +434,9 @@ var callbackS = function(tran, data){
 			destroy: true,
 	        "aaData" : list,
 	        "columns" : [
+	            { "mDataProp" : 'div_name_total' },
+	            { "mDataProp" : 'scenario_name' },
 	            { "mDataProp" : 'scenario_code' },
-	            { "mDataProp" : 'scenario_name' } ,
 	            { "mDataProp" : 'is_batch' } 
 	            
 	        ],
@@ -435,34 +475,24 @@ var callbackS = function(tran, data){
 	                text: '삭제',
 	                className: 'red',
 	                action: function ( e, dt, node, config ) {
-//	                	if(!confirm("선택된 테스트 케이스를 삭제하시겠습니까?")) return;
 	                	
 	                	var isSelected = false;
-	                	$('#tableTestcase tr').each(function(){
+	                	if(!confirm("시나리오 삭제시에 하위 테스트 케이스도 삭제됩니다.")){
+	                		return;
+	                	}
+	                	
+	                	$('#tableScenario tr').each(function(){
 	        				if($(this).hasClass('selected') ){
-	        					var dataJson = tableTestcase.row($(this)).data(); 
-	        					ajaxTranCall("scenario/deleteTestcase.do", dataJson, callbackS, callBackE);
+	        					var dataJson = tableScenario.row($(this)).data(); 
 	        					isSelected = true;
+	        					ajaxTranCall("scenario/deleteScenario.do", dataJson, callbackS, callBackE);
 	        				}
 	        			});
-	                	
 	                	
 	                	if(!isSelected){
 	                		alert(MSG.SELETED_DELETE_OBJ);
 	                		return;
 	                	}
-	                	if(!confirm("시나리오 삭제시에 하위 테스트 케이스도 삭제됩니다.")){
-	                		return;
-	                	}
-	                	
-
-	                	$('#tableScenario tr').each(function(){
-	        				if($(this).hasClass('selected') ){
-	        					var dataJson = tableScenario.row($(this)).data(); 
-	        					ajaxTranCall("scenario/deleteScenario.do", dataJson, callbackS, callBackE);
-	        				}
-	        			});
-	                	
 	                }
 	            } 
 	        ]
@@ -488,6 +518,7 @@ var modalOpen = function( crType , e, dt, node, config ) {
 		$('#scenario_code').val("");
 		$('#scenario_name').val("");
 		$('#description').val("");
+		$('#id').val("");
 		
 		
 		$('#modalSelectA').val("");
@@ -500,6 +531,7 @@ var modalOpen = function( crType , e, dt, node, config ) {
 	}
 	//2. 시나리오 수정
 	else if(crType == "2"){
+		
 		var isSelected = false;
 		var div_id = ""
 		$("#modalTitle").text("시나리오 수정");
@@ -508,7 +540,6 @@ var modalOpen = function( crType , e, dt, node, config ) {
 		$('#tableScenario tr').each(function(){
 			 if ( $(this).hasClass('selected') ){
 				 isSelected = true;
-
 				 var dataJson = tableScenario.row($(this)).data();
 				 div_id = dataJson.div_id;
 				 modal.convertJsonObjToModal("seTableModal", dataJson );
@@ -526,7 +557,7 @@ var modalOpen = function( crType , e, dt, node, config ) {
 			}
 			else{
 				
-				ajaxTranCall("scenario/selectDivDepth.do", {id:div_id}, callbackModalS, callBackE);
+				ajaxTranCall("scenario/selectDivDepth.do", {div_id:div_id}, callbackModalS, callBackE);
 			}
 			
 		}

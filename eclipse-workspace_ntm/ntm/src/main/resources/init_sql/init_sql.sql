@@ -20,14 +20,14 @@ ALTER SCHEMA sftm OWNER TO sftm_admin;
 ---------------------------------------------------------------------
 CREATE TABLE sftm.itm_user
 (
-  user_id character varying(256) NOT NULL,
+  user_id character varying(30) NOT NULL,
   password character varying(256) NOT NULL,
   name character varying(256),
   phone_num character varying(64),
-  email character varying(256),
+  birth character varying(6),
+  sex character varying(1),
   organization character varying(256),
   "position" character varying(256),
-  description character varying(256),
   team_id bigint,
   reg_user character varying(256) NOT NULL,
   reg_date timestamp without time zone DEFAULT now(),
@@ -48,17 +48,9 @@ ALTER TABLE sftm.itm_user ADD PRIMARY KEY(user_id);
 ---------------------------------------------------------------------
 -- 2. 역할 테이블 (sftm.itm_role) 
 ---------------------------------------------------------------------
-CREATE SEQUENCE sftm.itm_role_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
 CREATE TABLE sftm.itm_role (
-    id bigint DEFAULT nextval('sftm.itm_role_id_seq'::regclass) NOT NULL,
     project_id bigint NOT NULL,
-    code character varying(256),
+    code character varying(20),
     name character varying(256),
     description character varying(256),
     reg_user character varying(256) NOT NULL,
@@ -66,11 +58,9 @@ CREATE TABLE sftm.itm_role (
     modify_user character varying(256),
     modify_date timestamp without time zone 
 );
- 
-ALTER SEQUENCE sftm.itm_role_id_seq OWNED BY sftm.itm_role.id;
+  
 ALTER TABLE sftm.itm_role OWNER TO sftm_admin;
-ALTER TABLE sftm.itm_role ADD PRIMARY KEY(id);
-
+ALTER TABLE sftm.itm_role ADD PRIMARY KEY(code);
 
 
 ---------------------------------------------------------------------
@@ -87,7 +77,8 @@ CREATE TABLE sftm.itm_team (
     id bigint DEFAULT nextval('sftm.itm_team_id_seq'::regclass) NOT NULL,
     name character varying(256),
     project_id bigint NOT NULL,
-    role_id bigint NOT NULL,
+    role_code character varying(20),
+    reader_id character varying(20),
     description text,
     reg_user character varying(256) NOT NULL,
     reg_date timestamp without time zone DEFAULT now(),
@@ -114,27 +105,37 @@ CREATE SEQUENCE sftm.itm_div_id_seq
     CACHE 1;
  
 CREATE TABLE sftm.itm_div (
-    id character varying(10)  NOT NULL,
+    div_id character varying(10)  NOT NULL,
     project_id bigint NOT NULL,
     name character varying(256),
     depth character varying(1),
     upcode character varying(10),
+    team_id bigint,
     reg_user character varying(256) NOT NULL,
     reg_date timestamp without time zone DEFAULT now(),
     modify_user character varying(256),
     modify_date timestamp without time zone 
 );
 
-ALTER SEQUENCE 	sftm.itm_div_id_seq OWNED BY sftm.itm_div.id;
+ALTER SEQUENCE 	sftm.itm_div_id_seq OWNED BY sftm.itm_div.div_id;
 ALTER TABLE 	sftm.itm_div OWNER TO sftm_admin;
-ALTER TABLE 	sftm.itm_div ADD PRIMARY KEY(id);
+ALTER TABLE 	sftm.itm_div ADD PRIMARY KEY(div_id);
 
  
 ---------------------------------------------------------------------
 -- 5. 시나리오 테이블 (sftm.itm_scenario)  
 --------------------------------------------------------------------- 
+CREATE SEQUENCE sftm.itm_scenario_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+    
+    
 CREATE TABLE sftm.itm_scenario
 (
+  scenario_id bigint    NOT NULL,
   scenario_code character varying(100) NOT NULL, -- 시나리오코드
   scenario_name character varying(200) NOT NULL, -- 시나리오명
   div_id character varying(10), -- 업무구분
@@ -151,21 +152,31 @@ WITH (
 );
 
 
-ALTER TABLE sftm.itm_scenario ADD PRIMARY KEY(scenario_code);
+ALTER SEQUENCE 	sftm.itm_scenario_id_seq OWNED BY sftm.itm_scenario.scenario_id;
+ALTER TABLE sftm.itm_scenario ADD PRIMARY KEY(scenario_id);
 ALTER TABLE sftm.itm_scenario OWNER TO sftm_admin;
 
  
 ---------------------------------------------------------------------
 -- 6. 테스트케이스 테이블 (sftm.itm_test_case)  
 --------------------------------------------------------------------- 
+
+CREATE SEQUENCE sftm.itm_test_case_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+    
+    
 CREATE TABLE sftm.itm_test_case
 (
-  case_code character varying(100), -- 케이스코드
+  scenario_id bigint NOT NULL, -- 시나리오ID
+  case_id bigint NOT NULL, -- 케이스코드
   case_name character varying(200), -- 케이스명
   project_id bigint NOT NULL, -- 프로젝트ID
- 	scenario_code character varying(100) NOT NULL, -- 시나리오ID
-  tester_id character varying(256),
-  dev_id character varying(256), 
+  tester_id character varying(30),
+  dev_id character varying(30), 
   state character varying(20), 
   description text, -- 설명
   reg_user character varying(64), -- 등록자
@@ -176,7 +187,8 @@ CREATE TABLE sftm.itm_test_case
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE sftm.itm_test_case ADD PRIMARY KEY(scenario_code, case_code);
+ALTER SEQUENCE 	sftm.itm_test_case_id_seq OWNED BY sftm.itm_test_case.case_id;
+ALTER TABLE sftm.itm_test_case ADD PRIMARY KEY(scenario_id, case_id);
 ALTER TABLE sftm.itm_test_case OWNER TO sftm_admin; 
 
 
@@ -195,19 +207,17 @@ CREATE SEQUENCE sftm.itm_defect_id_seq
 
 CREATE TABLE sftm.itm_defect
 (
- 	id bigint DEFAULT nextval('sftm.itm_defect_id_seq'::regclass) NOT NULL,
+  defect_id bigint DEFAULT nextval('sftm.itm_defect_id_seq'::regclass) NOT NULL,
   project_id bigint NOT NULL, -- 프로젝트ID
-  scenario_code character varying(100) NOT NULL, -- 시나리오ID
-  case_code character varying(100), -- 케이스코드
-  test_type_id character varying(10) NOT NULL, -- 테스트유형ID
-  defect_code character varying(10), -- 결함코드
+  scenario_id bigint NOT NULL NOT NULL, -- 시나리오ID
+  case_code bigint NOT NULL, -- 케이스코드
+  --test_type character varying(10) NOT NULL, -- 테스트유형ID
+  --defect_code character varying(10), -- 결함코드
   title character varying(200), -- 결함명
   description text, -- 설명
   defect_user character varying(64), -- 결함담당자
   reg_user character varying(64), -- 등록자
   reg_date timestamp with time zone, -- 등록일자
-  modify_user character varying(64), -- 수정자
-  modify_date timestamp with time zone, -- 수정일자
   due_date timestamp with time zone, -- 조치완료일자
   plan_date timestamp with time zone, -- 조치예정일자
   defect_result text,
@@ -219,10 +229,26 @@ CREATE TABLE sftm.itm_defect
 WITH (
   OIDS=FALSE
 );
-ALTER SEQUENCE  sftm.itm_defect_id_seq OWNED BY sftm.itm_defect.id;
+ALTER SEQUENCE  sftm.itm_defect_id_seq OWNED BY sftm.itm_defect.defect_id;
 ALTER TABLE 	sftm.itm_defect OWNER TO sftm_admin; 
-ALTER TABLE 	sftm.itm_defect ADD PRIMARY KEY(id);
+ALTER TABLE 	sftm.itm_defect ADD PRIMARY KEY(defect_id);
 
+
+
+CREATE TABLE sftm.itm_defect_history
+(
+  defect_id bigint  NOT NULL,
+  seq bigint  NOT NULL,
+  test_type character varying(10) NOT NULL, -- 테스트유형ID
+  defect_code character varying(10), -- 결함코드
+  reg_user character varying(64), -- 등록자
+  reg_date timestamp with time zone -- 등록일자
+)
+WITH (
+  OIDS=FALSE
+); 
+ALTER TABLE 	sftm.itm_defect_history OWNER TO sftm_admin; 
+ALTER TABLE 	sftm.itm_defect_history ADD PRIMARY KEY(defect_id, seq);
 
 ----------------------------------------------------------------- 
 -- 8. 이미지 테이블  (sftm.itm_img)------------------------------------  

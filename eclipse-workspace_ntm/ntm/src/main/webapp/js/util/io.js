@@ -74,6 +74,15 @@ var ajaxTranCallWithFile = function(tran, data,  succeesCallback, errorCallback)
     });
 }
 
+
+/*
+ * 액셀 업로드만 
+ */
+var ajaxExcelDownLoad = function (tran , data, succeesCallback, errorCallback){
+	
+} 
+
+
 /*
  * 액셀 업로드만 
  */

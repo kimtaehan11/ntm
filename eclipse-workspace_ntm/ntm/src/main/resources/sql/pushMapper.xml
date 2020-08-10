@@ -7,7 +7,7 @@
        <result property="object"                   column="PackageBeanResult"/>
     </resultMap>
     
-  <insert id="insertPushDev" parameterType="map" useGeneratedKeys="true">
+  <insert id="insertPushMsg" parameterType="map" useGeneratedKeys="true">
 		INSERT INTO sftm.itm_push
 		(	
 			id , 
@@ -23,28 +23,6 @@
 			#{ defect_name },
 			#{ title} , 
 			#{ defect_user, }, 
-			'N', 
-			#{ reg_user },
-			now()
-		)
-  	</insert>
-  	
-  	<insert id="insertPushTest" parameterType="map" useGeneratedKeys="true">
-		INSERT INTO sftm.itm_push
-		(	
-			id , 
-			title, 
-			msg, 
-			user_id, 
-			recv_yn, 
-			reg_user, 
-			reg_date 
-		)
-		VALUES (
-			nextval('sftm.itm_push_id_seq'::REGCLASS),
-			#{ defect_name },
-			#{ title} , 
-			#{ reg_user, }, 
 			'N', 
 			#{ reg_user },
 			now()
